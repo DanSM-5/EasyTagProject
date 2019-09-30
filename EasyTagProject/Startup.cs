@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-
+//bl
 namespace EasyTagProject
 {
     public class Startup
@@ -48,6 +48,7 @@ namespace EasyTagProject
 
             app.UseStaticFiles();
             app.UseCookiePolicy();
+            app.UseCache();
 
             app.UseMvc(routes =>
             {
