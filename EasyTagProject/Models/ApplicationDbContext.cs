@@ -12,5 +12,8 @@ namespace EasyTagProject.Models
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         public DbSet<Room> Rooms { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
+        public DbSet<Schedule> Schedules { get; set; }
+        public DbSet<Item> Items { get; set; }
     }
 }

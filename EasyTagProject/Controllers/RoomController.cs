@@ -21,9 +21,22 @@ namespace EasyTagProject.Controllers
         /// <returns>
         /// View with the room information
         /// </returns>
-        public IActionResult Room(string name)
+        public ViewResult Room(string name)
         {
             return View(roomRepository.Rooms.FirstOrDefault(r => r.Name == name));
+        }
+
+        public ViewResult AddRoom() => View(new Room());
+
+        [HttpPost]
+        public IActionResult AddRoom(Room room)
+        {
+            if (ModelState.IsValid)
+            {
+
+            }
+
+            return View(room);
         }
     }
 }
