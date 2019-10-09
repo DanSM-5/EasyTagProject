@@ -39,8 +39,8 @@ namespace EasyTagProject.Models
         }
         public Room LeftRoom { get; set; }
         public Room RightRoom { get; set; }
-        public bool Availability { get; set; }
-        public ICollection<Item> Items {get; set; }
-        public Schedule Schedule { get; set; }
+        //public bool Availability { get; set; }
+        public ICollection<Item> Items { get; set; } = new List<Item>();
+        public Schedule Schedule { get; set; } = new Schedule();
     }
 }

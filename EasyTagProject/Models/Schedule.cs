@@ -7,7 +7,8 @@ namespace EasyTagProject.Models
 {
     public class Schedule
     {
-        public ICollection<Appointment> Appointments { get; set; }
+        public int Id { get; set; }
+        public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         public Room Room { get; set; }
 
     }

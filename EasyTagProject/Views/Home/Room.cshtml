@@ -14,3 +14,33 @@
     <div>Type: @Model.Status</div>
 </div>
 
+<div>
+    <table class="table table-active">
+        <thead>
+            <tr>
+                <th>Hour</th>
+                <th>Course</th>
+                <th>Instructor</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Schedule.Appointments.Any())
+            {
+                @foreach (var app in Model.Schedule.Appointments)
+                {
+                    <tr>
+                        <td>@app.Start.ToShortTimeString()</td>
+                        <td>@app.Course</td>
+                        <td>@app.UserName</td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="3">No Appointments</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

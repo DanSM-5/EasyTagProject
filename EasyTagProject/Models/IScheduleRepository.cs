@@ -5,10 +5,8 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
-    public interface IRoomRepository
+    public interface IScheduleRepository
     {
-        IQueryable<Room> Rooms { get; }
-        void Save(Room room);
-        Room Delete(int id);
+        IQueryable<Schedule> Schedules{get;}
     }
 }
