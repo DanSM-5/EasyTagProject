@@ -33,7 +33,7 @@ namespace EasyTagProject
             });
 
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration["Data:FacultyManagement:ConnectionString"]));
+                options.UseSqlServer(Configuration["Data:EasyTagDB:ConnectionString"]));
 
             services.AddTransient<IRoomRepository, EFRoomRepository>();
 
@@ -66,7 +66,7 @@ namespace EasyTagProject
                     template: "{controller=Home}/{action=Index}/{name?}");
             });
 
-            //SeedData.EnsurePopulated(app);
+            SeedData.EnsurePopulated(app);
         }
     }
 }

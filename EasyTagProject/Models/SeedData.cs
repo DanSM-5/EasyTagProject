@@ -33,8 +33,8 @@ namespace EasyTagProject.Models
                             {
                                 Course = "COMP334",
                                 UserName = "Paulo",
-                                Start = DateTime.ParseExact("2019-10-09 6:30 PM", "yyyy-MM-dd HH:mm tt",null),
-                                End = DateTime.ParseExact("2019-10-09 9:30 PM", "yyyy-MM-dd HH:mm tt",null)
+                                Start = DateTime.ParseExact("2019-10-09 18:30 PM", "yyyy-MM-dd HH:mm tt",null),
+                                End = DateTime.ParseExact("2019-10-09 21:30 PM", "yyyy-MM-dd HH:mm tt",null)
                             }
                         }
                     }
