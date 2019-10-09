@@ -29,7 +29,7 @@
                 @foreach (var app in Model.Schedule.Appointments)
                 {
                     <tr>
-                        <td>@app.Start.ToShortTimeString()</td>
+                        <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
                         <td>@app.Course</td>
                         <td>@app.UserName</td>
                     </tr>

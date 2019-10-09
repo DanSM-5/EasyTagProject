@@ -31,7 +31,7 @@ namespace EasyTagProject.Models
                 {
                     return Status.InClass;
                 }
-                else
+                else 
                 {
                     return Status.Empty;
                 }
