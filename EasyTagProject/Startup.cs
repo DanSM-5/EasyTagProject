@@ -63,7 +63,7 @@ namespace EasyTagProject
             {
                 routes.MapRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{name:string}");
+                    template: "{controller=Home}/{action=Index}/{name?}");
             });
         }
     }
