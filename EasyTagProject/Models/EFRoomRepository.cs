@@ -28,14 +28,13 @@ namespace EasyTagProject.Models
                 {
                     roomEntry.Name = room.Name;
                     roomEntry.Items = roomEntry.Items;
-                    roomEntry.LeftRoom = room.LeftRoom;
                     roomEntry.Number = room.Number;
-                    roomEntry.RightRoom = room.RightRoom;
                     roomEntry.Schedule = room.Schedule;
                     roomEntry.Type = room.Type;
                     roomEntry.Floor = room.Floor;
                     roomEntry.Block = room.Block;
-
+                    //roomEntry.RightRoom = room.RightRoom;
+                    //roomEntry.LeftRoom = room.LeftRoom;
                 }
             }
             else
@@ -56,7 +55,7 @@ namespace EasyTagProject.Models
                 context.SaveChanges();
             }
 
-            return room ?? default(Room);
+            return room ?? default;
         }
     }
 }

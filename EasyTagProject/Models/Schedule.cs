@@ -12,7 +12,7 @@ namespace EasyTagProject.Models
         [Key]
         public int Id { get; set; }
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
-        [ForeignKey("Room_FK")]
+        [ForeignKey("Id")]
         public Room Room { get; set; }
 
     }

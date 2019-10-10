@@ -6,10 +6,11 @@ using EasyTagProject.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+//using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 
 namespace EasyTagProject
 {
@@ -37,14 +38,15 @@ namespace EasyTagProject
 
             services.AddTransient<IRoomRepository, EFRoomRepository>();
 
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            services.AddRazorPages();
             services.AddMemoryCache();
             services.AddSession();
 
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
@@ -59,11 +61,19 @@ namespace EasyTagProject
             app.UseCookiePolicy();
             app.UseSession();
 
-            app.UseMvc(routes =>
+            app.UseRouting(//routes =>
+            
+                //routes.MapRoute(
+                //    name: "default",
+                //    template: "{controller=Home}/{action=Index}/{name?}");
+            );
+
+            app.UseEndpoints(endpoints =>
             {
-                routes.MapRoute(
+                endpoints.MapControllerRoute(
                     name: "default",
-                    template: "{controller=Home}/{action=Index}/{name?}");
+                    pattern: "{controller=Home}/{action=Index}/{name?}"
+                );
             });
 
             SeedData.EnsurePopulated(app);
