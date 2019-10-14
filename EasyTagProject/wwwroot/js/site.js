@@ -1,7 +1,7 @@
 ﻿
 // Function to fade in and out the description
 let fadeAppointmentFunction = (e) => {
-    if ($(e.target).hasClass('d-table-cell')) {
+    if ($(e.target).is('td')) {
         let displayClass = 'displayed';
         let idNum = $(e.target).parent().attr('id').split('-')[0];
         let tr = $('#' + idNum + '-header');
