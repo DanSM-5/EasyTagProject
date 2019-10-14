@@ -38,12 +38,13 @@ button.accept-policy {
 -------------------------------------------------- */
 html {
   position: relative;
-  min-height: 100%;
+  height: 100%;
 }
 
 body {
-  /* Margin bottom by footer height */
-  margin-bottom: 60px;
+    /* Margin bottom by footer height */
+    margin-bottom: 60px;
+    height:100%;
 }
 .footer {
   position: absolute;
@@ -59,10 +60,11 @@ body {
     display:none;
 }
 
-nav img {
+.container img {
     max-width:600px;
     width:100%;
     margin:0 auto;
+    padding:10px;
 }
 .headercolor {
     background:#3C5C8D;
@@ -79,4 +81,14 @@ nav img {
     background: #3C5C8D;
     font-size:200%;
     border-radius:30px;
+}
+.container {
+    background-color: #3C5C8D;
+    height:100%;
+}
+.pb-3 {
+    background:#fff;
+    width:90%;
+    margin:0 auto;
+    padding:20px;
 }
