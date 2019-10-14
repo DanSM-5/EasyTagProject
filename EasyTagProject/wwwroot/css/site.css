@@ -58,3 +58,25 @@ body {
 .hideTr{
     display:none;
 }
+
+nav img {
+    max-width:600px;
+    width:100%;
+    margin:0 auto;
+}
+.headercolor {
+    background:#3C5C8D;
+}
+
+.scannow {
+    width: 300px;
+    height: 160px;
+    text-align: center;
+    margin: 0 auto;
+    color: #ffffff;
+    font-weight: bold;
+    vertical-align: middle;
+    background: #3C5C8D;
+    font-size:200%;
+    border-radius:30px;
+}
