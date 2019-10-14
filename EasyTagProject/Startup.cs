@@ -61,12 +61,7 @@ namespace EasyTagProject
             app.UseCookiePolicy();
             app.UseSession();
 
-            app.UseRouting(//routes =>
-            
-                //routes.MapRoute(
-                //    name: "default",
-                //    template: "{controller=Home}/{action=Index}/{name?}");
-            );
+            app.UseRouting();
 
             app.UseEndpoints(endpoints =>
             {

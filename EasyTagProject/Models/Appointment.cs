@@ -14,5 +14,6 @@ namespace EasyTagProject.Models
         public string Course { get; set; }
         [Key]
         public int Id { get; set; }
+        public string Description { get; set; }
     }
 }

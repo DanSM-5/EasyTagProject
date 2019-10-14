@@ -1,21 +1,32 @@
 ﻿@model Room
 @{
-    ViewData["Title"] = "Room";
+    ViewData["Title"] = Model.Name;
 }
 
 <h1>@Model.Name</h1>
+<div class="row">
+    <div class="col text-center">Block</div>
+    <div class="col text-center">Floor</div>
+    <div class="col text-center">Classroom</div>
+</div>
+<div class="row">
+    <div class="col text-center"><h2>@Model.Block</h2></div>
+    <div class="col text-center"><h2>@Model.Floor</h2></div>
+    <div class="col text-center"><h2>@Model.Number</h2></div>
+</div>
 
-<div>@Model.Block</div>
-<div>@Model.Floor</div>
-<div>@Model.Number</div>
+<div class="row">
+    <div class="col text-center">Status</div>
+    <div class="col text-center">Type</div>
+</div>
 
-<div>
-    <div>Type: @Model.Type</div>
-    <div>Type: @Model.Status</div>
+<div class="row">
+    <div class="col text-center"><h2>@Model.Status</h2></div>
+    <div class="col text-center"><h2>@Model.Type</h2></div>
 </div>
 
 <div>
-    <table class="table table-active">
+    <table class="table table-active table-hover">
         <thead>
             <tr>
                 <th>Hour</th>
@@ -28,19 +39,24 @@
             {
                 @foreach (var app in Model.Schedule.Appointments)
                 {
-                    <tr>
-                        <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
-                        <td>@app.Course</td>
-                        <td>@app.UserName</td>
+                    <tr id="@app.Id-header" class="appointment">
+                        <td class="d-table-cell">@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
+                        <td class="d-table-cell">@app.Course</td>
+                        <td class="d-table-cell">@app.UserName</td>
+                    </tr>
+                    <tr id="@app.Id-description" class="hideTr">
+                        <td colspan="3" class="d-table-cell text-center">@app.Description</td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="3">No Appointments</td>
+                    <td colspan="3" class="text-center">No Appointments</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
+
+<script src="~/lib/jquery/dist/jquery.js"></script>

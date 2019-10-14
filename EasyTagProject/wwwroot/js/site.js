@@ -1,4 +1,21 @@
-﻿// Please see documentation at https://docs.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+﻿$(document).ready(addEventListener(
+    'click',
+    (e) => {
+        console.log('run')
+        if ($(e.target).hasClass('d-table-cell')) {
+            let displayClass = 'displayed';
+            let idNum = $(e.target).parent().attr('id').split('-')[0];
+            let tr = $('#' + idNum + '-header');
+            let hiddenId = '#' + idNum + "-description";
 
-// Write your JavaScript code.
+            if ($(tr).hasClass(displayClass)) {
+                $(tr).removeClass(displayClass);
+                $(hiddenId).fadeOut();
+            } else {
+                $(tr).addClass(displayClass);
+                $(hiddenId).fadeIn();
+            }
+        }
+    }
+));
+

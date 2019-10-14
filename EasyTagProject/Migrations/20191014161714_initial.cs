@@ -1,10 +1,9 @@
 ﻿using System;
-using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace EasyTagProject.Migrations
 {
-    public partial class Initial : Migration
+    public partial class initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -13,23 +12,16 @@ namespace EasyTagProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: false),
                     Block = table.Column<string>(nullable: false),
                     Floor = table.Column<int>(nullable: false),
                     Number = table.Column<int>(nullable: false),
-                    Type = table.Column<int>(nullable: false),
-                    LeftRoomId = table.Column<int>(nullable: true)
+                    Type = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Rooms", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Rooms_Rooms_LeftRoomId",
-                        column: x => x.LeftRoomId,
-                        principalTable: "Rooms",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -37,7 +29,7 @@ namespace EasyTagProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(nullable: true),
                     Description = table.Column<string>(nullable: true),
                     RoomId = table.Column<int>(nullable: true)
@@ -58,18 +50,16 @@ namespace EasyTagProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Room_FK = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Schedules", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Schedules_Rooms_Room_FK",
-                        column: x => x.Room_FK,
+                        name: "FK_Schedules_Rooms_Id",
+                        column: x => x.Id,
                         principalTable: "Rooms",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -77,11 +67,12 @@ namespace EasyTagProject.Migrations
                 columns: table => new
                 {
                     Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Start = table.Column<DateTime>(nullable: false),
                     End = table.Column<DateTime>(nullable: false),
                     UserName = table.Column<string>(nullable: true),
                     Course = table.Column<string>(nullable: true),
+                    Description = table.Column<string>(nullable: true),
                     ScheduleId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
@@ -104,20 +95,6 @@ namespace EasyTagProject.Migrations
                 name: "IX_Items_RoomId",
                 table: "Items",
                 column: "RoomId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Rooms_LeftRoomId",
-                table: "Rooms",
-                column: "LeftRoomId",
-                unique: true,
-                filter: "[LeftRoomId] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Schedules_Room_FK",
-                table: "Schedules",
-                column: "Room_FK",
-                unique: true,
-                filter: "[Room_FK] IS NOT NULL");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)

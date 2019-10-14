@@ -18,6 +18,7 @@ namespace EasyTagProject.Models
 
             if (!context.Rooms.Any())
             {
+                //First room declaration
                 Room room = new Room
                 {
                     Block = 'A',
@@ -33,19 +34,36 @@ namespace EasyTagProject.Models
                             {
                                 Course = "COMP334",
                                 UserName = "Paulo",
-                                Start = DateTime.ParseExact("2019-10-09 18:30 PM", "yyyy-MM-dd HH:mm tt",null),
-                                End = DateTime.ParseExact("2019-10-09 21:30 PM", "yyyy-MM-dd HH:mm tt",null)
+                                Start = DateTime.ParseExact("2019-10-15 12:30 PM", "yyyy-MM-dd HH:mm tt",null),
+                                End = DateTime.ParseExact("2019-10-15 14:30 PM", "yyyy-MM-dd HH:mm tt",null),
+                                Description = "Scheduled class of Programming 4"
+                            },
+                            new Appointment
+                            {
+                                Course = "COMP229",
+                                UserName = "Andre",
+                                Start = DateTime.ParseExact("2019-10-15 18:30 PM", "yyyy-MM-dd HH:mm tt",null),
+                                End = DateTime.ParseExact("2019-10-15 21:30 PM", "yyyy-MM-dd HH:mm tt",null),
+                                Description = "Scheduled class of Advance Web Development"
                             }
                         }
                     }
                 };
-
                 room.Schedule.Room = room;
 
+                //Second room declaration
+                Room secondRoom = new Room {
+                    Block = 'B',
+                    Floor = 2,
+                    Name = "A2-17",
+                    Number = 17,
+                    Type = Type.Classroom,
+                    Schedule = new Schedule()
+                };
+                secondRoom.Schedule.Room = secondRoom;
+
                 context.AttachRange(room.Schedule.Appointments.Select(a => a));
-
-                context.Rooms.Add(room);
-
+                context.Rooms.AddRange(room, secondRoom);
                 context.SaveChanges();
             }
         }

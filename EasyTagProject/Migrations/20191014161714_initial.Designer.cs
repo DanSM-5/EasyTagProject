@@ -10,14 +10,14 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EasyTagProject.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20191009223943_Initial")]
-    partial class Initial
+    [Migration("20191014161714_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "2.2.6-servicing-10079")
+                .HasAnnotation("ProductVersion", "3.0.0")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
@@ -25,17 +25,26 @@ namespace EasyTagProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Course");
+                    b.Property<string>("Course")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("End");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ScheduleId");
+                    b.Property<DateTime>("End")
+                        .HasColumnType("datetime2");
 
-                    b.Property<DateTime>("Start");
+                    b.Property<int?>("ScheduleId")
+                        .HasColumnType("int");
 
-                    b.Property<string>("UserName");
+                    b.Property<DateTime>("Start")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -48,13 +57,17 @@ namespace EasyTagProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Description");
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Name")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("RoomId");
+                    b.Property<int?>("RoomId")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -67,28 +80,27 @@ namespace EasyTagProject.Migrations
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
                     b.Property<string>("Block")
                         .IsRequired()
-                        .HasConversion(new ValueConverter<string, string>(v => default(string), v => default(string), new ConverterMappingHints(size: 1)));
+                        .HasColumnType("nvarchar(1)");
 
-                    b.Property<int>("Floor");
-
-                    b.Property<int?>("LeftRoomId");
+                    b.Property<int>("Floor")
+                        .HasColumnType("int");
 
                     b.Property<string>("Name")
-                        .IsRequired();
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Number");
+                    b.Property<int>("Number")
+                        .HasColumnType("int");
 
-                    b.Property<int>("Type");
+                    b.Property<int>("Type")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("LeftRoomId")
-                        .IsUnique()
-                        .HasFilter("[LeftRoomId] IS NOT NULL");
 
                     b.ToTable("Rooms");
                 });
@@ -96,46 +108,34 @@ namespace EasyTagProject.Migrations
             modelBuilder.Entity("EasyTagProject.Models.Schedule", b =>
                 {
                     b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("Room_FK");
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Room_FK")
-                        .IsUnique()
-                        .HasFilter("[Room_FK] IS NOT NULL");
 
                     b.ToTable("Schedules");
                 });
 
             modelBuilder.Entity("EasyTagProject.Models.Appointment", b =>
                 {
-                    b.HasOne("EasyTagProject.Models.Schedule")
+                    b.HasOne("EasyTagProject.Models.Schedule", null)
                         .WithMany("Appointments")
                         .HasForeignKey("ScheduleId");
                 });
 
             modelBuilder.Entity("EasyTagProject.Models.Item", b =>
                 {
-                    b.HasOne("EasyTagProject.Models.Room")
+                    b.HasOne("EasyTagProject.Models.Room", null)
                         .WithMany("Items")
                         .HasForeignKey("RoomId");
-                });
-
-            modelBuilder.Entity("EasyTagProject.Models.Room", b =>
-                {
-                    b.HasOne("EasyTagProject.Models.Room", "LeftRoom")
-                        .WithOne("RightRoom")
-                        .HasForeignKey("EasyTagProject.Models.Room", "LeftRoomId");
                 });
 
             modelBuilder.Entity("EasyTagProject.Models.Schedule", b =>
                 {
                     b.HasOne("EasyTagProject.Models.Room", "Room")
                         .WithOne("Schedule")
-                        .HasForeignKey("EasyTagProject.Models.Schedule", "Room_FK");
+                        .HasForeignKey("EasyTagProject.Models.Schedule", "Id")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 #pragma warning restore 612, 618
         }
