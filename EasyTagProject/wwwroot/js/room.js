@@ -23,5 +23,5 @@ let addEventsListeners = function () {
 };
 
 // add events after the page is loaded
-$(document).ready(addEventListener('load', addEventsListeners));
+$(document).ready(addEventsListeners);
 

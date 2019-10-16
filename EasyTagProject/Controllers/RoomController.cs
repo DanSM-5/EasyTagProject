@@ -21,11 +21,13 @@ namespace EasyTagProject.Controllers
         /// <returns>
         /// View with the room information
         /// </returns>
+        [HttpGet("{action}/{name}")]
         public ViewResult Room(string name)
         {
             return View(roomRepository.Rooms.FirstOrDefault(r => r.Name == name));
         }
 
+        [HttpGet]
         public ViewResult AddRoom() => View(new Room());
 
         [HttpPost]
@@ -33,7 +35,7 @@ namespace EasyTagProject.Controllers
         {
             if (ModelState.IsValid)
             {
-
+                roomRepository.Save(room);
             }
 
             return View(room);

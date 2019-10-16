@@ -33,6 +33,11 @@ namespace EasyTagProject
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            //services.Configure<IISServerOptions>(options =>
+            //{
+            //    options.AutomaticAuthentication = false;
+            //});
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["Data:EasyTagDB:ConnectionString"]));
 
