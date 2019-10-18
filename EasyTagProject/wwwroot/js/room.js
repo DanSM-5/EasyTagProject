@@ -3,7 +3,11 @@
 let fadeAppointmentFunction = (e) => {
     if ($(e.target).is('td')) {
         let displayClass = 'displayed';
-        let idNum = $(e.target).parent().attr('id').split('-')[0];
+        let idNum = $(e.target)
+            .parent()
+            .attr('id')
+            .split('-')[0];
+
         let tr = $('#' + idNum + '-header');
         let hiddenId = '#' + idNum + "-description";
 
