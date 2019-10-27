@@ -1,0 +1,57 @@
+﻿@model AddAppointmentViewModel
+@{
+    ViewData["Title"] = "Add Appoinment";
+}
+
+<h1>Add Appoinment @Model.Date.ToShortDateString()</h1>
+
+<table class="table">
+    <tr>
+        <th>Time</th>
+        <th>Status</th>
+    </tr>
+    @for (; Model.StartRange.TimeOfDay < Model.EndRange.TimeOfDay; Model.StartRange += 30.Minutes())
+    {
+        <tr>
+            <td>
+                @Model.StartRange.ToShortTimeString()
+            </td>
+            @if (Model.Room.Schedule.Appointments.Any(a => a.Start.TimeOfDay <= Model.StartRange.TimeOfDay && a.End.TimeOfDay >= Model.StartRange.TimeOfDay))
+            {
+                <td>
+                    Busy
+                </td>
+            }
+            else
+            {
+                if (Model.Date.Date > DateTime.Now.Date || (Model.Date.Date == DateTime.Now.Date && Model.StartRange.TimeOfDay >= DateTime.Now.TimeOfDay) )
+                {
+                    <td>
+                        <div class="">
+                            <a asp-action="Appointment" asp-controller="Appointment" 
+                               asp-route-name="@Model.Room.Name" 
+                               asp-route-roomId="@Model.Room.Id"
+                               asp-route-scheduleId="@Model.Room.Schedule.Id"
+                               asp-route-selectedTime="@((Model.Date.Date + Model.StartRange.TimeOfDay).ToString("MM-dd-yyyy H:mm"))">
+                                Free
+                            </a>
+                        </div>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        Free
+                    </td>
+                }
+            }
+        </tr>
+    }
+</table>
+<div>
+    <a class="btn btn-warning" asp-action="Room" asp-controller="Room"
+       asp-route-name="@Model.Room.Name"
+       asp-route-pDate="@Model.Date.ToString("MM-dd-yyyy")">
+        Cancel
+    </a>
+</div>

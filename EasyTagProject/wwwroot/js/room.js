@@ -9,23 +9,18 @@ let fadeAppointmentFunction = (e) => {
             .split('-')[0];
 
         let tr = $('#' + idNum + '-header');
-        let hiddenId = '#' + idNum + "-description";
+        let hiddenTd = '#' + idNum + "-description";
 
         if ($(tr).hasClass(displayClass)) {
             $(tr).removeClass(displayClass);
-            $(hiddenId).fadeOut();
+            $(hiddenTd).fadeOut();
         } else {
             $(tr).addClass(displayClass);
-            $(hiddenId).fadeIn();
+            $(hiddenTd).fadeIn();
         }
     }
 };
 
-// load event listeners
-let addEventsListeners = function () {
-    $(document).click(fadeAppointmentFunction);
-};
-
 // add events after the page is loaded
-$(document).ready(addEventsListeners);
+$(document).click(fadeAppointmentFunction);
 

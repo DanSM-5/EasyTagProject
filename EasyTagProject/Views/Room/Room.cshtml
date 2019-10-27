@@ -72,20 +72,37 @@ else
     </table>
 </div>
 
-<div id="pagination">
-    <ul class="pagination">
-        <li class="page-item">
-            <a asp-action="Room" asp-route-name="@Model.Room.Name" asp-route-date="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
-                <i class="fas fa-step-backward"></i>
-            </a>
-        </li>
-
-        <li class="page-item">
-            <a asp-action="Room" asp-route-name="@Model.Room.Name" asp-route-date="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
-                <i class="fas fa-step-forward"></i>
-            </a>
-        </li>
-    </ul>
+<div class="d-flex"> 
+    <a class="btn btn-primary text-center" asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")"
+       asp-controller="Room" asp-action="AddAppointment">
+        Add Appointment
+    </a>
 </div>
 
-<script async src="~/js/room.js" asp-append-version="true"></script>
+<div id="pagination" class="row">
+    <div class="col align-content-center">
+        <ul class="pagination">
+            <li class="page-item">
+                <a asp-action="Room" asp-route-name="@Model.Room.Name" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
+                    <i class="fas fa-step-backward"></i>
+                </a>
+            </li>
+
+            <li class="page-item">
+                <a asp-action="Room" asp-route-name="@Model.Room.Name" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
+                    <i class="fas fa-step-forward"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <div class="col-8">
+        <form method="post" asp-action="FindRoom" asp-controller="Room">
+            <input type="hidden" name="name" value="@Model.Room.Name" />
+            <label for="date" class="input-group">Serch day: </label>
+            <input type="date" class="input-group" name="pDate" value="" required/>
+            <button type="submit" class="btn btn-primary btn-lg">Search</button>
+        </form>
+    </div>
+</div>
+
+<script defer src="~/js/room.js" asp-append-version="true"></script>
