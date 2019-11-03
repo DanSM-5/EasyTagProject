@@ -36,8 +36,8 @@ namespace EasyTagProject.Models
                 {
                     Course = "COMP334",
                     UserName = "Paulo",
-                    Start = DateTime.ParseExact("2019-11-03 12:30 PM", "yyyy-MM-dd HH:mm tt", null),
-                    End = DateTime.ParseExact("2019-11-03 14:30 PM", "yyyy-MM-dd HH:mm tt", null),
+                    Start = DateTime.ParseExact("2019-11-05 12:30 PM", "yyyy-MM-dd HH:mm tt", null),
+                    End = DateTime.ParseExact("2019-11-05 14:30 PM", "yyyy-MM-dd HH:mm tt", null),
                     Description = "Scheduled class of Programming 4"
                 };
 
@@ -45,8 +45,8 @@ namespace EasyTagProject.Models
                 {
                     Course = "COMP229",
                     UserName = "Andre",
-                    Start = DateTime.ParseExact("2019-11-03 18:30 PM", "yyyy-MM-dd HH:mm tt", null),
-                    End = DateTime.ParseExact("2019-11-03 21:30 PM", "yyyy-MM-dd HH:mm tt", null),
+                    Start = DateTime.ParseExact("2019-11-05 18:30 PM", "yyyy-MM-dd HH:mm tt", null),
+                    End = DateTime.ParseExact("2019-11-05 21:30 PM", "yyyy-MM-dd HH:mm tt", null),
                     Description = "Scheduled class of Advance Web Development"
                 };
 

@@ -44,7 +44,6 @@ namespace EasyTagProject
             services.AddTransient<IRoomRepository, EFRoomRepository>();
             services.AddTransient<IAppointmentRepository, EFAppointmentRepository>();
 
-            //services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
             services.AddRazorPages();
             services.AddMemoryCache();
             services.AddSession();
