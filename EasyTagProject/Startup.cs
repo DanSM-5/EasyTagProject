@@ -73,7 +73,7 @@ namespace EasyTagProject
             {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{name?}"
+                    pattern: "{controller=Home}/{action=Index}/{id?}"
                 );
             });
 

@@ -20,7 +20,7 @@ namespace EasyTagProject.Models
         {
             context.AttachRange(room.Schedule.Appointments.Select(a => a));
 
-            if (context.Rooms.Any(r => r.Id == room.Id))
+            if (room.Id != 0)
             {
                 Room roomEntry = context.Rooms.FirstOrDefault(r => r.Id == room.Id);
 
@@ -29,12 +29,10 @@ namespace EasyTagProject.Models
                     roomEntry.Name = room.Name;
                     roomEntry.Items = roomEntry.Items;
                     roomEntry.Number = room.Number;
-                    roomEntry.Schedule = room.Schedule;
                     roomEntry.Type = room.Type;
                     roomEntry.Floor = room.Floor;
                     roomEntry.Block = room.Block;
-                    //roomEntry.RightRoom = room.RightRoom;
-                    //roomEntry.LeftRoom = room.LeftRoom;
+                    roomEntry.RoomCode = room.RoomCode;
                 }
             }
             else
@@ -51,7 +49,7 @@ namespace EasyTagProject.Models
 
             if (room != null)
             {
-                context.Rooms.Add(room);
+                context.Rooms.Remove(room);
                 context.SaveChanges();
             }
 

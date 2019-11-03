@@ -44,7 +44,7 @@ else
             <tr>
                 <th>Hour</th>
                 <th>Course</th>
-                <th>Instructor</th>
+                <th colspan="2">Instructor</th>
             </tr>
         </thead>
         <tbody>
@@ -52,53 +52,81 @@ else
             {
                 @foreach (var app in Model.Room.Schedule.Appointments)
                 {
-                    <tr id="@app.Id-header" class="appointment">
-                        <td class="d-table-cell">@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
-                        <td class="d-table-cell">@app.Course</td>
-                        <td class="d-table-cell">@app.UserName</td>
-                    </tr>
+            <tr id="@app.Id-header" class="appointment">
+                @if (app.Start.Date >= DateTime.Now.Date)
+                {
+                    <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
+                    <td>@app.Course</td>
+                    <td>@app.UserName</td>
+                    <td class="btn-inline">
+                        <a class="btn btn-warning btn-group-sm" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
+                           asp-route-code="@Model.Room.RoomCode" 
+                           asp-route-id="@app.Id">
+                            Edit
+                        </a>
+                        <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
+                            <input type="hidden" name="id" value="@app.Id" />
+                            <input type="hidden" name="code" value="@Model.Room.RoomCode" />
+                            <button class="btn btn-danger btn-group-sm">
+                                Delete
+                            </button>
+                        </form>
+                    </td>
+                }
+                else
+                {
+                    <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
+                    <td>@app.Course</td>
+                    <td colspan="2">@app.UserName</td>
+                }
+            </tr>
                     <tr id="@app.Id-description" class="hideTr">
-                        <td colspan="3" class="d-table-cell text-center">@app.Description</td>
+                        <td colspan="4" class="d-table-cell text-center">@app.Description</td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="3" class="text-center">No Appointments</td>
+                    <td colspan="4" class="text-center">No Appointments</td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
 
-<div class="d-flex"> 
-    <a class="btn btn-primary text-center" asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")"
-       asp-controller="Room" asp-action="AddAppointment">
-        Add Appointment
-    </a>
-</div>
+@if (Model.Pagination.CurrentDate >= DateTime.Today)
+{
+    <div class="form-group"> 
+        <div >
+            <a class="btn btn-primary text-center" asp-controller="Appointment" asp-action="AppointmentList" 
+               asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
+                Add Appointment
+            </a>
+        </div>
+    </div>
+}
 
 <div id="pagination" class="row">
     <div class="col align-content-center">
         <ul class="pagination">
             <li class="page-item">
-                <a asp-action="Room" asp-route-name="@Model.Room.Name" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
+                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
                     <i class="fas fa-step-backward"></i>
                 </a>
             </li>
 
             <li class="page-item">
-                <a asp-action="Room" asp-route-name="@Model.Room.Name" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
+                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
                     <i class="fas fa-step-forward"></i>
                 </a>
             </li>
         </ul>
     </div>
     <div class="col-8">
-        <form method="post" asp-action="FindRoom" asp-controller="Room">
-            <input type="hidden" name="name" value="@Model.Room.Name" />
-            <label for="date" class="input-group">Serch day: </label>
+        <form asp-action="FindRoomByDate" asp-controller="Room" method="post">
+            <input type="hidden" name="code" value="@Model.Room.RoomCode" />
+            <label for="pDate" class="input-group">Serch day: </label>
             <input type="date" class="input-group" name="pDate" value="" required/>
             <button type="submit" class="btn btn-primary btn-lg">Search</button>
         </form>

@@ -9,5 +9,6 @@ namespace EasyTagProject.Models
     {
         IQueryable<Appointment> Appointments { get; }
         void Save(Appointment appointment);
+        Appointment Delete(int id);
     }
 }

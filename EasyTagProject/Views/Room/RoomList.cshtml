@@ -1,0 +1,35 @@
+﻿@model IEnumerable<Room>
+@{
+    ViewData["Title"] = "Room List";
+}
+
+<h1>Rooms</h1>
+
+@foreach (Room room in Model)
+{
+    <div class="form-group border-room">
+        <div><h2>@room.RoomCode</h2></div>
+        <div>Type: @room.Type</div>
+        <div class="row center-elements">
+            <div class="col center-elements">
+                Current Status: @room.Status
+            </div>
+            <div class="col center-elements">
+                <a asp-action="Room" asp-controller="Room" asp-route-code="@room.RoomCode" class="btn btn-primary">Go to room page</a>
+            </div>
+            <div class="col center-elements">
+                <form asp-action="DeleteRoom" asp-controller="RoomCRUD" method="post">
+                    <a asp-action="EditRoom" asp-controller="RoomCRUD" asp-route-id="@room.Id" class="btn btn-primary btn-warning">Edit</a>
+                    <br />
+                    <input type="hidden" value="@room.Id" name="id"/>
+                    <button class="btn btn-primary btn-danger">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+}
+
+<div class="center-elements">
+    <a asp-action="AddRoom" asp-controller="RoomCRUD" class="btn btn-primary">Add Room</a>
+</div>
+

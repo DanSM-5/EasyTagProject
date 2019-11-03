@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyTagProject.Models;
+using EasyTagProject.Models.ViewModels;
 using FluentDate;
 using Microsoft.AspNetCore.Mvc;
 
@@ -10,42 +11,39 @@ namespace EasyTagProject.Controllers
 {
     public class AppointmentController : Controller
     {
-        private IAppointmentRepository repository;
-        public AppointmentController(IAppointmentRepository repo) => repository = repo;
+        private IAppointmentRepository appointmentRopository;
+        private IRoomRepository roomRepository;
 
-        [HttpGet("{action}/{name}/{roomId}/{scheduleId}/{selectedTime}")]
-        public ViewResult Appointment(string name, int roomId, int scheduleId, DateTime selectedTime)
-        {
-            return View(new Appointment { RoomName = name, RoomId = roomId, ScheduleId = scheduleId, Start = selectedTime, End = selectedTime + 30.Minutes()});
+        public AppointmentController(IAppointmentRepository aRepo, IRoomRepository rRepo) 
+        { 
+            appointmentRopository = aRepo;
+            roomRepository = rRepo;
         }
 
-        [HttpPost("{action}/{name}/{roomId}/{scheduleId}/{selectedTime}")]
-        public IActionResult Appointment(Appointment appointment)
+        public IActionResult RedirectToAppointmentList(int id, DateTime date)
         {
-            if (appointment.Start > appointment.End)
-            {
-                ModelState.AddModelError("", "Start time must be before end time");
-            }
-            IEnumerable<Appointment> appointments = repository.Appointments.Where(a => a.Start.Date == appointment.Start.Date);
-
-            if(appointments.Any(a => a.Start.TimeOfDay <= appointment.End.TimeOfDay 
-                                && appointment.Start.TimeOfDay <= a.End.TimeOfDay))
-            {
-                ModelState.AddModelError("", "The time you selected is already busy!");
-            }
-            if (ModelState.IsValid)
-            {
-                repository.Save(appointment);
-
-                return RedirectToAction(nameof(Room),nameof(Room), new { name = appointment.RoomName, pDate = appointment.Start.ToString("MM-dd-yyyy") });
-            }
-
-            return View(appointment);
+            return RedirectToAction(nameof(AppointmentList), nameof(Appointment), new { id = id, searchDate = date.ToString("MM-dd-yyyy")});
         }
 
-        public IActionResult RedirectToRoom(int id, DateTime date)
+        public IActionResult RedirectToRoom(string code, DateTime pDate)
         {
-            return RedirectToAction("AddAppointment", nameof(Room), new { id = id, searchDate = date.ToString("MM-dd-yyyy")});
+            return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = pDate.ToString("MM-dd-yyyy") });
+        }
+
+        [HttpGet("{action}/{Id}/{searchDate}")]
+        public IActionResult AppointmentList(int Id, DateTime searchDate)
+        {
+            Room room = roomRepository.Rooms.FirstOrDefault(r => r.Id == Id);
+            
+            if (searchDate >= DateTime.Today)
+            {
+
+                room.Schedule.Appointments = room.Schedule.GetAppointments(searchDate);
+
+                return View(new AppointmentListViewModel { Room = room, Date = searchDate.Date + DateTime.Now.TimeOfDay }); 
+            }
+
+            return RedirectToAction(nameof(Room), nameof(Room), new { code = room.RoomCode, pDate = searchDate.ToString("MM-dd-yyyy") });
         }
     }
 }

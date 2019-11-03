@@ -93,3 +93,24 @@ body {
     padding:20px;
     border-radius:20px;
 }
+
+.btn-center{
+    margin:auto,auto;
+    width: 50%;
+}
+
+.btn-inline{
+    display: flex;
+}
+
+.border-room {
+    border: 3px solid #dee2e6 !important;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.center-elements {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}

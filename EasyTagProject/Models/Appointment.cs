@@ -13,8 +13,7 @@ namespace EasyTagProject.Models
         public int Id { get; set; }
         [Required]
         public DateTime Start { get; set; }
-        [Required]
-        
+        [Required]       
         public DateTime End { get; set; }
         [Required]
         public string UserName { get; set; }
@@ -22,9 +21,8 @@ namespace EasyTagProject.Models
         public string Course { get; set; }
         public string Description { get; set; }
         public int ScheduleId { get; set; }
-        [NotMapped]
-        public string RoomName { get; set; }
-        [NotMapped]
         public int RoomId { get; set; }
+        [NotMapped]
+        public string RoomCode { get; set; }
     }
 }

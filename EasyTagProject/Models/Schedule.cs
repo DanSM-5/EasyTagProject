@@ -14,6 +14,7 @@ namespace EasyTagProject.Models
         public ICollection<Appointment> Appointments { get; set; } = new List<Appointment>();
         [ForeignKey("Id")]
         public Room Room { get; set; }
+        [NotMapped]
         public bool IsBusy => Appointments.Any(a => a.Start < DateTime.Now && a.End > DateTime.Now);
 
 
