@@ -22,7 +22,7 @@ namespace EasyTagProject.Controllers
         [HttpGet("{action}/{code}/{roomId}/{selectedTime}")]
         public IActionResult AddAppointment(string code, int roomId, int scheduleId, DateTime selectedTime)
         {
-            if (selectedTime.Date > DateTime.Today || (selectedTime == DateTime.Today && DateTime.Now.TimeOfDay < (DateTime.Today + 22.5.Hours()).TimeOfDay))
+            if (selectedTime.Date.Date > DateTime.Today || (selectedTime.Date == DateTime.Today.Date && DateTime.Now.TimeOfDay < (DateTime.Today + 22.5.Hours()).TimeOfDay))
             {
                 return View(new Appointment { RoomCode = code, RoomId = roomId, ScheduleId = scheduleId, Start = selectedTime, End = selectedTime + 30.Minutes() });
             }
