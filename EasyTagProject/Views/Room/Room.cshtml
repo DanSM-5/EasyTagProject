@@ -126,7 +126,7 @@ else
     <div class="col-8">
         <form asp-action="FindRoomByDate" asp-controller="Room" method="post">
             <input type="hidden" name="code" value="@Model.Room.RoomCode" />
-            <label for="pDate" class="input-group">Serch day: </label>
+            <label for="pDate" class="input-group">Search day: </label>
             <input type="date" class="input-group" name="pDate" value="" required/>
             <button type="submit" class="btn btn-primary btn-lg">Search</button>
         </form>

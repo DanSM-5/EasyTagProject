@@ -3,12 +3,12 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome</h1>
+    <h1 class="display-4 h1">Welcome</h1>
     <form>
         <!--<input type="file" accept="image/*" capture="camera" />-->
-        <button class="scannow" asp-action="Room" asp-controller="Room" asp-route-code="A3-13">Scan Tag Now</button>
+        <button class="btn btn-primary btn-lg btn-block scannow" asp-action="Room" asp-controller="Room" asp-route-code="A3-13">Scan Tag Now</button>
     </form>
-    <div>
-        <a asp-action="RoomList" asp-controller="Room">List of rooms</a>
+    <div class="btnlistofrooms">
+        <a asp-action="RoomList" asp-controller="Room"><div class="btn btn-outline-secondary">List of rooms</div></a>
     </div>
 </div>

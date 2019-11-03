@@ -45,6 +45,7 @@ body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
     height:100%;
+    width:100%!important;
     
 }
 .footer {
@@ -54,10 +55,13 @@ body {
   /* Set the fixed height of the footer here */
   height: 60px;
   line-height: 60px; /* Vertically center the text there */
+  color:#ffffff!important;
 }
-
-.hideTr{
-    display:none;
+.btnlistofrooms {
+    margin-top:16px;
+}
+.hideTr {
+    display: none;
 }
 
 .container img {
@@ -71,7 +75,6 @@ body {
 }
 
 .scannow {
-    width: 300px;
     height: 160px;
     text-align: center;
     margin: 0 auto;
@@ -85,7 +88,19 @@ body {
 .container {
     background-color: #3C5C8D;
     height: auto;
+    display:inline-block;
     margin-bottom: -1px;
+    width:100%!important;
+}
+.footertxt {
+    background-color: #3C5C8D;
+    height: auto;
+    display: inline-block;
+    width:100%;
+    text-align:center;
+    height:53px;
+    padding-top:17px;
+    color:#ffffff!important;
 }
 .pb-3 {
     background:#fff;
@@ -110,8 +125,12 @@ body {
     padding: 10px;
 }
 
-.center-elements {
+.center-button {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.inlineblockrule {
+    display:inline-block;
 }
