@@ -1,0 +1,19 @@
+﻿@model Appointment
+@{
+    ViewData["Title"] = "Edit Appointment";
+}
+
+<h1>Add Appointment on @Model.Start.Date.ToShortDateString()</h1>
+<div asp-validation-summary="All"></div>
+<form asp-action="EditAppointment" asp-controller="AppointmentCRUD" method="post">
+
+    @await Html.PartialAsync("AppointmentFieldsPartial", Model);
+    <div class="form-group">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button asp-action="RedirectToRoom" asp-controller="Appointment"
+                asp-route-code="@Model.RoomCode"
+                asp-route-pDate="@Model.Start.Date.ToString("MM-dd-yyyy")">
+            Cancel
+        </button>
+    </div>
+</form>

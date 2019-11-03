@@ -5,8 +5,10 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
-    interface IAppointmentRepository
+    public interface IAppointmentRepository
     {
         IQueryable<Appointment> Appointments { get; }
+        void Save(Appointment appointment);
+        Appointment Delete(int id);
     }
 }

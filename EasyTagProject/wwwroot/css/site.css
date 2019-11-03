@@ -45,9 +45,9 @@ body {
     /* Margin bottom by footer height */
     margin-bottom: 60px;
     height:100%;
+    
 }
 .footer {
-  position: absolute;
   bottom: 0;
   width: 100%;
   white-space: nowrap;
@@ -84,7 +84,8 @@ body {
 }
 .container {
     background-color: #3C5C8D;
-    height:100%;
+    height: auto;
+    margin-bottom: -1px;
 }
 .pb-3 {
     background:#fff;
@@ -92,4 +93,25 @@ body {
     margin:0 auto;
     padding:20px;
     border-radius:20px;
+}
+
+.btn-center{
+    margin:auto,auto;
+    width: 50%;
+}
+
+.btn-inline{
+    display: flex;
+}
+
+.border-room {
+    border: 3px solid #dee2e6 !important;
+    border-radius: 10px;
+    padding: 10px;
+}
+
+.center-elements {
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
