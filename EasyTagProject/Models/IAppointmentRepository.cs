@@ -8,7 +8,7 @@ namespace EasyTagProject.Models
     public interface IAppointmentRepository
     {
         IQueryable<Appointment> Appointments { get; }
-        void Save(Appointment appointment);
-        Appointment Delete(int id);
+        Task SaveAsync(Appointment appointment);
+        Task<Appointment> DeleteAsync(int id);
     }
 }

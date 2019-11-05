@@ -14,7 +14,7 @@ namespace EasyTagProject.Models
         /// <param name="room">
         /// Room to ve saved
         /// </param>
-        void Save(Room room);
-        Room Delete(int id);
+        Task SaveAsync(Room room);
+        Task<Room> DeleteAsync(int id);
     }
 }

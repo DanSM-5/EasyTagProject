@@ -6,6 +6,7 @@ using EasyTagProject.Models;
 using EasyTagProject.Models.ViewModels;
 using FluentDate;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyTagProject.Controllers
 {
@@ -31,13 +32,12 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpGet("{action}/{Id}/{searchDate}")]
-        public IActionResult AppointmentList(int Id, DateTime searchDate)
+        public async Task<IActionResult> AppointmentList(int Id, DateTime searchDate)
         {
-            Room room = roomRepository.Rooms.FirstOrDefault(r => r.Id == Id);
+            Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.Id == Id);
             
             if (searchDate >= DateTime.Today)
             {
-
                 room.Schedule.Appointments = room.Schedule.GetAppointments(searchDate);
 
                 return View(new AppointmentListViewModel { Room = room, Date = searchDate.Date + DateTime.Now.TimeOfDay }); 

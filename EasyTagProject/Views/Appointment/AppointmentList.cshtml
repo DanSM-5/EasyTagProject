@@ -16,7 +16,7 @@
             <td>
                 @Model.StartRange.ToShortTimeString()
             </td>
-            @if (Model.Room.Schedule.Appointments.Any(a => a.Start.TimeOfDay <= Model.StartRange.TimeOfDay && a.End.TimeOfDay >= Model.StartRange.TimeOfDay))
+            @if ((Model.Room.Schedule.Appointments.Any(a => a.Start.TimeOfDay < (Model.StartRange.TimeOfDay + 30.Minutes()) && a.End.TimeOfDay > Model.StartRange.TimeOfDay)))
             {
                 <td>
                     Busy
