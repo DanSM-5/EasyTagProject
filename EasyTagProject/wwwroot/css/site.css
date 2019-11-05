@@ -88,7 +88,6 @@ body {
 .container {
     background-color: #3C5C8D;
     height: auto;
-    display:inline-block;
     margin-bottom: -1px;
     width:100%!important;
 }
