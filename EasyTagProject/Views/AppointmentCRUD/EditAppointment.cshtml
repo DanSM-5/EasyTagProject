@@ -7,7 +7,7 @@
 <div asp-validation-summary="All"></div>
 <form asp-action="EditAppointment" asp-controller="AppointmentCRUD" method="post">
 
-    @await Html.PartialAsync("AppointmentFieldsPartial", Model);
+    <partial name="AppointmentFieldsPartial" for="@Model" />
     <div class="form-group">
         <button type="submit" class="btn btn-primary">Save</button>
         <button asp-action="RedirectToRoom" asp-controller="Appointment"

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using EasyTagProject.Models;
 using FluentDate;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EasyTagProject.Controllers
 {
@@ -31,23 +32,13 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpPost("{action}/{code}/{roomId}/{selectedTime}")]
-        public IActionResult AddAppointment(Appointment appointment)
+        public async Task<IActionResult> AddAppointment(Appointment appointment)
         {
-            if (appointment.Start > appointment.End)
-            {
-                ModelState.AddModelError("", "Start time must be before end time");
-            }
+            ValidateAppointment(appointment);
 
-            IEnumerable<Appointment> appointments = appointmentRopository.Appointments.Where(a => a.Start.Date == appointment.Start.Date && a.RoomId == appointment.RoomId);
-
-            if (appointments.Any(a => a.Start.TimeOfDay <= appointment.End.TimeOfDay
-                                 && appointment.Start.TimeOfDay <= a.End.TimeOfDay))
-            {
-                ModelState.AddModelError("", "The time you selected is already busy!");
-            }
             if (ModelState.IsValid)
             {
-                appointmentRopository.Save(appointment);
+                await appointmentRopository.SaveAsync(appointment);
 
                 return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
             }
@@ -56,31 +47,21 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpGet("{action}/{code}/{id}")]
-        public ViewResult EditAppointment(string code, int id)
+        public async Task<ViewResult> EditAppointment(string code, int id)
         {
-            Appointment app = appointmentRopository.Appointments.FirstOrDefault(a => a.Id == id);
+            Appointment app = await appointmentRopository.Appointments.FirstOrDefaultAsync(a => a.Id == id);
             app.RoomCode = code;
-            return View(nameof(EditAppointment), app);
+            return View(app);
         }
 
         [HttpPost("{action}/{code}/{id}")]
-        public IActionResult EditAppointment(Appointment appointment)
+        public async Task<IActionResult> EditAppointment(Appointment appointment)
         {
-            if (appointment.Start > appointment.End)
-            {
-                ModelState.AddModelError("", "Start time must be before end time");
-            }
+            ValidateAppointment(appointment);
 
-            IEnumerable<Appointment> appointments = appointmentRopository.Appointments.Where(a => a.Start.Date == appointment.Start.Date && a.RoomId == appointment.RoomId);
-
-            if (appointments.Any(a => a.Start.TimeOfDay <= appointment.End.TimeOfDay
-                                 && appointment.Start.TimeOfDay <= a.End.TimeOfDay))
-            {
-                ModelState.AddModelError("", "The time you selected is already busy!");
-            }
             if (ModelState.IsValid)
             {
-                appointmentRopository.Save(appointment);
+                await appointmentRopository.SaveAsync(appointment);
 
                 return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
             }
@@ -88,10 +69,31 @@ namespace EasyTagProject.Controllers
             return View(appointment);
         }
 
-        [HttpPost]
-        public IActionResult DeleteAppointment(int id, string code)
+        private void ValidateAppointment(Appointment appointment)
         {
-            Appointment app = appointmentRopository.Delete(id);
+            if (appointment.Start > appointment.End)
+            {
+                ModelState.AddModelError("", "Start time must be before end time");
+            }
+
+            List<Appointment> appointments = appointmentRopository.Appointments.Where(a => a.Start.Date == appointment.Start.Date && a.RoomId == appointment.RoomId).ToList();
+
+            if (appointments.Any(a => a.Id == appointment.Id))
+            {
+                appointments.Remove(appointments.Single(a => a.Id == appointment.Id));
+            }
+
+            if (appointments.Any(a => a.Start.TimeOfDay < appointment.End.TimeOfDay
+                                 && appointment.Start.TimeOfDay < a.End.TimeOfDay))
+            {
+                ModelState.AddModelError("", "The time you selected is already busy!");
+            }
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> DeleteAppointment(int id, string code)
+        {
+            Appointment app = await appointmentRopository.DeleteAsync(id);
 
             return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = app.Start.ToString("MM-dd-yyyy") });
         }

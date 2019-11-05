@@ -13,13 +13,12 @@ namespace EasyTagProject.Models
         public IQueryable<Appointment> Appointments => context.Appointments;
         private IQueryable<Room> Rooms => context.Rooms
             .Include(r => r.Schedule);
-                //.ThenInclude(s => s.Appointments);
 
-        public void Save(Appointment appointment)
+        public async Task SaveAsync(Appointment appointment)
         {
             if (appointment.Id != 0)
             {
-                Appointment entry = context.Appointments.FirstOrDefault(r => r.Id == appointment.Id);
+                Appointment entry = await context.Appointments.FirstOrDefaultAsync(r => r.Id == appointment.Id);
 
                 if (entry != null)
                 {
@@ -32,7 +31,7 @@ namespace EasyTagProject.Models
             }
             else
             {
-                Room room = Rooms.FirstOrDefault(r => r.Id == appointment.RoomId);
+                Room room = await Rooms.FirstOrDefaultAsync(r => r.Id == appointment.RoomId);
 
                 if (room != null)
                 {
@@ -40,17 +39,17 @@ namespace EasyTagProject.Models
                 }
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        public Appointment Delete(int id)
+        public async Task<Appointment> DeleteAsync(int id)
         {
-            Appointment app = context.Appointments.FirstOrDefault(a => a.Id == id);
+            Appointment app = await context.Appointments.FirstOrDefaultAsync(a => a.Id == id);
 
             if (app != null)
             {
                 context.Appointments.Remove(app);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
             return app;

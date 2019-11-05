@@ -16,13 +16,13 @@ namespace EasyTagProject.Models
             .Include(r => r.Items);
 
 
-        public void Save(Room room)
+        public async Task SaveAsync(Room room)
         {
             context.AttachRange(room.Schedule.Appointments.Select(a => a));
 
             if (room.Id != 0)
             {
-                Room roomEntry = context.Rooms.FirstOrDefault(r => r.Id == room.Id);
+                Room roomEntry = await context.Rooms.FirstOrDefaultAsync(r => r.Id == room.Id);
 
                 if (roomEntry != null)
                 {
@@ -37,20 +37,20 @@ namespace EasyTagProject.Models
             }
             else
             {
-                context.Rooms.Add(room);
+                await context.Rooms.AddAsync(room);
             }
 
-            context.SaveChanges();
+            await context.SaveChangesAsync();
         }
 
-        public Room Delete(int id)
+        public async Task<Room> DeleteAsync(int id)
         {
-            Room room = context.Rooms.FirstOrDefault(r => r.Id == id);
+            Room room = await context.Rooms.FirstOrDefaultAsync(r => r.Id == id);
 
             if (room != null)
             {
                 context.Rooms.Remove(room);
-                context.SaveChanges();
+                await context.SaveChangesAsync();
             }
 
             return room ?? default;
