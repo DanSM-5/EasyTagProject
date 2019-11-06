@@ -17,6 +17,10 @@
     </environment>
     <link rel="stylesheet" href="~/css/site.css" />
     <link href="~/lib/font-awesome/css/all.css" rel="stylesheet" />
+    @if (ViewBag.Print != null)
+    {
+        <link href="~/css/printPages.css" rel="stylesheet" type="text/css" media="print"/>
+    }
 </head>
 <body>
     <header>

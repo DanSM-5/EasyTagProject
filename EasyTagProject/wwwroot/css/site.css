@@ -133,3 +133,8 @@ body {
 .inlineblockrule {
     display:inline-block;
 }
+
+.qr-code{
+    width:600px;
+    height: 600px;
+}

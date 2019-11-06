@@ -1,0 +1,12 @@
+﻿
+@{
+    ViewData["Title"] = $"{ ViewBag.Code } Tag";
+}
+
+<h1 class="text-center">@($"Room { ViewBag.Code }")</h1>
+<div class="text-center">
+    <img src="@ViewBag.ImageUrl" class="qr-code"/>
+</div>
+<div class="text-center">
+    <a class="hide-element" href="#" onclick="window.print();return false;" rel="nofollow noopener"><i class="fas fa-print fa-5x"></i></a>
+</div>

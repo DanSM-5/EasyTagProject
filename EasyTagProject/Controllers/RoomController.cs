@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using EasyTagProject.Models;
 using EasyTagProject.Models.ViewModels;
 using FluentDate;
@@ -67,6 +69,32 @@ namespace EasyTagProject.Controllers
         public ViewResult RoomList()
         {
             return View(roomRepository.Rooms.OrderBy(r => r.RoomCode));
+        }
+
+        [HttpGet("{action}/{code}")]
+        public ViewResult RoomTag(string code)
+        {
+            // Identify host string
+            var hostString = HttpContext.Request.Host.ToString();
+            StringBuilder url = new StringBuilder();
+            url.Append(hostString);
+            url.Append("/Room/");
+            url.Append(code);
+            url.Append("/");
+            string encodedUrl = HttpUtility.UrlEncode(url.ToString());
+
+            // Creation of url for API
+            url.Clear();
+            url.Append("http://api.qrserver.com/v1/create-qr-code/?data=");
+            url.Append(encodedUrl);
+            url.Append("&size=600x600");
+
+            // Information for page RoomTag
+            ViewBag.ImageUrl = url.ToString();
+            ViewBag.Print = true;
+            ViewBag.Code = code;
+
+            return View();
         }
     }
 }
