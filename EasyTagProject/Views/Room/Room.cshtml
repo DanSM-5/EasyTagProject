@@ -3,7 +3,7 @@
     ViewData["Title"] = Model.Room.Name;
 }
 
-<h1>@Model.Room.Name</h1>
+<h1 class="text-center">@Model.Room.Name</h1>
 <div class="row">
     <div class="col text-center">Block</div>
     <div class="col text-center">Floor</div>
@@ -98,8 +98,8 @@ else
 @if (Model.Pagination.CurrentDate >= DateTime.Today)
 {
     <div class="form-group"> 
-        <div >
-            <a class="btn btn-primary text-center" asp-controller="Appointment" asp-action="AppointmentList" 
+        <div class="btn-container">
+            <a class="btn btn-primary text-center btn-addApm" asp-controller="Appointment" asp-action="AppointmentList" 
                asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
                 Add Appointment
             </a>
@@ -109,10 +109,17 @@ else
 
 <div id="pagination" class="row">
     <div class="col align-content-center">
-        <ul class="pagination">
+        <ul class="pagination justify-content-center">
             <li class="page-item">
                 <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
                     <i class="fas fa-step-backward"></i>
+                </a>
+            </li>
+
+            <li class="page-item">
+                <a asp-controller="Room" asp-action="Room" 
+                   asp-route-code="@Model.Room.RoomCode" asp-route-pdate="" class="page-link">
+                    Today
                 </a>
             </li>
 
@@ -123,12 +130,14 @@ else
             </li>
         </ul>
     </div>
-    <div class="col-8">
+</div>
+<div>
+    <div class="text-center btn-container">
         <form asp-action="FindRoomByDate" asp-controller="Room" method="post">
             <input type="hidden" name="code" value="@Model.Room.RoomCode" />
             <label for="pDate" class="input-group">Search day: </label>
-            <input type="date" class="input-group" name="pDate" value="" required/>
-            <button type="submit" class="btn btn-primary btn-lg">Search</button>
+            <input type="date" class="input-group" name="pDate" value="" required />
+            <button type="submit" class="btn btn-primary">Search</button>
         </form>
     </div>
 </div>

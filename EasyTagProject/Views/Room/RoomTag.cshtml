@@ -2,9 +2,9 @@
 @{
     ViewData["Title"] = $"{ ViewBag.Code } Tag";
 }
-
+<partial name="BackButtonPartial"/>
 <h1 class="text-center">@($"Room { ViewBag.Code }")</h1>
-<div class="text-center">
+<div class="text-center qr-container">
     <img src="@ViewBag.ImageUrl" class="qr-code"/>
 </div>
 <div class="text-center">

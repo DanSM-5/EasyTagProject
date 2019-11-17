@@ -16,6 +16,10 @@ html {
   html {
     font-size: 16px;
   }
+    /*.qr-code {
+        width: 200px;
+        height: 200px;
+    }*/
 }
 
 .border-top {
@@ -60,6 +64,7 @@ body {
 .btnlistofrooms {
     margin-top:16px;
 }
+
 .hideTr {
     display: none;
 }
@@ -114,7 +119,16 @@ body {
     width: 50%;
 }
 
-.btn-inline{
+.btn-container {
+    display: flex;
+    justify-content: center;
+}
+
+.btn-addApm{
+    width:50%;
+}
+
+.btn-inline {
     display: flex;
 }
 
@@ -134,7 +148,13 @@ body {
     display:inline-block;
 }
 
-.qr-code{
-    width:600px;
-    height: 600px;
+
+.qr-code{    
+    width: 100%;
+    height: 100%;
+}
+
+.qr-container{
+    width: 100%;
+    height: 100%;
 }

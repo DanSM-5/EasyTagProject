@@ -6,16 +6,16 @@ using System.Threading.Tasks;
 using System.ComponentModel.DataAnnotations.Schema;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
+using System.Diagnostics.CodeAnalysis;
 
 namespace EasyTagProject.Models
 {
     public enum Type { Classroom, Office, Bathroom}
     public enum Status { Empty, InClass, Closed}
-    public class Room
+    public class Room : IComparable<Room>
     {
         [Key]
         public int Id { get; set; }
-        //[RegularExpression(@"^[A-Z][0-9]-\d{2}$", ErrorMessage = "Please enter a valid short name!!!")]
         public string Name { get; set; }
         [Required]
         public char Block { get; set; }
@@ -51,5 +51,10 @@ namespace EasyTagProject.Models
         public ICollection<Item> Items { get; set; } = new List<Item>();
         [BindNever]
         public Schedule Schedule { get; set; } = new Schedule();
+
+        public int CompareTo([AllowNull] Room other)
+        {
+            return RoomCode.CompareTo(other.RoomCode);
+        }
     }
 }

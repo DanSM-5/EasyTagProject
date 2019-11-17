@@ -34,7 +34,7 @@ namespace EasyTagProject.Controllers
         [HttpPost("{action}/{code}/{roomId}/{selectedTime}")]
         public async Task<IActionResult> AddAppointment(Appointment appointment)
         {
-            ValidateAppointment(appointment);
+            await ValidateAppointmentAsync(appointment);
 
             if (ModelState.IsValid)
             {
@@ -57,7 +57,7 @@ namespace EasyTagProject.Controllers
         [HttpPost("{action}/{code}/{id}")]
         public async Task<IActionResult> EditAppointment(Appointment appointment)
         {
-            ValidateAppointment(appointment);
+            await ValidateAppointmentAsync(appointment);
 
             if (ModelState.IsValid)
             {
@@ -69,25 +69,41 @@ namespace EasyTagProject.Controllers
             return View(appointment);
         }
 
-        private void ValidateAppointment(Appointment appointment)
+        private async Task ValidateAppointmentAsync(Appointment appointment)
         {
+            //  Start task to get appointments from the same room and in the same date
+            var getAppointments = appointmentRopository.Appointments.Where(a => a.Start.Date == appointment.Start.Date && a.RoomId == appointment.RoomId).ToListAsync();
+            
             if (appointment.Start > appointment.End)
             {
                 ModelState.AddModelError("", "Start time must be before end time");
             }
 
-            List<Appointment> appointments = appointmentRopository.Appointments.Where(a => a.Start.Date == appointment.Start.Date && a.RoomId == appointment.RoomId).ToList();
+            if (appointment.Start < DateTime.Today.AddDays(-1))
+            {
+                ModelState.AddModelError("", "The appointment cannot be created in the past");
+            }
 
+            //  Identify if any apointment overlaps
+            #region AvoidOverlapingAppoinments
+
+            List<Appointment> appointments = await getAppointments;
+            
+            //  Remove the appointment being validating 
+            //  from the list of appointments
+            //  if it is not a new appointment
             if (appointments.Any(a => a.Id == appointment.Id))
             {
                 appointments.Remove(appointments.Single(a => a.Id == appointment.Id));
             }
 
+            //  Verify if the appoinment overlaps another
             if (appointments.Any(a => a.Start.TimeOfDay < appointment.End.TimeOfDay
                                  && appointment.Start.TimeOfDay < a.End.TimeOfDay))
             {
                 ModelState.AddModelError("", "The time you selected is already busy!");
-            }
+            } 
+            #endregion
         }
 
         [HttpPost]

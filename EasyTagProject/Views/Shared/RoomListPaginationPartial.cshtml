@@ -1,0 +1,73 @@
+﻿@model RoomListPagination
+<div>
+    <ul class="pagination justify-content-center">
+
+        <li class="page-item @(!Model.ShowFirst? "disabled":"")">
+            <a asp-action="RoomList" asp-controller="Room"
+               asp-route-page="1" class="page-link"><i class="fas fa-fast-backward"></i></a>
+        </li>
+
+        <li class="page-item @(!Model.ShowPrevious? "disabled":"")">
+            <a asp-action="RoomList" asp-controller="Room"
+               asp-route-page="@(Model.CurrentPage -1)" class="page-link"><i class="fas fa-step-backward"></i></a>
+        </li>
+
+        @if (Model.CurrentPage - 2 > 0)
+        {
+            <li class="page-item">
+                <a asp-action="RoomList" asp-controller="Room"
+                   asp-route-page="@(Model.CurrentPage - 2)" class="page-link">
+                    @(Model.CurrentPage - 2)
+                </a>
+            </li>
+        }
+
+        @if (Model.CurrentPage - 1 > 0)
+        {
+            <li class="page-item">
+                <a asp-action="RoomList" asp-controller="Room"
+                   asp-route-page="@(Model.CurrentPage -1)" class="page-link">
+                    @(Model.CurrentPage - 1)
+                </a>
+            </li>
+        }
+
+        <li class="page-item active">
+            <a asp-action="RoomList" asp-controller="Room"
+               asp-route-page="@(Model.CurrentPage)" class="page-link">
+                @(Model.CurrentPage)
+            </a>
+        </li>
+
+        @if (Model.CurrentPage + 1 <= Model.TotalPages)
+        {
+            <li class="page-item">
+                <a asp-action="RoomList" asp-controller="Room"
+                   asp-route-page="@(Model.CurrentPage + 1)" class="page-link">
+                    @(Model.CurrentPage + 1)
+                </a>
+            </li>
+        }
+
+        @if (Model.CurrentPage + 2 <= Model.TotalPages)
+        {
+            <li class="page-item">
+                <a asp-action="RoomList" asp-controller="Room"
+                   asp-route-page="@(Model.CurrentPage + 2)" class="page-link">
+                    @(Model.CurrentPage + 2)
+                </a>
+            </li>
+        }
+
+        <li class="page-item  @(!Model.ShowNext? "disabled":"")">
+            <a asp-action="RoomList" asp-controller="Room"
+               asp-route-page="@(Model.CurrentPage + 1)" class="page-link"><i class="fas fa-step-forward"></i></a>
+        </li>
+
+        <li class="page-item  @(!Model.ShowLast? "disabled":"")">
+            <a asp-action="RoomList" asp-controller="Room"
+               asp-route-page="@Model.TotalPages" class="page-link"><i class="fas fa-fast-forward"></i></a>
+        </li>
+
+    </ul>
+</div>

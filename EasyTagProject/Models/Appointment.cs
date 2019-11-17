@@ -2,12 +2,13 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
-    public class Appointment
+    public class Appointment : IComparable<Appointment>
     {
         [Key]
         public int Id { get; set; }
@@ -24,5 +25,10 @@ namespace EasyTagProject.Models
         public int RoomId { get; set; }
         [NotMapped]
         public string RoomCode { get; set; }
+
+        public int CompareTo([AllowNull] Appointment other)
+        {
+            return Start.CompareTo(other.Start);
+        }
     }
 }

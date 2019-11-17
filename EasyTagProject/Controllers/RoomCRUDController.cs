@@ -27,14 +27,31 @@ namespace EasyTagProject.Controllers
         [HttpPost("{action}")]//("{controller}/{action}")]
         public async Task<IActionResult> AddRoom(Room room)
         {
+            Task<bool> isRepeatedLocation;
+
+            if (room.Id != 0)
+            {
+                isRepeatedLocation = roomRepository.Rooms.AnyAsync(r =>
+                            r.RoomCode == $"{room.Block}{room.Floor}-{room.Number}"
+                            && r.Id != room.Id);
+            }
+            else
+            {
+                isRepeatedLocation = roomRepository.Rooms.AnyAsync(r =>
+                            r.RoomCode == $"{room.Block}{room.Floor}-{room.Number}");
+            }
+            
+
             if (room.Floor > 4)
             {
                 ModelState.AddModelError("Floor", "Floor does not exist");
             }
-            if (roomRepository.Rooms.Any(r => r.RoomCode == $"{room.Block}{room.Floor}-{room.Number}"))
+
+            if (await isRepeatedLocation)
             {
                 ModelState.AddModelError("", "Room location alredy exists");
             }
+
             if (ModelState.IsValid)
             {
                 room.RoomCode = $"{room.Block}{room.Floor}-{room.Number}";

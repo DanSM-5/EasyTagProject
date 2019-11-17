@@ -1,0 +1,83 @@
+﻿@model RoomListViewModel
+
+<div>
+    <ul class="pagination justify-content-center">
+
+        <li class="page-item @(!Model.Pagination.ShowFirst? "disabled":"")">
+            <a asp-action="SearchList" asp-controller="Room"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-page="1" class="page-link"><i class="fas fa-fast-backward"></i></a>
+        </li>
+
+        <li class="page-item @(!Model.Pagination.ShowPrevious? "disabled":"")">
+            <a asp-action="SearchList" asp-controller="Room"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-page="@(Model.Pagination.CurrentPage -1)" class="page-link"><i class="fas fa-step-backward"></i></a>
+        </li>
+
+        @if (Model.Pagination.CurrentPage - 2 > 0)
+        {
+            <li class="page-item">
+                <a asp-action="SearchList" asp-controller="Room"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-page="@(Model.Pagination.CurrentPage - 2)" class="page-link">
+                    @(Model.Pagination.CurrentPage - 2)
+                </a>
+            </li>
+        }
+
+        @if (Model.Pagination.CurrentPage - 1 > 0)
+        {
+            <li class="page-item">
+                <a asp-action="SearchList" asp-controller="Room"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-page="@(Model.Pagination.CurrentPage -1)" class="page-link">
+                    @(Model.Pagination.CurrentPage - 1)
+                </a>
+            </li>
+        }
+
+        <li class="page-item active">
+            <a asp-action="SearchList" asp-controller="Room"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-page="@(Model.Pagination.CurrentPage)" class="page-link">
+                @(Model.Pagination.CurrentPage)
+            </a>
+        </li>
+
+        @if (Model.Pagination.CurrentPage + 1 <= Model.Pagination.TotalPages)
+        {
+            <li class="page-item">
+                <a asp-action="SearchList" asp-controller="Room"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-page="@(Model.Pagination.CurrentPage + 1)" class="page-link">
+                    @(Model.Pagination.CurrentPage + 1)
+                </a>
+            </li>
+        }
+
+        @if (Model.Pagination.CurrentPage + 2 <= Model.Pagination.TotalPages)
+        {
+            <li class="page-item">
+                <a asp-action="SearchList" asp-controller="Room"
+                   asp-route-searchString="@Model.SearchString"
+                   asp-route-page="@(Model.Pagination.CurrentPage + 2)" class="page-link">
+                    @(Model.Pagination.CurrentPage + 2)
+                </a>
+            </li>
+        }
+
+        <li class="page-item  @(!Model.Pagination.ShowNext? "disabled":"")">
+            <a asp-action="SearchList" asp-controller="Room"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-page="@(Model.Pagination.CurrentPage + 1)" class="page-link"><i class="fas fa-step-forward"></i></a>
+        </li>
+
+        <li class="page-item  @(!Model.Pagination.ShowLast? "disabled":"")">
+            <a asp-action="SearchList" asp-controller="Room"
+               asp-route-searchString="@Model.SearchString"
+               asp-route-page="@Model.Pagination.TotalPages" class="page-link"><i class="fas fa-fast-forward"></i></a>
+        </li>
+
+    </ul>
+</div>
