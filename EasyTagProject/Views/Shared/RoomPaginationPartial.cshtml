@@ -1,0 +1,25 @@
+﻿@model RoomViewModel
+<div id="pagination" class="row">
+    <div class="col align-content-center">
+        <ul class="pagination justify-content-center">
+            <li class="page-item">
+                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
+                    <i class="fas fa-step-backward"></i>
+                </a>
+            </li>
+
+            <li class="page-item">
+                <a asp-controller="Room" asp-action="Room"
+                   asp-route-code="@Model.Room.RoomCode" asp-route-pdate="" class="page-link">
+                    Today
+                </a>
+            </li>
+
+            <li class="page-item">
+                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
+                    <i class="fas fa-step-forward"></i>
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>

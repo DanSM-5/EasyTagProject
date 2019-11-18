@@ -25,18 +25,21 @@
     <div class="col text-center"><h2>@Model.Room.Type</h2></div>
 </div>
 
+<hr />
+
 @if (@Model.Pagination.CurrentDate == DateTime.Today)
 {
-    <div>
-        <div><b>Today: @Model.Pagination.CurrentDate.ToLongDateString()</b></div>
+    <div class="text-center mt-3">
+        <div><h3><b>Today: @Model.Pagination.CurrentDate.ToLongDateString()</b></h3></div>
     </div>
 }
 else
 {
-    <div>
-        <div>@Model.Pagination.CurrentDate.ToLongDateString()</div>
+    <div class="text-center  mt-3">
+        <div><h3>@Model.Pagination.CurrentDate.ToLongDateString()</h3></div>
     </div>
 }
+<partial name="RoomPaginationPartial" for="@Model" />
 
 <div>
     <table class="table table-active table-hover">
@@ -107,30 +110,8 @@ else
     </div>
 }
 
-<div id="pagination" class="row">
-    <div class="col align-content-center">
-        <ul class="pagination justify-content-center">
-            <li class="page-item">
-                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
-                    <i class="fas fa-step-backward"></i>
-                </a>
-            </li>
+<partial name="RoomPaginationPartial" for="@Model" />
 
-            <li class="page-item">
-                <a asp-controller="Room" asp-action="Room" 
-                   asp-route-code="@Model.Room.RoomCode" asp-route-pdate="" class="page-link">
-                    Today
-                </a>
-            </li>
-
-            <li class="page-item">
-                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
-                    <i class="fas fa-step-forward"></i>
-                </a>
-            </li>
-        </ul>
-    </div>
-</div>
 <div>
     <div class="text-center btn-container">
         <form asp-action="FindRoomByDate" asp-controller="Room" method="post">
