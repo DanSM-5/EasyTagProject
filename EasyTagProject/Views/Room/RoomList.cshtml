@@ -76,8 +76,11 @@ else
     </div>
 }
 
+@if (ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)))
+{
+    <div class="center-button">
+        <a asp-action="AddRoom" asp-controller="RoomCRUD" class="btn btn-primary">Add Room</a>
+    </div>
+}
 
-<div class="center-button">
-    <a asp-action="AddRoom" asp-controller="RoomCRUD" class="btn btn-primary">Add Room</a>
-</div>
 

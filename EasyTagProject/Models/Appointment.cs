@@ -1,4 +1,5 @@
-﻿using System;
+﻿using EasyTagProject.Models.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -17,14 +18,16 @@ namespace EasyTagProject.Models
         [Required]       
         public DateTime End { get; set; }
         [Required]
-        public string UserName { get; set; }
-        [Required]
         public string Course { get; set; }
         public string Description { get; set; }
         public int ScheduleId { get; set; }
         public int RoomId { get; set; }
         [NotMapped]
         public string RoomCode { get; set; }
+
+        [Required]
+        public string UserName { get; set; }
+        public string UserId { get; set; }
 
         public int CompareTo([AllowNull] Appointment other)
         {

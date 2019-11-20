@@ -1,23 +1,31 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using EasyTagProject.Models;
 using FluentDate;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyTagProject.Controllers
 {
+    [Authorize(Roles = "Admin,Professor")]
     public class AppointmentCRUDController : Controller
     {
         private IAppointmentRepository appointmentRopository;
         private IRoomRepository roomRepository;
 
-        public AppointmentCRUDController(IRoomRepository rRepo, IAppointmentRepository aRepo)
+        public IHttpContextAccessor ViewContext { get; }
+
+        public AppointmentCRUDController(IRoomRepository rRepo, IAppointmentRepository aRepo, IHttpContextAccessor httpContext)
         {
             roomRepository = rRepo;
             appointmentRopository = aRepo;
+            ViewContext = httpContext;
         }
 
         [HttpGet("{action}/{code}/{roomId}/{selectedTime}")]
@@ -38,6 +46,7 @@ namespace EasyTagProject.Controllers
 
             if (ModelState.IsValid)
             {
+                appointment.UserId = ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 await appointmentRopository.SaveAsync(appointment);
 
                 return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });

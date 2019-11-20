@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyTagProject.Models
 {
-    public enum Type { Classroom, Office, Bathroom}
+    public enum Type { Classroom, Office, Bathroom, LibraryRoom, ConferenceRoom, Gym, ComputerLab }
     public enum Status { Empty, InClass, Closed}
     public class Room : IComparable<Room>
     {

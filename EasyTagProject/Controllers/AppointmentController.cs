@@ -5,11 +5,13 @@ using System.Threading.Tasks;
 using EasyTagProject.Models;
 using EasyTagProject.Models.ViewModels;
 using FluentDate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyTagProject.Controllers
 {
+    [Authorize(Roles = "Admin,Professor")]
     public class AppointmentController : Controller
     {
         private IAppointmentRepository appointmentRopository;

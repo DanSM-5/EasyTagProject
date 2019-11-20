@@ -4,12 +4,12 @@
 <input asp-for="RoomId" type="hidden" />
 <input asp-for="ScheduleId" type="hidden" />
 <div class="form-group">
-    <div><span asp-validation-for="UserName"></span></div>
+    <div><span asp-validation-for="UserName" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="UserName" class="form-control"></label>
     <input asp-for="UserName" class="form-control" />
 </div>
 <div class="form-group">
-    <div><span asp-validation-for="Start"></span></div>
+    <div><span asp-validation-for="Start" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="Start" class="form-control"></label>
     <select asp-for="Start" class="form-control">
         @for (DateTime timeOption = DateTime.Today.AddHours(8.5); timeOption.TimeOfDay <= (DateTime.Today + 22.Hours()).TimeOfDay; timeOption += 30.Minutes())
@@ -22,7 +22,7 @@
     </select>
 </div>
 <div class="form-group">
-    <div><span asp-validation-for="End"></span></div>
+    <div><span asp-validation-for="End" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="End" class="form-control"></label>
     <select asp-for="End" class="form-control">
         @for (DateTime timeOption = DateTime.Today.AddHours(9); timeOption.TimeOfDay <= (DateTime.Today + 22.5.Hours()).TimeOfDay; timeOption += 30.Minutes())
@@ -35,12 +35,12 @@
     </select>
 </div>
 <div class="form-group">
-    <div><span asp-validation-for="Course"></span></div>
+    <div><span asp-validation-for="Course" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="Course" class="form-control"></label>
     <input asp-for="Course" class="form-control" />
 </div>
 <div class="form-group">
-    <div><span asp-validation-for="Description"></span></div>
+    <div><span asp-validation-for="Description" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="Description" class="form-control"></label>
     <input asp-for="Description" class="form-control" />
 </div>

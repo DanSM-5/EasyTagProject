@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using EasyTagProject.Models;
+using EasyTagProject.Models.Identity;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace EasyTagProject.Controllers
 {
+    [Authorize(Roles = nameof(UserRoles.Admin))]
     public class RoomCRUDController : Controller
     {
         private IRoomRepository roomRepository;
@@ -54,7 +57,7 @@ namespace EasyTagProject.Controllers
 
             if (ModelState.IsValid)
             {
-                room.RoomCode = $"{room.Block}{room.Floor}-{room.Number}";
+                room.RoomCode = $"{room.Block}{room.Floor}-{room.Number.ToString("00")}";
                 await roomRepository.SaveAsync(room);
 
                 return RedirectToAction(nameof(Room), nameof(Room), new { code = room.RoomCode });

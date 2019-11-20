@@ -1,0 +1,10 @@
+﻿@model string
+@{
+    ViewData["Title"] = "AccessDenied";
+}
+
+<h2>Access Denied</h2>
+<br />
+<br />
+<h3 class="text-center">Looks like you don't have the permission to be here</h3>
+<p class="text-center">If you want to continue please log in as an <a asp-action="Login" asp-controller="Account" asp-route-returnUrl="@Model">administrator</a> o go <a href="javascript:history.go(-1)">back</a></p>

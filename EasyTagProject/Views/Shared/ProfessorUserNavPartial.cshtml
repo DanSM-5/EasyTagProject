@@ -1,0 +1,8 @@
+﻿<a class="nav-link text-white" asp-action="Index" asp-controller="Home"><i class="fas fa-home"></i> Home</a>
+<a asp-controller="Room" asp-action="RoomList" class="nav-link text-white"><i class="fas fa-list"></i> Room List</a>
+<a asp-controller="Admin" asp-action="Edit" 
+   asp-route-id="@(ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value)"
+   asp-route-returnUrl="@ViewContext.HttpContext.Request.PathAndQuery()"
+   class="nav-link text-white"><i class="fas fa-user"></i> Manage Account</a>
+<a class="nav-link text-white glyphicon glyphicon-log-in"
+   asp-controller="Account" asp-action="Logout"><i class="fas fa-sign-out-alt"></i> Logout</a>

@@ -56,14 +56,17 @@ else
                 @foreach (var app in Model.Room.Schedule.Appointments)
                 {
             <tr id="@app.Id-header" class="appointment">
-                @if (app.Start.Date >= DateTime.Now.Date)
+                @if (app.Start.Date >= DateTime.Now.Date &&
+                    (ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == app.UserId ||
+                    ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin))
+                    ))
                 {
                     <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
                     <td>@app.Course</td>
                     <td>@app.UserName</td>
                     <td class="btn-inline">
                         <a class="btn btn-warning btn-group-sm" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
-                           asp-route-code="@Model.Room.RoomCode" 
+                           asp-route-code="@Model.Room.RoomCode"
                            asp-route-id="@app.Id">
                             Edit
                         </a>
@@ -100,14 +103,18 @@ else
 
 @if (Model.Pagination.CurrentDate >= DateTime.Today)
 {
-    <div class="form-group"> 
-        <div class="btn-container">
-            <a class="btn btn-primary text-center btn-addApm" asp-controller="Appointment" asp-action="AppointmentList" 
-               asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
-                Add Appointment
-            </a>
+    if (ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)) ||
+        ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Professor)))
+    {
+        <div class="form-group"> 
+            <div class="btn-container">
+                <a class="btn btn-primary text-center btn-addApm" asp-controller="Appointment" asp-action="AppointmentList" 
+                   asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
+                    Add Appointment
+                </a>
+            </div>
         </div>
-    </div>
+    }
 }
 
 <partial name="RoomPaginationPartial" for="@Model" />
