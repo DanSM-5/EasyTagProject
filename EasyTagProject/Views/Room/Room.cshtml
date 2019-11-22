@@ -2,7 +2,16 @@
 @{
     ViewData["Title"] = Model.Room.Name;
 }
+<!--
+    Page that displays appointments of the room
+    Accessible for all visitors
 
+    Some functionality of the page requires authentication.
+-->
+
+<!--
+    Display Room Information
+-->
 <h1 class="text-center">@Model.Room.Name</h1>
 <div class="row">
     <div class="col text-center">Block</div>
@@ -26,7 +35,9 @@
 </div>
 
 <hr />
-
+<!--
+    Display date of results
+-->
 @if (@Model.Pagination.CurrentDate == DateTime.Today)
 {
     <div class="text-center mt-3">
@@ -39,8 +50,15 @@ else
         <div><h3>@Model.Pagination.CurrentDate.ToLongDateString()</h3></div>
     </div>
 }
+
+<!--
+    Include pagination for room
+-->
 <partial name="RoomPaginationPartial" for="@Model" />
 
+<!--
+    Create table to display daily appointments
+-->
 <div>
     <table class="table table-active table-hover">
         <thead>
@@ -55,37 +73,36 @@ else
             {
                 @foreach (var app in Model.Room.Schedule.Appointments)
                 {
-            <tr id="@app.Id-header" class="appointment">
-                @if (app.Start.Date >= DateTime.Now.Date &&
-                    (ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == app.UserId ||
-                    ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin))
-                    ))
-                {
-                    <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
-                    <td>@app.Course</td>
-                    <td>@app.UserName</td>
-                    <td class="btn-inline">
-                        <a class="btn btn-warning btn-group-sm" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
-                           asp-route-code="@Model.Room.RoomCode"
-                           asp-route-id="@app.Id">
-                            Edit
-                        </a>
-                        <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
-                            <input type="hidden" name="id" value="@app.Id" />
-                            <input type="hidden" name="code" value="@Model.Room.RoomCode" />
-                            <button class="btn btn-danger btn-group-sm">
-                                Delete
-                            </button>
-                        </form>
-                    </td>
-                }
-                else
-                {
-                    <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
-                    <td>@app.Course</td>
-                    <td colspan="2">@app.UserName</td>
-                }
-            </tr>
+                    <tr id="@app.Id-header" class="appointment">
+                        @if (app.Start.Date >= DateTime.Now.Date && 
+                            ViewContext.IsAccessibleForUserOrAdmin(app.UserId))
+                        {
+                            <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
+                            <td>@app.Course</td>
+                            <td>@app.UserName</td>
+                            <td class="btn-inline">
+                                <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
+                                   asp-route-code="@Model.Room.RoomCode"
+                                   asp-route-id="@app.Id">
+                                    Edit
+                                </a>
+                                <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
+                                    <input type="hidden" name="id" value="@app.Id" />
+                                    <input type="hidden" name="code" value="@Model.Room.RoomCode" />
+                                    <button class="btn btn-danger btn-group">
+                                        Delete
+                                    </button>
+                                </form>
+                            </td>
+
+                        }
+                        else
+                        {
+                            <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
+                            <td>@app.Course</td>
+                            <td colspan="2">@app.UserName</td>
+                        }
+                    </tr>
                     <tr id="@app.Id-description" class="hideTr">
                         <td colspan="4" class="d-table-cell text-center">@app.Description</td>
                     </tr>
@@ -101,14 +118,19 @@ else
     </table>
 </div>
 
+<!--
+    Determines if the searched date is not in the past
+    to enable user to add new appointments
+-->
 @if (Model.Pagination.CurrentDate >= DateTime.Today)
 {
-    if (ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)) ||
-        ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Professor)))
+    // Verifies that only Admin and professors can add appointments
+    if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)) ||
+        ViewContext.IsUserInRool(nameof(UserRoles.Professor)))
     {
-        <div class="form-group"> 
+        <div class="form-group">
             <div class="btn-container">
-                <a class="btn btn-primary text-center btn-addApm" asp-controller="Appointment" asp-action="AppointmentList" 
+                <a class="btn btn-primary text-center btn-addApm" asp-controller="Appointment" asp-action="AppointmentList"
                    asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
                     Add Appointment
                 </a>
@@ -117,17 +139,17 @@ else
     }
 }
 
+<!--
+    Include pagination for room
+-->
 <partial name="RoomPaginationPartial" for="@Model" />
 
-<div>
-    <div class="text-center btn-container">
-        <form asp-action="FindRoomByDate" asp-controller="Room" method="post">
-            <input type="hidden" name="code" value="@Model.Room.RoomCode" />
-            <label for="pDate" class="input-group">Search day: </label>
-            <input type="date" class="input-group" name="pDate" value="" required />
-            <button type="submit" class="btn btn-primary">Search</button>
-        </form>
-    </div>
-</div>
+<!--
+    Include search appointments for specific date
+-->
+<partial name="RoomFindByDatePartial" />
 
+<!--
+    javascript file for fade in/out animations
+-->
 <script defer src="~/js/room.js" asp-append-version="true"></script>

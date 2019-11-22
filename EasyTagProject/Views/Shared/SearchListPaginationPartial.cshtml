@@ -1,20 +1,30 @@
 ﻿@model RoomListViewModel
 
+<!--
+    Partial view to include pagination for RoomList
+    It is adapted to display the results of a search
+-->
 <div>
     <ul class="pagination justify-content-center">
-
+        <!--
+            Go to first page. Disabled if the current page is the first page.    
+        -->
         <li class="page-item @(!Model.Pagination.ShowFirst? "disabled":"")">
             <a asp-action="SearchList" asp-controller="Room"
                asp-route-searchString="@Model.SearchString"
                asp-route-page="1" class="page-link"><i class="fas fa-fast-backward"></i></a>
         </li>
-
+        <!--
+            Go one page back. Disabled if the current page is the first page.    
+        -->
         <li class="page-item @(!Model.Pagination.ShowPrevious? "disabled":"")">
             <a asp-action="SearchList" asp-controller="Room"
                asp-route-searchString="@Model.SearchString"
                asp-route-page="@(Model.Pagination.CurrentPage -1)" class="page-link"><i class="fas fa-step-backward"></i></a>
         </li>
-
+        <!--
+            Display page number 2 positions previous. It appears only if it is possible to go back 2 pages.    
+        -->
         @if (Model.Pagination.CurrentPage - 2 > 0)
         {
             <li class="page-item">
@@ -25,7 +35,9 @@
                 </a>
             </li>
         }
-
+        <!--
+            Display previous page number. It appears only if it is possible to go back 1 page.    
+        -->
         @if (Model.Pagination.CurrentPage - 1 > 0)
         {
             <li class="page-item">
@@ -36,7 +48,9 @@
                 </a>
             </li>
         }
-
+        <!--
+            Display current page number.  
+        -->
         <li class="page-item active">
             <a asp-action="SearchList" asp-controller="Room"
                asp-route-searchString="@Model.SearchString"
@@ -44,7 +58,9 @@
                 @(Model.Pagination.CurrentPage)
             </a>
         </li>
-
+        <!--
+            Display next page number. It appears only if it is possible to go forward 1 page.    
+        -->
         @if (Model.Pagination.CurrentPage + 1 <= Model.Pagination.TotalPages)
         {
             <li class="page-item">
@@ -55,7 +71,9 @@
                 </a>
             </li>
         }
-
+        <!--
+            Display page number 2 positions next. It appears only if it is possible to go forward 2 pages.    
+        -->
         @if (Model.Pagination.CurrentPage + 2 <= Model.Pagination.TotalPages)
         {
             <li class="page-item">
@@ -66,18 +84,21 @@
                 </a>
             </li>
         }
-
+        <!--
+            Go one page forward. Disabled if the current page is the last page.    
+        -->
         <li class="page-item  @(!Model.Pagination.ShowNext? "disabled":"")">
             <a asp-action="SearchList" asp-controller="Room"
                asp-route-searchString="@Model.SearchString"
                asp-route-page="@(Model.Pagination.CurrentPage + 1)" class="page-link"><i class="fas fa-step-forward"></i></a>
         </li>
-
+        <!--
+            Go to the last page. Disabled if the current page is the last page.    
+        -->
         <li class="page-item  @(!Model.Pagination.ShowLast? "disabled":"")">
             <a asp-action="SearchList" asp-controller="Room"
                asp-route-searchString="@Model.SearchString"
                asp-route-page="@Model.Pagination.TotalPages" class="page-link"><i class="fas fa-fast-forward"></i></a>
         </li>
-
     </ul>
 </div>

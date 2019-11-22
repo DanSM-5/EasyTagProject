@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EasyTagProject.Models.Identity;
 using EasyTagProject.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -17,14 +18,16 @@ namespace EasyTagProject.Controllers
     public class AdminController : Controller
     {
         private UserManager<EasyTagUser> userManager;
-        public AdminController(UserManager<EasyTagUser> manager)
+        IHttpContextAccessor viewContext;
+        public AdminController(UserManager<EasyTagUser> manager, IHttpContextAccessor viewContext)
         {
             userManager = manager;
+            this.viewContext = viewContext;
         }
         [Authorize(Roles = nameof(UserRoles.Admin))]
         public async Task<IActionResult> ManageUsers()
         {
-            return View(await userManager.Users.Where(u => u.UserName != "Admin").ToListAsync());
+            return View(await userManager.Users.Where(u => u.UserName != UserRoles.Admin.ToString()).ToListAsync());
         }
 
         [Authorize(Roles = nameof(UserRoles.Admin))]
@@ -50,7 +53,9 @@ namespace EasyTagProject.Controllers
                     UserName = model.UserName,
                     Email = model.Email.ToLower(),
                     PhoneNumber = model.PhoneNumber,
-                    Role = model.Role
+                    Role = model.Role,
+                    FirstName = model.FirstName,
+                    LastName = model.LastName
                 };
 
                 IdentityResult result = await userManager.CreateAsync(user, model.Password);
@@ -93,37 +98,47 @@ namespace EasyTagProject.Controllers
             return RedirectToAction(nameof(ManageUsers));
         }
 
-        //[Authorize(Roles = "Admin,Professor")]
         [HttpGet]
-        public async Task<ViewResult> Edit(string id, string returnUrl)
+        public async Task<IActionResult> Edit(string id, string returnUrl)
         {
-            EasyTagUser tagUser = await userManager.FindByIdAsync(id);
-
-            if (tagUser != null)
+            if (viewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == id ||
+                viewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)))
             {
-                CreateUserViewModel user = new CreateUserViewModel
-                {
-                    Email = tagUser.Email,
-                    UserName = tagUser.UserName,
-                    PhoneNumber = tagUser.PhoneNumber,
-                    Role = tagUser.Role,
-                    Id = tagUser.Id,
-                    Editing = true
-                };
+                EasyTagUser tagUser = await userManager.FindByIdAsync(id);
 
-                if (!String.IsNullOrEmpty(returnUrl))
+                if (tagUser.UserName != UserRoles.Admin.ToString())
                 {
-                    user.ReturnUrl = returnUrl;
-                }
+                    if (tagUser != null)
+                    {
+                        CreateUserViewModel user = new CreateUserViewModel
+                        {
+                            Email = tagUser.Email,
+                            UserName = tagUser.UserName,
+                            PhoneNumber = tagUser.PhoneNumber,
+                            Role = tagUser.Role,
+                            Id = tagUser.Id,
+                            FirstName = tagUser.FirstName,
+                            LastName = tagUser.LastName,
+                            Editing = true
+                        };
 
-                return View(user);
+                        if (!String.IsNullOrEmpty(returnUrl))
+                        {
+                            user.ReturnUrl = returnUrl;
+                        }
+
+                        return View(user);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError("", "User not found!!");
+                    }
+
+                    return View(nameof(ManageUsers), await userManager.Users.Where(u => u.UserName != UserRoles.Admin.ToString()).ToListAsync());
+                } 
             }
-            else
-            {
-                ModelState.AddModelError("", "User not found!!");
-            }       
-
-            return View(nameof(ManageUsers), await userManager.Users.Where(u => u.UserName != "Admin").ToListAsync());
+           
+            return Redirect("/");
         }
 
         //[Authorize(Roles = "Admin,Professor")]
@@ -135,18 +150,21 @@ namespace EasyTagProject.Controllers
                 EasyTagUser tagUser = await userManager.FindByIdAsync(model.Id);
                 if (tagUser != null)
                 {
-                    if (tagUser.Role != model.Role)
+                    if (viewContext.HttpContext.User.IsInRole(UserRoles.Admin.ToString()))
                     {
-                        UserRoles? oldRole = tagUser.Role;
-                        await userManager.RemoveFromRoleAsync(tagUser, oldRole.ToString());
-                        tagUser.Role = model.Role;
-                        var changeRoleResult = await userManager.AddToRoleAsync(tagUser, model.Role.ToString());
-                        if (!changeRoleResult.Succeeded)
+                        if (tagUser.Role != model.Role)
                         {
-                            tagUser.Role = oldRole;
-                            ModelState.AddModelError("", $"Unexpected error occurred setting role for user with ID {tagUser.Id}");
-                            AddErrorsFromResult(changeRoleResult);
-                        }
+                            UserRoles? oldRole = tagUser.Role;
+                            await userManager.RemoveFromRoleAsync(tagUser, oldRole.ToString());
+                            tagUser.Role = model.Role;
+                            var changeRoleResult = await userManager.AddToRoleAsync(tagUser, model.Role.ToString());
+                            if (!changeRoleResult.Succeeded)
+                            {
+                                tagUser.Role = oldRole;
+                                ModelState.AddModelError("", $"Unexpected error occurred setting role for user with ID {tagUser.Id}");
+                                AddErrorsFromResult(changeRoleResult);
+                            }
+                        } 
                     }
 
                     if (tagUser.Email != model.Email)
@@ -179,6 +197,16 @@ namespace EasyTagProject.Controllers
                             ModelState.AddModelError("", $"Unexpected error occurred setting user name for user with ID {tagUser.Id}");
                             AddErrorsFromResult(changeUserNameResult);
                         }
+                    }
+
+                    if (tagUser.FirstName != model.FirstName)
+                    {
+                        tagUser.FirstName = model.FirstName;
+                    }
+
+                    if (tagUser.LastName != model.LastName)
+                    {
+                        tagUser.LastName = model.LastName;
                     }
 
                     var updateResult = await userManager.UpdateAsync(tagUser);

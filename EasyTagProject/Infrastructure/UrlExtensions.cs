@@ -8,6 +8,11 @@ namespace EasyTagProject.Infrastructure
 {
     public static class UrlExtensions
     {
+        /// <summary>
+        /// Returns the actual path with query string as string
+        /// </summary>
+        /// <param name="request">Extended object</param>
+        /// <returns></returns>
         public static string PathAndQuery(this HttpRequest request) =>
             request.QueryString.HasValue
             ? $"{request.Path}{request.QueryString}"

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
+    /*
+     * Model class for pagination of RoomList page
+     */
     public class RoomListPagination
     {
         //[BindProperty(SupportsGet = true)]

@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models.ViewModels
 {
+    // ViewModel to generate AppointmentList View
     public class AppointmentListViewModel
     {
         public DateTime StartRange { get; set; } = DateTime.Parse("08:30:00");

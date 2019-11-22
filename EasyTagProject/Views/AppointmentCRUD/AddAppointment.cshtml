@@ -2,7 +2,10 @@
 @{
     ViewData["Title"] = "Add Appointment";
 }
-
+<!--
+    Page for adding appointments
+    Accessible for Professor/Admin users only
+-->
 <h1>Add Appointment on @Model.Start.Date.ToShortDateString()</h1>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 <form asp-action="AddAppointment" asp-controller="AppointmentCRUD" method="post">
@@ -12,7 +15,8 @@
         <button type="submit" class="btn btn-primary">Save</button>
         <button asp-action="RedirectToAppointmentList" asp-controller="Appointment"
                 asp-route-id="@Model.RoomId"
-                asp-route-date="@Model.Start.Date.ToString("MM-dd-yyyy")">
+                asp-route-date="@Model.Start.Date.ToString("MM-dd-yyyy")"
+                class="btn btn-secondary">
             Cancel
         </button>
     </div>

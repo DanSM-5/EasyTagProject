@@ -4,6 +4,14 @@
     ViewData["Title"] = "Edit User";
 }
 
+<!--
+    Page for additing user accounts information
+    Accessible Admin users or the specific user only.
+-->
+
+<!--
+    Display massage if password change succeeded
+-->
 @if (TempData["PasswordChanged"] != null)
 {
     <div class="text-center p-2 text-info">
@@ -13,6 +21,10 @@
 
 <div><h1 class="text-center">Edit User</h1></div>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
+<!--
+    Form to change password only
+    All other filelds are not updated
+-->
 <form asp-controller="Admin" asp-action="ChangePassword" method="post">
     <div class="form-group">
         <div><span asp-validation-for="OldPassword" class="text-danger validation-summary-errors" data-valmsg-for="OldPassword"></span></div>
@@ -27,12 +39,17 @@
     <input asp-for="ReturnUrl" type="hidden" />
     <input asp-for="Id" type="hidden" />
     <input asp-for="Editing" type="hidden" />
-    <input asp-for="Role" type="hidden"/>
+    <input asp-for="Role" type="hidden" />
     <input asp-for="UserName" type="hidden" />
     <input asp-for="Email" type="hidden" />
     <input asp-for="PhoneNumber" type="hidden" />
+    <input asp-for="FirstName" type="hidden" />
+    <input asp-for="LastName" type="hidden" />
 </form>
 <br />
+<!--
+    Form to uldate fields other than password
+-->
 <form asp-action="Edit" asp-controller="Admin" method="post">
     <input asp-for="ReturnUrl" type="hidden" />
     <input asp-for="Editing" type="hidden" />
@@ -44,7 +61,7 @@
 
         @if (String.IsNullOrEmpty(Model.ReturnUrl))
         {
-            <a asp-action="ManageUsers" asp-controller="Admin" class="btn btn-secondary">Cancel</a>
+            <a asp-action="Index" asp-controller="Home">Cancel</a>
         }
         else
         {

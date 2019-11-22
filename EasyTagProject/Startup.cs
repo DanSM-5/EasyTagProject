@@ -18,8 +18,8 @@ namespace EasyTagProject
 {
     public class Startup
     {
+        // Get configuration to read information in appsettings.json file
         public IConfiguration Configuration { get; }
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -34,11 +34,6 @@ namespace EasyTagProject
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
-            //services.Configure<IISServerOptions>(options =>
-            //{
-            //    options.AutomaticAuthentication = false;
-            //});
 
             // Connection to EasyTag DataBase
             services.AddDbContext<ApplicationDbContext>(options =>
@@ -63,17 +58,17 @@ namespace EasyTagProject
                 $"abcdefghijklmnñopqrstuvwxyzABCDEFGHIJKLMNÑOPQRSTUVWXYZ0123456789!#$%&'()*+,-.:;<=>?@[]^_`|~";
             })
                 .AddEntityFrameworkStores<ETIdentityDbContext>()
+                //.AddDefaultUI()
                 .AddDefaultTokenProviders();
-
-            //services.AddIdentityServer()
-            //    .AddApiAuthorization<EasyTagUser, ApplicationDbContext>();
 
             #endregion
 
+            // Services for dependency injection
             services.AddTransient<IRoomRepository, EFRoomRepository>();
             services.AddTransient<IAppointmentRepository, EFAppointmentRepository>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
+            // Required services for application functionality
             services.AddRazorPages();
             services.AddMemoryCache();
             services.AddSession();
@@ -83,6 +78,7 @@ namespace EasyTagProject
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
+            // Error page returned by environment variable
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -91,17 +87,18 @@ namespace EasyTagProject
             {
                 app.UseExceptionHandler("/Home/Error");
             }
-
+            
+            // User CSS and JS provided
             app.UseStaticFiles();
+            
             app.UseCookiePolicy();
             app.UseSession();
-            //app.UseAuthentication();
+
             app.UseRouting();
             app.UseAuthentication();
             app.UseAuthorization();
-            //app.UseIdentityServer();
 
-
+            // Default routing system
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -110,7 +107,9 @@ namespace EasyTagProject
                 );
             });
 
+            // Creates EasyTagDB if it does not exist and adds default information
             SeedData.EnsurePopulated(app);
+            // Creates IdentityUsersEasyTag database if it does not exist and adds default users and roles
             SeedDataIdentiy.EnsurePopulated(app);
         }
     }

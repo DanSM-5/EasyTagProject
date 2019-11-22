@@ -2,7 +2,10 @@
 @{
     ViewData["Title"] = "Manage Users";
 }
-
+<!--
+    Page for managing user accounts information
+    Accessible Admin users only
+-->
 <h1 class="text-center">Manage Users</h1>
 <div asp-validation-summary="ModelOnly" class="text-danger validation-summary-errors"></div>
 <table class="table table-hover table-active">
@@ -42,7 +45,7 @@
         }
     </tbody>
 </table>
-<div>
+<div class="justify-content-center">
     <a asp-action="Create" asp-controller="Admin" class="btn btn-primary">Create</a>
 </div>
 

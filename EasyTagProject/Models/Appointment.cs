@@ -9,7 +9,10 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
-    public class Appointment : IComparable<Appointment>
+    /*
+     * Model class for Appointment objects
+     */
+    public class Appointment : IComparable<Appointment>, IDisposable
     {
         [Key]
         public int Id { get; set; }
@@ -33,5 +36,7 @@ namespace EasyTagProject.Models
         {
             return Start.CompareTo(other.Start);
         }
+
+        public void Dispose(){        }
     }
 }

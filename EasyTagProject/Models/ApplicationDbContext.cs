@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
+    // Class that allows the connection to EasyTagDB using EF
     public class ApplicationDbContext : DbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }

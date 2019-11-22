@@ -7,6 +7,7 @@ using System.Web;
 using EasyTagProject.Models;
 using EasyTagProject.Models.ViewModels;
 using FluentDate;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
@@ -47,10 +48,7 @@ namespace EasyTagProject.Controllers
             Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.RoomCode == code);
 
             // Set appontments
-            room.Schedule.Appointments = room.Schedule.Appointments
-                                         .Where(a => a.Start.Date == date)
-                                         .OrderBy(a => a.Start)
-                                         .ToList();
+            room.Schedule.Appointments = room.Schedule.GetAppointmentsInDate(date);
 
             return room;
         }
@@ -121,6 +119,7 @@ namespace EasyTagProject.Controllers
             });
         }
 
+        [Authorize]
         [HttpGet("{action}/{code}")]
         public async Task<ViewResult> RoomTag(string code)
         {

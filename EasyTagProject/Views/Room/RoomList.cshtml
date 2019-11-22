@@ -2,15 +2,22 @@
 @{
     ViewData["Title"] = "Room List";
 }
-
+<!--
+    Page that displays the list of rooms or the ones filtered by search
+    Accessible for all visitors
+-->
 <div class="row">
     <div class="col">
         <h1>Rooms</h1>
     </div>
+
+    <!--
+        Adds search fucntionality to filter the list of rooms
+    -->
     <div class="col">
-        <form asp-controller="Room" asp-action="SearchList" 
+        <form asp-controller="Room" asp-action="SearchList"
               asp-route-page="1" asp-route-searchString="" method="get">
-            <input asp-for="SearchString"/>
+            <input asp-for="SearchString" />
             <button class="btn btn-primary" type="submit">Search</button>
             <a class="btn btn-primary"
                asp-action="RoomList" asp-controller="Room">See All</a>
@@ -18,6 +25,9 @@
     </div>
 </div>
 
+<!--
+    The following loop creates a div per room to be displayed
+-->
 @foreach (Room room in Model.Rooms)
 {
     <div class="form-group border-room col">
@@ -42,41 +52,57 @@
                 <div class="row">
                     <div class="col">
                         <a asp-action="Room" asp-controller="Room" asp-route-code="@room.RoomCode" class="btn btn-primary inlineblockrule">Go to room page</a>
-                        <form asp-action="DeleteRoom" asp-controller="RoomCRUD" method="post" class="inlineblockrule">
-                            <a asp-action="EditRoom" asp-controller="RoomCRUD" asp-route-id="@room.Id" class="btn btn-primary btn-warning">Edit</a>
-                            <input type="hidden" value="@room.Id" name="id" />
-                            <button class="btn btn-primary btn-danger">Delete</button>
-                        </form>
+                        @if (ViewContext.IsUserInRool(UserRoles.Admin.ToString()))
+                        {
+                            <form asp-action="DeleteRoom" asp-controller="RoomCRUD" method="post" class="inlineblockrule">
+                                <a asp-action="EditRoom" asp-controller="RoomCRUD" asp-route-id="@room.Id" class="btn btn-primary btn-warning">Edit</a>
+                                <input type="hidden" value="@room.Id" name="id" />
+                                <button class="btn btn-primary btn-danger">Delete</button>
+                            </form>
+                        }
                     </div>
-                    <div class="col">
-                        <a class="btn btn-primary" asp-action="RoomTag" asp-controller="Room" asp-route-code="@room.RoomCode">Get QR code</a>
-                    </div>
+                    @if (ViewContext.IsUserInRool(UserRoles.Admin.ToString()) ||
+                        ViewContext.IsUserInRool(UserRoles.Professor.ToString()))
+                    {
+                        <div class="col">
+                            <a class="btn btn-primary" asp-action="RoomTag" asp-controller="Room" asp-route-code="@room.RoomCode">Get QR code</a>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
 }
 
+<!--
+    Include the pagination for the page or
+    add message if there is no room found
+-->
 @if (Model.Rooms.Count() != 0)
 {
     @if (String.IsNullOrEmpty(Model.SearchString))
     {
+        // Partial view for normal pagination
         <partial name="RoomListPaginationPartial" for="Pagination" />
     }
     else
     {
+        // Partial view for pagination of search result
         <partial name="SearchListPaginationPartial" for="@Model" />
     }
-
 }
 else
 {
+    // Not found message
     <div class="text-center">
         <h1>Nothing found</h1>
     </div>
 }
 
-@if (ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)))
+<!--
+    Enable Add Room button for Admin users
+-->
+@if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
 {
     <div class="center-button">
         <a asp-action="AddRoom" asp-controller="RoomCRUD" class="btn btn-primary">Add Room</a>

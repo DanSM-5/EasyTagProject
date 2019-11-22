@@ -1,20 +1,31 @@
 ﻿@model RoomViewModel
+<!--
+    Partial View for pagination of Room page.
+    It allows to navigate appointments per day
+-->
 <div id="pagination" class="row">
     <div class="col align-content-center">
         <ul class="pagination justify-content-center">
+            <!--
+                Previos day    
+            -->
             <li class="page-item">
                 <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
                     <i class="fas fa-step-backward"></i>
                 </a>
             </li>
-
+            <!--
+                Current date of the system   
+            -->
             <li class="page-item">
                 <a asp-controller="Room" asp-action="Room"
                    asp-route-code="@Model.Room.RoomCode" asp-route-pdate="" class="page-link">
                     Today
                 </a>
             </li>
-
+            <!--
+                Next day    
+            -->
             <li class="page-item">
                 <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
                     <i class="fas fa-step-forward"></i>

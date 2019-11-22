@@ -2,11 +2,16 @@
 @{
     ViewData["Title"] = "Login";
 }
+<!--
+    Login page
+    Accessible for all visitors.
+-->
 
 <h2>Login</h2>
 <div asp-validation-summary="All" class="text-danger"></div>
 <form asp-action="Login" asp-controller="Account" method="post">
     <input type="hidden" asp-for="ReturnUrl" />
+    <input type="hidden" asp-for="UrlLength" />
     <div class="form-group">
         <label asp-for="Name"></label>
         <div><span asp-validation-for="Name" class="text-danger"></span></div>

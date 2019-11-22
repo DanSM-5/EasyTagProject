@@ -1,17 +1,26 @@
 ﻿@model RoomListPagination
+<!--
+    Partial view to include pagination for RoomList
+-->
 <div>
     <ul class="pagination justify-content-center">
-
+        <!--
+            Go to first page. Disabled if the current page is the first page.    
+        -->
         <li class="page-item @(!Model.ShowFirst? "disabled":"")">
             <a asp-action="RoomList" asp-controller="Room"
                asp-route-page="1" class="page-link"><i class="fas fa-fast-backward"></i></a>
         </li>
-
+        <!--
+            Go one page back. Disabled if the current page is the first page.    
+        -->
         <li class="page-item @(!Model.ShowPrevious? "disabled":"")">
             <a asp-action="RoomList" asp-controller="Room"
                asp-route-page="@(Model.CurrentPage -1)" class="page-link"><i class="fas fa-step-backward"></i></a>
         </li>
-
+        <!--
+            Display page number 2 positions previous. It appears only if it is possible to go back 2 pages.    
+        -->
         @if (Model.CurrentPage - 2 > 0)
         {
             <li class="page-item">
@@ -21,7 +30,9 @@
                 </a>
             </li>
         }
-
+        <!--
+            Display previous page number. It appears only if it is possible to go back 1 page.    
+        -->
         @if (Model.CurrentPage - 1 > 0)
         {
             <li class="page-item">
@@ -31,14 +42,18 @@
                 </a>
             </li>
         }
-
+        <!--
+            Display current page number.  
+        -->
         <li class="page-item active">
             <a asp-action="RoomList" asp-controller="Room"
                asp-route-page="@(Model.CurrentPage)" class="page-link">
                 @(Model.CurrentPage)
             </a>
         </li>
-
+        <!--
+            Display next page number. It appears only if it is possible to go forward 1 page.    
+        -->
         @if (Model.CurrentPage + 1 <= Model.TotalPages)
         {
             <li class="page-item">
@@ -48,7 +63,9 @@
                 </a>
             </li>
         }
-
+        <!--
+            Display page number 2 positions next. It appears only if it is possible to go forward 2 pages.    
+        -->
         @if (Model.CurrentPage + 2 <= Model.TotalPages)
         {
             <li class="page-item">
@@ -58,16 +75,19 @@
                 </a>
             </li>
         }
-
+        <!--
+            Go one page forward. Disabled if the current page is the last page.    
+        -->
         <li class="page-item  @(!Model.ShowNext? "disabled":"")">
             <a asp-action="RoomList" asp-controller="Room"
                asp-route-page="@(Model.CurrentPage + 1)" class="page-link"><i class="fas fa-step-forward"></i></a>
         </li>
-
+        <!--
+            Go to the last page. Disabled if the current page is the last page.    
+        -->
         <li class="page-item  @(!Model.ShowLast? "disabled":"")">
             <a asp-action="RoomList" asp-controller="Room"
                asp-route-page="@Model.TotalPages" class="page-link"><i class="fas fa-fast-forward"></i></a>
         </li>
-
     </ul>
 </div>

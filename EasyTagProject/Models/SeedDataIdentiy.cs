@@ -14,13 +14,13 @@ namespace EasyTagProject.Models
     {
         public static async void EnsurePopulated(IApplicationBuilder app)
         {
-
+            // Get context object for Identity Database and run the migrations scripts
             ETIdentityDbContext context = app.ApplicationServices.GetRequiredService<ETIdentityDbContext>();
             context.Database.Migrate();
 
+            // Executed is the identity database is empty
             if (!(context.UserRoles.Any() && context.Users.Any()))
             {
-
                 //Admin Data
                 string adminUser = "Admin";
                 string adminPass = "Secret@123";

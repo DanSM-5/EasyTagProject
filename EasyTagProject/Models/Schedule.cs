@@ -1,4 +1,5 @@
-﻿using System;
+﻿using FluentDate;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
@@ -7,6 +8,11 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
+    /*
+     * Model class for Schedule
+     * Contains a reference of the room that is attached to and a list of appointments
+     * for that room.
+     */
     public class Schedule
     {
         [Key]
@@ -17,14 +23,50 @@ namespace EasyTagProject.Models
         [NotMapped]
         public bool IsBusy => Appointments.Any(a => a.Start < DateTime.Now && a.End > DateTime.Now);
 
+        // Get the appointments in the date provided
+        public List<Appointment> GetAppointmentsInDate(DateTime start) =>
+            Appointments.Where(a => a.Start > start && a.Start < start.AddDays(1))
+                .OrderBy(a => a.Start)
+                .ToList();
 
-        public List<Appointment> GetAppointments(DateTime start)
-        {
-            var schedules = Appointments.Where(a => a.Start > start && a.Start < start.AddDays(1))
-                                    .OrderBy(a => a.Start)
-                                    .ToList();
+        public string GetOverlappingAppointmentUserName(DateTime time) => 
+            Appointments
+                .Where(a =>
+                    a.Start.Date == time.Date &&
+                    a.Start < (time + 30.Minutes()) && 
+                    a.End > time)
+                .FirstOrDefault()
+                .UserName;
 
-            return schedules;
-        }
+        public string GetOverlappingAppointmentUserId(DateTime time) =>
+            Appointments
+                .Where(a =>
+                    a.Start.Date == time.Date &&
+                    a.Start < (time + 30.Minutes()) &&
+                    a.End > time)
+                .FirstOrDefault()
+                .UserId;
+
+        public Appointment GetOverlappingAppointment(DateTime time) =>
+            Appointments
+                .Where(a =>
+                    a.Start.Date == time.Date &&
+                    a.Start < (time + 30.Minutes()) &&
+                    a.End > time)
+                .FirstOrDefault();
+
+        public List<Appointment> GetOverlappingAppointmentsList(DateTime time) =>
+            Appointments
+                .Where(a =>
+                    a.Start.Date == time.Date &&
+                    a.Start < (time + 30.Minutes()) &&
+                    a.End > time).ToList();
+
+        public bool IsOverlapingInDate(DateTime time) =>
+            Appointments
+                .Where(a => a.Start.Date == time.Date)
+                .Any(a => a.Start.TimeOfDay < (time.TimeOfDay + 30.Minutes()) && a.End.TimeOfDay > time.TimeOfDay);
+
+
     }
 }

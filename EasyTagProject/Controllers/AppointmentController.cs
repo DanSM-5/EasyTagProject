@@ -23,12 +23,12 @@ namespace EasyTagProject.Controllers
             roomRepository = rRepo;
         }
 
-        public IActionResult RedirectToAppointmentList(int id, DateTime date)
+        public async Task<IActionResult> RedirectToAppointmentList(int id, DateTime date)
         {
             return RedirectToAction(nameof(AppointmentList), nameof(Appointment), new { id = id, searchDate = date.ToString("MM-dd-yyyy")});
         }
 
-        public IActionResult RedirectToRoom(string code, DateTime pDate)
+        public async Task<IActionResult> RedirectToRoom(string code, DateTime pDate)
         {
             return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = pDate.ToString("MM-dd-yyyy") });
         }
@@ -40,7 +40,7 @@ namespace EasyTagProject.Controllers
             
             if (searchDate >= DateTime.Today)
             {
-                room.Schedule.Appointments = room.Schedule.GetAppointments(searchDate);
+                room.Schedule.Appointments = room.Schedule.GetAppointmentsInDate(searchDate);
 
                 return View(new AppointmentListViewModel { Room = room, Date = searchDate.Date + DateTime.Now.TimeOfDay }); 
             }

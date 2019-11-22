@@ -1,5 +1,10 @@
 ﻿@model CreateUserViewModel
 
+<!--
+    User fields for user registration
+    It includes: UserName, Email, Role, and PhoneNumber
+-->
+
 <div class="form-group">
     <div><span asp-validation-for="UserName" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="UserName"></label>
@@ -11,36 +16,36 @@
     <input asp-for="Email" class="form-control" />
 </div>
 <div class="form-group">
-    <div><span asp-validation-for="Role" class="text-danger validation-summary-errors"></span></div>
-    <label asp-for="Role"></label>
-    <select asp-for="Role" class="form-control">
-        <option value="" selected="selected">Select a role</option>
-        @foreach (var role in ((UserRoles[])Enum.GetValues(typeof(UserRoles))).OrderBy(r => r.ToString()))
-        {
-            <option value="@role">@role</option>
-        }
-    </select>
+    <div><span asp-validation-for="FirstName" class="text-danger validation-summary-errors"></span></div>
+    <label asp-for="FirstName"></label>
+    <input asp-for="FirstName" class="form-control" />
 </div>
+<div class="form-group">
+    <div><span asp-validation-for="LastName" class="text-danger validation-summary-errors"></span></div>
+    <label asp-for="LastName"></label>
+    <input asp-for="LastName" class="form-control" />
+</div>
+
+@if (ViewContext.IsUserInRool(UserRoles.Admin.ToString()))
+{
+    <div class="form-group">
+        <div><span asp-validation-for="Role" class="text-danger validation-summary-errors"></span></div>
+        <label asp-for="Role"></label>
+        <select asp-for="Role" class="form-control">
+            <option value="" selected="selected">Select a role</option>
+            @foreach (var role in ((UserRoles[])Enum.GetValues(typeof(UserRoles))).OrderBy(r => r.ToString()))
+            {
+                <option value="@role">@role</option>
+            }
+        </select>
+    </div>
+}
+else
+{
+    <input asp-for="Role" type="hidden">
+}
 <div class="form-group">
     <div><span asp-validation-for="PhoneNumber" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="PhoneNumber"></label>
     <input asp-for="PhoneNumber" class="form-control" />
 </div>
-@*@if (ViewBag.Title == "Edit User")
-{
-    <div class="form-group">
-        <div><span asp-validation-for="OldPassword"></span></div>
-        <label asp-for="OldPassword"></label>
-        <input asp-for="OldPassword" class="form-control" />
-    </div>
-}
-<div class="form-group">
-    <div><span asp-validation-for="Password"></span></div>
-    <label asp-for="Password">@(ViewBag.Title == "Edit User" ? "New Password" : "Password")</label>
-    <input asp-for="Password" class="form-control" />
-</div>
-<div class="form-group">
-    <div><span asp-validation-for="RepeatPass"></span></div>
-    <label asp-for="RepeatPass"></label>
-    <input asp-for="RepeatPass" class="form-control" />
-</div>*@

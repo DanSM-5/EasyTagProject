@@ -2,12 +2,15 @@
 @{
     ViewData["Title"] = "Create User";
 }
-
+<!--
+    Page for creating user accounts
+    Accessible Admin users only.
+-->
 <div><h1 class="text-center">New User</h1></div>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 <form asp-action="Create" asp-controller="Admin" method="post">
     <partial name="UserFieldsPartial" for="@Model" />
-    <partial name="UserPasswordInputPartial" for="@Model"/>
+    <partial name="UserPasswordInputPartial" for="@Model" />
     <div>
         <button type="submit" class="btn btn-primary">Create</button>
         <a asp-action="ManageUsers" asp-controller="Admin" class="btn btn-secondary">Cancel</a>

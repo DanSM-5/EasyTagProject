@@ -34,11 +34,11 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
                     <div class="navbar-nav">
-                        @if (ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)))
+                        @if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
                         {
                             <partial name="AdminUserNavPartial" />
                         }
-                        else if (ViewContext.HttpContext.User.IsInRole(nameof(UserRoles.Professor)))
+                        else if (ViewContext.IsUserInRool(nameof(UserRoles.Professor)))
                         {
                             <partial name="ProfessorUserNavPartial" />
                         }

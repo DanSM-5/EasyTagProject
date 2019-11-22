@@ -15,7 +15,6 @@ namespace EasyTagProject.Controllers
 
         public ViewResult AddAppointment(int roomId, string range)
         {
-
             return View();
         }
     }

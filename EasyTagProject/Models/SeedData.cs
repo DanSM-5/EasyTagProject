@@ -12,10 +12,11 @@ namespace EasyTagProject.Models
     {
         public static void EnsurePopulated(IApplicationBuilder app)
         {
+            // Gets the context object for EasyTagDb and runs the migration scripts
             ApplicationDbContext context = app.ApplicationServices.GetRequiredService<ApplicationDbContext>();
-
             context.Database.Migrate();
 
+            // Rxecuted only if the database is empty
             if (!context.Rooms.Any())
             {
                 //First room declaration

@@ -4,14 +4,16 @@ using EasyTagProject.Models.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace EasyTagProject.Migrations.ETIdentityDb
 {
     [DbContext(typeof(ETIdentityDbContext))]
-    partial class ETIdentityDbContextModelSnapshot : ModelSnapshot
+    [Migration("20191121235438_fullName")]
+    partial class fullName
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

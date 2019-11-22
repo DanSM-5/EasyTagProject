@@ -7,6 +7,9 @@ namespace EasyTagProject.Models
 {
     public interface IScheduleRepository
     {
+        /// <summary>
+        /// Returns the collection of schedules in database. Includes appoinments.
+        /// </summary>
         IQueryable<Schedule> Schedules{get;}
     }
 }

@@ -1,0 +1,14 @@
+﻿<!--
+    Partial view to include search appointments by date    
+-->
+
+<div>
+    <div class="text-center btn-container">
+        <form asp-action="FindRoomByDate" asp-controller="Room" method="post">
+            <input type="hidden" name="code" value="@Model.Room.RoomCode" />
+            <label for="pDate" class="input-group">Search day: </label>
+            <input type="date" class="input-group" name="pDate" value="" required />
+            <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+    </div>
+</div>

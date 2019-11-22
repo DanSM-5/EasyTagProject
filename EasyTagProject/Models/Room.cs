@@ -10,8 +10,14 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace EasyTagProject.Models
 {
-    public enum Type { Classroom, Office, Bathroom, LibraryRoom, ConferenceRoom, Gym, ComputerLab }
-    public enum Status { Empty, InClass, Closed}
+    // Enum that defines the types of room available
+    public enum Type { Classroom, Office, Bathroom, LibraryRoom, ConferenceRoom, Gym, ComputerLab, Workshop }
+    // Enum that defines the posible states of a Room
+    public enum Status { Empty, InClass, Closed }
+    
+    /*
+     * Model class for Room objects
+     */
     public class Room : IComparable<Room>
     {
         [Key]

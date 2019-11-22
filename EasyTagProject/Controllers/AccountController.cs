@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 using EasyTagProject.Models.Identity;
 using EasyTagProject.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -26,6 +27,8 @@ namespace EasyTagProject.Controllers
         [AllowAnonymous]
         public async Task<ViewResult> Login(string returnUrl)
         {
+            //var returnUrlOptions = returnUrl.Split("*****");
+            //return View(new LoginViewModel { ReturnUrl = returnUrlOptions[0], UrlLength = Convert.ToInt32(returnUrlOptions[1]) });
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -42,7 +45,13 @@ namespace EasyTagProject.Controllers
                 {
                     if ((await signInManager.PasswordSignInAsync(user, model.Password, false, false)).Succeeded)
                     {
-                        return Redirect(model?.ReturnUrl ?? "/");
+                        if (model.ReturnUrl == "/Account/AccessDenied" || String.IsNullOrEmpty(model.ReturnUrl))
+                        {
+                            return Redirect("/");
+                        }
+                        //return Redirect(model?.ReturnUrl ?? "/");
+                        //TempData["UrlLength"] = model.UrlLength;
+                        return RedirectToAction(nameof(ReturnToPage),new { returnUrl = model.ReturnUrl});
                     }
                 }
             }
@@ -51,14 +60,27 @@ namespace EasyTagProject.Controllers
             return View(model);
         }
 
+        public async Task<IActionResult> ReturnToPage(string returnUrl)
+        {
+            var url = HttpUtility.UrlDecode(returnUrl);
+            return Redirect(url);
+        }
+
         [HttpGet("{controller}/{action}/{returnUrl?}")]
         public async Task<RedirectResult> Logout(string returnUrl = "/")
         {
             await signInManager.SignOutAsync();
-            return Redirect(returnUrl);
+
+            if (String.IsNullOrEmpty(returnUrl))
+            {
+                return Redirect("/");
+            }
+
+            return Redirect(HttpUtility.UrlDecode(returnUrl));
         }
 
         [Authorize(Roles = nameof(UserRoles.Professor))]
-        public async Task<ViewResult> AccessDenied(string returnUrl) => View(nameof(AccessDenied), returnUrl);
+        public async Task<ViewResult> AccessDenied(string returnUrl) => 
+            View(nameof(AccessDenied), returnUrl);
     }
 }

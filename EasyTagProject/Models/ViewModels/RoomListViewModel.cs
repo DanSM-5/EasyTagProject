@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models.ViewModels
 {
+    // View Model to generate RoomList View
     public class RoomListViewModel
     {
         public IEnumerable<Room> Rooms { get; set; }

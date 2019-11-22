@@ -15,9 +15,11 @@ namespace EasyTagProject
         public static void Main(string[] args)
         {
             var host = CreateWebHostBuilder(args)
+                // Start
+                // Elements added to publish and run in ISS
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .UseIISIntegration()
-                
+                .UseIISIntegration()    
+                // End
                 .Build();
 
                 host.Run();
@@ -25,7 +27,7 @@ namespace EasyTagProject
 
         public static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
-                .UseDefaultServiceProvider(options => options.ValidateScopes = false)
+                .UseDefaultServiceProvider(options => options.ValidateScopes = false) // line added to support EF Core
                 .UseStartup<Startup>();
     }
 }

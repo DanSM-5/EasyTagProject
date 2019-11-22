@@ -7,11 +7,9 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models.Identity
 {
+    // Class that allows the connection to IdentityUsersEasyTag database
     public class ETIdentityDbContext: IdentityDbContext<EasyTagUser>
     {
-        public ETIdentityDbContext(DbContextOptions<ETIdentityDbContext> options): base(options)
-        {
-
-        }
+        public ETIdentityDbContext(DbContextOptions<ETIdentityDbContext> options): base(options){}
     }
 }

@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using EasyTagProject.Infrastructure;
 using EasyTagProject.Models;
+using EasyTagProject.Models.Identity;
 using FluentDate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -18,22 +21,25 @@ namespace EasyTagProject.Controllers
     {
         private IAppointmentRepository appointmentRopository;
         private IRoomRepository roomRepository;
+        private UserManager<EasyTagUser> userManager;
+        private IHttpContextAccessor ViewContext { get; }
 
-        public IHttpContextAccessor ViewContext { get; }
-
-        public AppointmentCRUDController(IRoomRepository rRepo, IAppointmentRepository aRepo, IHttpContextAccessor httpContext)
+        public AppointmentCRUDController(IRoomRepository rRepo, IAppointmentRepository aRepo, IHttpContextAccessor httpContext, UserManager<EasyTagUser> manager)
         {
             roomRepository = rRepo;
             appointmentRopository = aRepo;
             ViewContext = httpContext;
+            userManager = manager;
         }
 
         [HttpGet("{action}/{code}/{roomId}/{selectedTime}")]
-        public IActionResult AddAppointment(string code, int roomId, int scheduleId, DateTime selectedTime)
+        public async Task<IActionResult> AddAppointment(string code, int roomId, int scheduleId, DateTime selectedTime)
         {
             if (selectedTime.Date.Date > DateTime.Today || (selectedTime.Date == DateTime.Today.Date && DateTime.Now.TimeOfDay < (DateTime.Today + 22.5.Hours()).TimeOfDay))
             {
-                return View(new Appointment { RoomCode = code, RoomId = roomId, ScheduleId = scheduleId, Start = selectedTime, End = selectedTime + 30.Minutes() });
+                // Find logged user and add the name as default for an appointmnt
+                EasyTagUser tagUser = await userManager.FindByNameAsync(ViewContext.HttpContext.GetLoggedUserName());
+                return View(new Appointment { UserName = tagUser.FullName, RoomCode = code, RoomId = roomId, ScheduleId = scheduleId, Start = selectedTime, End = selectedTime + 30.Minutes() });
             }
 
             return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = selectedTime.ToString("MM-dd-yyyy") });

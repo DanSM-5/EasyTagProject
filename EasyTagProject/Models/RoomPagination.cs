@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models
 {
+    /*
+     * Model class for pagination of Room page
+     */
     public class RoomPagination
     {
         public DateTime Yesterday => CurrentDate.AddDays(-1);

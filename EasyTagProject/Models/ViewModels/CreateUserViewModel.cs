@@ -8,11 +8,16 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models.ViewModels
 {
+    // ViewModel to generate Create View
     public class CreateUserViewModel
     {
         public bool? Editing { get; set; } = false;
         [Required]
         public string UserName { get; set; }
+        [Required]
+        public string FirstName { get; set; }
+        [Required]
+        public string LastName { get; set; }
         [Required]
         public string Email { get; set; }
         [Required]
