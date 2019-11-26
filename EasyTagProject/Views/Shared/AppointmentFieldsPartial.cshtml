@@ -7,28 +7,37 @@
 <input asp-for="ScheduleId" type="hidden" />
 <div class="form-group">
     <div><span asp-validation-for="UserName" class="text-danger validation-summary-errors"></span></div>
-    <label asp-for="UserName" class="form-control"></label>
+    <label asp-for="UserName" class="form-text"></label>
     <input asp-for="UserName" class="form-control"/>
 </div>
-<div class="form-group">
-    <div><span asp-validation-for="Start" class="text-danger validation-summary-errors"></span></div>
-    <label asp-for="Start" class="form-control"></label>
-    <!--
-        Adds only current or future hours available for selection
-    -->
-    <select asp-for="Start" class="form-control">
-        @for (DateTime timeOption = DateTime.Today.AddHours(8.5); timeOption.TimeOfDay <= (DateTime.Today + 22.Hours()).TimeOfDay; timeOption += 30.Minutes())
-        {
-            if (Model.Start.Date > DateTime.Today.Date || (Model.Start.Date == DateTime.Today.Date && timeOption.TimeOfDay >= DateTime.Now.TimeOfDay))
+
+@if (Model.Start > DateTime.Now || Model.Id == 0)
+{
+    <div class="form-group">
+        <div><span asp-validation-for="Start" class="text-danger validation-summary-errors"></span></div>
+        <label asp-for="Start" class="form-text"></label>
+        <!--
+            Adds only current or future hours available for selection
+        -->
+        <select asp-for="Start" class="form-control">
+            @for (DateTime timeOption = DateTime.Today.AddHours(8.5); timeOption.TimeOfDay <= (DateTime.Today + 22.Hours()).TimeOfDay; timeOption += 30.Minutes())
             {
-                <option value="@(Model.Start.Date + timeOption.TimeOfDay)">@timeOption.ToShortTimeString()</option>
+                if (Model.Start.Date > DateTime.Today.Date || (Model.Start.Date == DateTime.Today.Date && timeOption.TimeOfDay >= DateTime.Now.TimeOfDay))
+                {
+                    <option value="@(Model.Start.Date + timeOption.TimeOfDay)">@timeOption.ToShortTimeString()</option>
+                }
             }
-        }
-    </select>
-</div>
+        </select>
+    </div>
+}
+else
+{
+    <input asp-for="Start" type="hidden"/>
+}
+
 <div class="form-group">
     <div><span asp-validation-for="End" class="text-danger validation-summary-errors"></span></div>
-    <label asp-for="End" class="form-control"></label>
+    <label asp-for="End" class="form-text"></label>
     <!--
         Adds only current or future hours available for selection
     -->
@@ -44,11 +53,11 @@
 </div>
 <div class="form-group">
     <div><span asp-validation-for="Course" class="text-danger validation-summary-errors"></span></div>
-    <label asp-for="Course" class="form-control"></label>
+    <label asp-for="Course" class="form-text"></label>
     <input asp-for="Course" class="form-control" />
 </div>
 <div class="form-group">
     <div><span asp-validation-for="Description" class="text-danger validation-summary-errors"></span></div>
-    <label asp-for="Description" class="form-control"></label>
+    <label asp-for="Description" class="form-text"></label>
     <input asp-for="Description" class="form-control" />
 </div>

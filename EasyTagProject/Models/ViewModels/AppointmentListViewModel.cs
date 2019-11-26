@@ -12,5 +12,6 @@ namespace EasyTagProject.Models.ViewModels
         public DateTime EndRange { get; set; } = DateTime.Parse("22:30:00");
         public DateTime Date { get; set; }
         public Room Room { get; set; }
+        public Appointment OverlappedAppointment { get; set; }
     }
 }

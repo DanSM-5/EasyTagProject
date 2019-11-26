@@ -16,10 +16,10 @@
         <th>Status</th>
     </tr>
 
-    <!--
+    @*
         Create all the posible blocks of 30 minutes in the range "StartRange = 8:30 AM"
         to "EndRange" = 10:30 PM
-    -->
+    *@
     @for (; Model.StartRange.TimeOfDay < Model.EndRange.TimeOfDay; Model.StartRange += 30.Minutes())
     {
         // If the time of the appointment is in the past, it won't be diplayed
@@ -29,30 +29,30 @@
         }
         else
         {
-            <tr>
-                <!-- Time of the block -->
-                <td>
-                    @Model.StartRange.ToShortTimeString()
-                </td>
-                <!-- 
-                    Verifies if there is any appointment in the current block of time
+            /*
+                Verifies if there is any appointment in the current block of time
 
-                    If it overlaps an appointment, add a Busy message
-
-                    Old Logic
-                    ((Model.Room.Schedule.Appointments.Any(a => a.Start.TimeOfDay < (Model.StartRange.TimeOfDay + 30.Minutes()) && a.End.TimeOfDay > Model.StartRange.TimeOfDay)))
-                -->
-                @if (Model.Room.Schedule.IsOverlapingInDate(Model.Date.Date + Model.StartRange.TimeOfDay))
+                If it overlaps an appointment, add a Busy message
+            */
+            @if (Model.Room.Schedule.IsOverlapingInDate(Model.Date.Date + Model.StartRange.TimeOfDay))
+            {
+                // Find overlapping appointment
+                using (var app = Model.Room.Schedule.GetOverlappingAppointment(Model.Date.Date + Model.StartRange.TimeOfDay))
                 {
-                    // Find overlapping appointment
-                    using (var app = Model.Room.Schedule.GetOverlappingAppointment(Model.Date.Date + Model.StartRange.TimeOfDay))
+                    if (app.Id != (Model.OverlappedAppointment?.Id ?? 0))
                     {
-                        // the current logged user can edit this appointment?
-                        if (ViewContext.IsAccessibleForUser(app.UserId))
+                        <tr>
+                            @*Time of the block*@
+                            <td>
+                                @Model.StartRange.ToShortTimeString()
+                            </td>
+                        @* the current logged user can edit this appointment?*@
+                        @if(ViewContext.IsAccessibleForUser(app.UserId))
                         {
+
                             <td>
                                 <div class="d-flex">
-                                    <p class="mr-auto">Your appointment for @app.Description</p>
+                                    <p class="mr-auto">Your appointment for &quot;@app.Description&quot;</p>
                                     <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
                                        asp-route-code="@Model.Room.RoomCode"
                                        asp-route-id="@app.Id">
@@ -73,7 +73,7 @@
                         {
                             <td>
                                 <div class="d-flex">
-                                    <p>Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)</p>
+                                    <p class="mr-auto">Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)</p>
                                     <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
                                        asp-route-code="@Model.Room.RoomCode"
                                        asp-route-id="@app.Id">
@@ -95,43 +95,42 @@
                                 Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)
                             </td>
                         }
-                    }
 
-                }
-                else
-                {
-                    <!--
-                        Verifies it the current block of time is available or if it is already in the past    
-                    -->
-                    if (Model.Date.Date > DateTime.Now.Date || (Model.Date.Date == DateTime.Now.Date && Model.StartRange.TimeOfDay >= DateTime.Now.TimeOfDay))
-                    {
-                        <td>
-                            <div class="">
-                                <a asp-action="AddAppointment" asp-controller="AppointmentCRUD"
-                                   asp-route-code="@Model.Room.RoomCode"
-                                   asp-route-roomId="@Model.Room.Id"
-                                   asp-route-selectedTime="@((Model.Date.Date + Model.StartRange.TimeOfDay).ToString("MM-dd-yyyy H:mm"))">
-                                    Free
-                                </a>
-                            </div>
-                        </td>
-                    }
-                    else
-                    {
-                        // EmptyBlock in the past is now catched first
-                        <!-- Past hours are not eligible -->
-                        <td>
-                            Free
-                        </td>
+                        </tr>
+                        Model.OverlappedAppointment = app;
                     }
                 }
 
-            </tr>
+            }
+            else
+            {
+                ///*
+                //    Verifies it the current block of time is available or if it is already in the past
+                //*/
+                //if (Model.Date.Date > DateTime.Now.Date || (Model.Date.Date == DateTime.Now.Date && Model.StartRange.TimeOfDay >= DateTime.Now.TimeOfDay))
+                //{
+                <tr>
+                    @*Time of the block*@
+                    <td>
+                        @Model.StartRange.ToShortTimeString()
+                    </td>
+                    <td class="h-100">
+                        <div class="text-center h-100 d-block">
+                            <a asp-action="AddAppointment" asp-controller="AppointmentCRUD"
+                               asp-route-code="@Model.Room.RoomCode"
+                               asp-route-roomId="@Model.Room.Id"
+                               asp-route-selectedTime="@((Model.Date.Date + Model.StartRange.TimeOfDay).ToString("MM-dd-yyyy H:mm"))">
+                                Free
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            }
         }
     }
 </table>
 
-<!-- Go back to room page -->
+@* Go back to room page *@
 <div>
     <a class="btn btn-warning" 
        asp-action="Room" 

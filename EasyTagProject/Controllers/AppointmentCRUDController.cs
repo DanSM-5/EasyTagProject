@@ -48,6 +48,7 @@ namespace EasyTagProject.Controllers
         [HttpPost("{action}/{code}/{roomId}/{selectedTime}")]
         public async Task<IActionResult> AddAppointment(Appointment appointment)
         {
+            appointment.Id = 0;
             await ValidateAppointmentAsync(appointment);
 
             if (ModelState.IsValid)
@@ -62,16 +63,25 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpGet("{action}/{code}/{id}")]
-        public async Task<ViewResult> EditAppointment(string code, int id)
+        public async Task<IActionResult> EditAppointment(string code, int id)
         {
             Appointment app = await appointmentRopository.Appointments.FirstOrDefaultAsync(a => a.Id == id);
-            app.RoomCode = code;
-            return View(app);
+            if (app != null)
+            {
+                app.RoomCode = code;
+                return View(app);
+            }
+
+            return Redirect("/");
         }
 
         [HttpPost("{action}/{code}/{id}")]
         public async Task<IActionResult> EditAppointment(Appointment appointment)
         {
+            if (!(appointmentRopository.Appointments.Any(a => a.Id == appointment.Id)))
+            {
+                return Redirect("/");
+            }
             await ValidateAppointmentAsync(appointment);
 
             if (ModelState.IsValid)
@@ -87,16 +97,36 @@ namespace EasyTagProject.Controllers
         private async Task ValidateAppointmentAsync(Appointment appointment)
         {
             //  Start task to get appointments from the same room and in the same date
-            var getAppointments = appointmentRopository.Appointments.Where(a => a.Start.Date == appointment.Start.Date && a.RoomId == appointment.RoomId).ToListAsync();
+            var getAppointments = appointmentRopository.Appointments
+                                    .Where(a => 
+                                        a.Start.Date == appointment.Start.Date 
+                                        && a.RoomId == appointment.RoomId 
+                                        || a.Id == appointment.Id) // Check this later
+                                    .ToListAsync();
             
             if (appointment.Start > appointment.End)
             {
                 ModelState.AddModelError("", "Start time must be before end time");
             }
 
-            if (appointment.Start < DateTime.Today.AddDays(-1))
+            if(appointment.Start == appointment.End)
+            {
+                ModelState.AddModelError("", "Start must be different than end time");
+            }
+
+            if (appointment.Start < DateTime.Today)
             {
                 ModelState.AddModelError("", "The appointment cannot be created in the past");
+            }
+
+            if (appointment.Start < DateTime.Now && appointment.Id == 0)
+            {
+                ModelState.AddModelError("", "The appointment cannot be created in the past");
+            }
+
+            if (appointment.Start.Date != appointment.End.Date)
+            {
+                ModelState.AddModelError("", "The appointment must be created in the same day");
             }
 
             //  Identify if any apointment overlaps
@@ -104,12 +134,28 @@ namespace EasyTagProject.Controllers
 
             List<Appointment> appointments = await getAppointments;
             
-            //  Remove the appointment being validating 
-            //  from the list of appointments
-            //  if it is not a new appointment
+            // Validate that the appointment being eddited 
+            // is not in the past and belongs to the same user or is an admin
             if (appointments.Any(a => a.Id == appointment.Id))
             {
-                appointments.Remove(appointments.Single(a => a.Id == appointment.Id));
+                var app = appointments.Single(a => a.Id == appointment.Id);
+                appointments.Remove(app);
+
+                if (app.Start < DateTime.Today)
+                {
+                    ModelState.AddModelError("", "You cannot edit an appointment in the past!");
+                }
+
+                if (!(ViewContext.HttpContext.IsAccessibleForUserOrAdmin(app.UserId)))
+                {
+                    ModelState.AddModelError("", "You do not have the rights to edit this appointment");
+                }
+
+                // Start date cannot be moved to the past
+                if (app.Start < DateTime.Now && app.Start != appointment.Start)
+                {
+                    appointment.Start = app.Start;
+                }
             }
 
             //  Verify if the appoinment overlaps another
@@ -117,7 +163,7 @@ namespace EasyTagProject.Controllers
                                  && appointment.Start.TimeOfDay < a.End.TimeOfDay))
             {
                 ModelState.AddModelError("", "The time you selected is already busy!");
-            } 
+            }
             #endregion
         }
 

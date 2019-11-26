@@ -27,9 +27,32 @@ namespace EasyTagProject.Infrastructure
             {
                 return false;
             }
+            if (String.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
 
             return viewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == userId ||
                 viewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin));
+        }
+
+        public static bool IsAccessibleForUserOrAdmin(this HttpContext httpContext, string userId)
+        {
+            if (httpContext.User == null)
+            {
+                return false;
+            }
+            if (httpContext.User.FindFirst(ClaimTypes.NameIdentifier) == null)
+            {
+                return false;
+            }
+            if (String.IsNullOrEmpty(userId))
+            {
+                return false;
+            }
+
+            return httpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == userId ||
+                httpContext.User.IsInRole(nameof(UserRoles.Admin));
         }
 
         /// <summary>

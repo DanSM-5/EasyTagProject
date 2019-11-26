@@ -22,6 +22,7 @@ namespace EasyTagProject.Models
         public DateTime End { get; set; }
         [Required]
         public string Course { get; set; }
+        [Required]
         public string Description { get; set; }
         public int ScheduleId { get; set; }
         public int RoomId { get; set; }
@@ -37,6 +38,6 @@ namespace EasyTagProject.Models
             return Start.CompareTo(other.Start);
         }
 
-        public void Dispose(){        }
+        public void Dispose(){}
     }
 }
