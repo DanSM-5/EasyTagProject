@@ -12,8 +12,7 @@ namespace EasyTagProject.Models
         public EFRoomRepository(ApplicationDbContext ctx) => context = ctx;
         public IQueryable<Room> Rooms => context.Rooms
             .Include(r => r.Schedule)
-                .ThenInclude(s => s.Appointments)
-            .Include(r => r.Items);
+                .ThenInclude(s => s.Appointments);
 
 
         public async Task SaveAsync(Room room)

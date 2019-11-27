@@ -14,12 +14,10 @@ namespace EasyTagProject.Controllers
     [Authorize(Roles = "Admin,Professor")]
     public class AppointmentController : Controller
     {
-        private IAppointmentRepository appointmentRopository;
         private IRoomRepository roomRepository;
 
-        public AppointmentController(IAppointmentRepository aRepo, IRoomRepository rRepo) 
+        public AppointmentController(IRoomRepository rRepo) 
         { 
-            appointmentRopository = aRepo;
             roomRepository = rRepo;
         }
 

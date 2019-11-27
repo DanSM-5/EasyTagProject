@@ -19,55 +19,140 @@ namespace EasyTagProject.Models
             // Rxecuted only if the database is empty
             if (!context.Rooms.Any())
             {
-                //First room declaration
-                Room room = new Room
-                {
-                    Block = 'A',
-                    Floor = 3,
-                    RoomCode = "A3-13",
-                    Number = 13,
-                    Type = Type.Classroom,
-                    Schedule = new Schedule
+                context.Rooms.AddRange(
+                    new Room {
+                        Block = 'A',
+                        Floor = 3,
+                        RoomCode = "A3-13",
+                        Number = 13,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
                     {
-                        Appointments = new List<Appointment>()
-                    }
-                };
-
-                Appointment appointment1 = new Appointment
-                {
-                    Course = "COMP334",
-                    UserName = "Paulo",
-                    Start = DateTime.ParseExact("2019-11-05 12:30 PM", "yyyy-MM-dd HH:mm tt", null),
-                    End = DateTime.ParseExact("2019-11-05 14:30 PM", "yyyy-MM-dd HH:mm tt", null),
-                    Description = "Scheduled class of Programming 4"
-                };
-
-                Appointment appointment2 = new Appointment
-                {
-                    Course = "COMP229",
-                    UserName = "Andre",
-                    Start = DateTime.ParseExact("2019-11-05 18:30 PM", "yyyy-MM-dd HH:mm tt", null),
-                    End = DateTime.ParseExact("2019-11-05 21:30 PM", "yyyy-MM-dd HH:mm tt", null),
-                    Description = "Scheduled class of Advance Web Development"
-                };
-
-                room.Schedule.Room = room;
-                room.Schedule.Appointments.Add(appointment1);
-                room.Schedule.Appointments.Add(appointment2);
-
-                //Second room declaration
-                Room secondRoom = new Room {
-                    Block = 'B',
-                    Floor = 2,
-                    RoomCode = "A2-17",
-                    Number = 17,
-                    Type = Type.Classroom,
-                    Schedule = new Schedule()
-                };
-                secondRoom.Schedule.Room = secondRoom;
-
-                context.AttachRange(room.Schedule.Appointments.Select(a => a));
-                context.Rooms.AddRange(room, secondRoom);
+                        Block = 'B',
+                        Floor = 2,
+                        RoomCode = "B2-17",
+                        Number = 17,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room {
+                        Block = 'C',
+                        Floor = 2,
+                        RoomCode = "C2-17",
+                        Number = 17,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'A',
+                        Floor = 3,
+                        RoomCode = "A3-15",
+                        Number = 15,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'A',
+                        Floor = 3,
+                        RoomCode = "A3-17",
+                        Number = 17,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'D',
+                        Floor = 2,
+                        RoomCode = "D2-17",
+                        Number = 17,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'A',
+                        Floor = 2,
+                        RoomCode = "A2-12",
+                        Number = 12,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'A',
+                        Floor = 1,
+                        RoomCode = "A1-17",
+                        Number = 17,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'C',
+                        Floor = 3,
+                        RoomCode = "C3-05",
+                        Number = 5,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'C',
+                        Floor = 3,
+                        RoomCode = "C3-04",
+                        Number = 4,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'E',
+                        Floor = 2,
+                        RoomCode = "E2-11",
+                        Number = 11,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'B',
+                        Floor = 1,
+                        RoomCode = "B1-10",
+                        Number = 10,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'D',
+                        Floor = 3,
+                        RoomCode = "D3-11",
+                        Number = 11,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'E',
+                        Floor = 2,
+                        RoomCode = "E2-09",
+                        Number = 9,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    },
+                    new Room
+                    {
+                        Block = 'E',
+                        Floor = 1,
+                        RoomCode = "E1-02",
+                        Number = 2,
+                        Type = Type.Classroom,
+                        Schedule = new Schedule()
+                    });
                 context.SaveChanges();
             }
         }

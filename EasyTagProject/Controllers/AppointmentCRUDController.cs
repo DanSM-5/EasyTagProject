@@ -20,13 +20,12 @@ namespace EasyTagProject.Controllers
     public class AppointmentCRUDController : Controller
     {
         private IAppointmentRepository appointmentRopository;
-        private IRoomRepository roomRepository;
         private UserManager<EasyTagUser> userManager;
         private IHttpContextAccessor ViewContext { get; }
 
-        public AppointmentCRUDController(IRoomRepository rRepo, IAppointmentRepository aRepo, IHttpContextAccessor httpContext, UserManager<EasyTagUser> manager)
+        public AppointmentCRUDController(IAppointmentRepository aRepo, IHttpContextAccessor httpContext, UserManager<EasyTagUser> manager)
         {
-            roomRepository = rRepo;
+
             appointmentRopository = aRepo;
             ViewContext = httpContext;
             userManager = manager;
