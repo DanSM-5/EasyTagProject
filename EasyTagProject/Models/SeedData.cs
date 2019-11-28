@@ -16,7 +16,7 @@ namespace EasyTagProject.Models
             ApplicationDbContext context = app.ApplicationServices.GetRequiredService<ApplicationDbContext>();
             context.Database.Migrate();
 
-            // Rxecuted only if the database is empty
+            // Executed only if the database is empty
             if (!context.Rooms.Any())
             {
                 context.Rooms.AddRange(

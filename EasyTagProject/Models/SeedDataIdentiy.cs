@@ -66,7 +66,9 @@ namespace EasyTagProject.Models
                     { 
                         Role = UserRoles.Admin,
                         Email = "admin@admin.com",
-                        PhoneNumber = "1111111111"
+                        PhoneNumber = "1111111111",
+                        FirstName = "Admin",
+                        LastName = "Root"
                     };
                     await userManager.CreateAsync(admin, adminPass);
                     await userManager.AddToRoleAsync(admin, adminRoleName);
@@ -88,7 +90,9 @@ namespace EasyTagProject.Models
                     { 
                         Role = UserRoles.Professor,
                         Email = "andreTeacher@mail.com",
-                        PhoneNumber = "123456790"
+                        PhoneNumber = "123456790",
+                        FirstName = "Andre",
+                        LastName = "Ribeiro"
                     };
                     await userManager.CreateAsync(professor, profPass);
                     await userManager.AddToRoleAsync(professor, professorRoleName);
