@@ -107,13 +107,13 @@ namespace EasyTagProject
                 );
             });
 
-            if (env.IsDevelopment())
-            {
+            //if (env.IsDevelopment())
+            //{
                 // Creates EasyTagDB if it does not exist and adds default information
                 SeedData.EnsurePopulated(app);
                 // Creates IdentityUsersEasyTag database if it does not exist and adds default users and roles
                 SeedDataIdentiy.EnsurePopulated(app);
-            }
+            //}
         }
     }
 }

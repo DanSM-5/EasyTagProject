@@ -25,10 +25,17 @@ namespace EasyTagProject.Controllers
 
         [HttpGet("{controller}/{action}/{returnUrl?}")]
         [AllowAnonymous]
-        public async Task<ViewResult> Login(string returnUrl)
+        public async Task<IActionResult> Login(string returnUrl = "/")
         {
-            //var returnUrlOptions = returnUrl.Split("*****");
-            //return View(new LoginViewModel { ReturnUrl = returnUrlOptions[0], UrlLength = Convert.ToInt32(returnUrlOptions[1]) });
+            if (returnUrl.Contains("Login"))
+            {
+                returnUrl = "/";
+            }
+            if (String.IsNullOrEmpty(returnUrl))
+            {
+                returnUrl = "/";
+            }
+
             return View(new LoginViewModel { ReturnUrl = returnUrl });
         }
 
@@ -41,16 +48,21 @@ namespace EasyTagProject.Controllers
             {
                 EasyTagUser user = await userManager.FindByNameAsync(model.Name);
 
+                if (user == null)
+                {
+                    user = await userManager.FindByEmailAsync(model.Name);
+                }
+
                 if (user != null)
                 {
                     if ((await signInManager.PasswordSignInAsync(user, model.Password, false, false)).Succeeded)
                     {
-                        if (model.ReturnUrl == "/Account/AccessDenied" || String.IsNullOrEmpty(model.ReturnUrl))
+                        if (model.ReturnUrl == "/Account/AccessDenied" || String.IsNullOrEmpty(model.ReturnUrl)
+                            || model.ReturnUrl.Contains("Login"))
                         {
                             return Redirect("/");
                         }
-                        //return Redirect(model?.ReturnUrl ?? "/");
-                        //TempData["UrlLength"] = model.UrlLength;
+
                         return RedirectToAction(nameof(ReturnToPage),new { returnUrl = model.ReturnUrl});
                     }
                 }

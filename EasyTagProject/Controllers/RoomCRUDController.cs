@@ -20,18 +20,20 @@ namespace EasyTagProject.Controllers
             roomRepository = repo;
         }
 
-        [HttpGet("{action}")]//("{controller}/{action}")]
+        [HttpGet("{action}")]
         public ViewResult AddRoom()
         {
             ViewData["Title"] = "Add Room";
             return View(new Room());
         }
 
-        [HttpPost("{action}")]//("{controller}/{action}")]
+        [HttpPost("{action}")]
         public async Task<IActionResult> AddRoom(Room room)
         {
             Task<bool> isRepeatedLocation;
 
+            // Check if a new room already exists with the same location
+            // or if an update conflicts with an existing location
             if (room.Id != 0)
             {
                 isRepeatedLocation = roomRepository.Rooms.AnyAsync(r =>
@@ -45,7 +47,7 @@ namespace EasyTagProject.Controllers
             }
             
 
-            if (room.Floor > 4)
+            if (room.Floor > 4 || room.Floor < 1)
             {
                 ModelState.AddModelError("Floor", "Floor does not exist");
             }

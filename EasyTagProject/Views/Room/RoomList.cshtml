@@ -2,18 +2,18 @@
 @{
     ViewData["Title"] = "Room List";
 }
-<!--
+@*
     Page that displays the list of rooms or the ones filtered by search
     Accessible for all visitors
--->
+*@
 <div class="row">
     <div class="col">
         <h1>Rooms</h1>
     </div>
 
-    <!--
+    @*
         Adds search fucntionality to filter the list of rooms
-    -->
+    *@
     <div class="col">
         <form asp-controller="Room" asp-action="SearchList"
               asp-route-page="1" asp-route-searchString="" method="get">
@@ -24,10 +24,9 @@
         </form>
     </div>
 </div>
-
-<!--
+@*
     The following loop creates a div per room to be displayed
--->
+*@
 @foreach (Room room in Model.Rooms)
 {
     <div class="form-group border-room col">
@@ -61,8 +60,7 @@
                             </form>
                         }
                     </div>
-                    @if (ViewContext.IsUserInRool(UserRoles.Admin.ToString()) ||
-                        ViewContext.IsUserInRool(UserRoles.Professor.ToString()))
+                    @if (ViewContext.IsUserInRool(UserRoles.Admin.ToString()))
                     {
                         <div class="col">
                             <a class="btn btn-primary" asp-action="RoomTag" asp-controller="Room" asp-route-code="@room.RoomCode">Get QR code</a>
@@ -74,10 +72,10 @@
     </div>
 }
 
-<!--
+@*
     Include the pagination for the page or
     add message if there is no room found
--->
+*@
 @if (Model.Rooms.Count() != 0)
 {
     @if (String.IsNullOrEmpty(Model.SearchString))
@@ -99,9 +97,9 @@ else
     </div>
 }
 
-<!--
+@*
     Enable Add Room button for Admin users
--->
+*@
 @if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
 {
     <div class="center-button">

@@ -2,16 +2,15 @@
 @{
     ViewData["Title"] = Model.Room.Name;
 }
-<!--
+@*
     Page that displays appointments of the room
     Accessible for all visitors
 
     Some functionality of the page requires authentication.
--->
-
-<!--
+*@
+@*
     Display Room Information
--->
+*@
 <h1 class="text-center">@Model.Room.Name</h1>
 <div class="row">
     <div class="col text-center">Block</div>
@@ -35,9 +34,9 @@
 </div>
 
 <hr />
-<!--
+@*
     Display date of results
--->
+*@
 @if (@Model.Pagination.CurrentDate == DateTime.Today)
 {
     <div class="text-center mt-3">
@@ -51,14 +50,14 @@ else
     </div>
 }
 
-<!--
+@*
     Include pagination for room
--->
+*@
 <partial name="RoomPaginationPartial" for="@Model" />
 
-<!--
+@*
     Create table to display daily appointments
--->
+*@
 <div>
     <table class="table table-active table-hover">
         <thead>
@@ -74,8 +73,8 @@ else
                 @foreach (var app in Model.Room.Schedule.Appointments)
                 {
                     <tr id="@app.Id-header" class="appointment">
-                        @if (app.Start.Date >= DateTime.Now.Date && 
-                            ViewContext.IsAccessibleForUserOrAdmin(app.UserId))
+                        @if (app.Start.Date >= DateTime.Now.Date &&
+                   ViewContext.IsAccessibleForUserOrAdmin(app.UserId))
                         {
                             <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
                             <td>@app.Course</td>
@@ -118,10 +117,10 @@ else
     </table>
 </div>
 
-<!--
+@*
     Determines if the searched date is not in the past
     to enable user to add new appointments
--->
+*@
 @if (Model.Pagination.CurrentDate >= DateTime.Today)
 {
     // Verifies that only Admin and professors can add appointments
@@ -139,17 +138,17 @@ else
     }
 }
 
-<!--
+@*
     Include pagination for room
--->
+*@
 <partial name="RoomPaginationPartial" for="@Model" />
 
-<!--
+@*
     Include search appointments for specific date
--->
+*@
 <partial name="RoomFindByDatePartial" />
 
-<!--
+@*
     javascript file for fade in/out animations
--->
+*@
 <script defer src="~/js/room.js" asp-append-version="true"></script>

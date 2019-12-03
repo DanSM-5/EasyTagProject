@@ -90,11 +90,12 @@ namespace EasyTagProject.Controllers
         [HttpGet("{action}/{page=1}/{searchString?}")]
         public async Task<IActionResult> SearchList(string searchString, int page)
         {
+            // verify that page can't be negative
             if (page == 0)
             {
                 return RedirectToAction(nameof(RoomList));
             }
-
+            // verify that there is criteria for search
             if (String.IsNullOrEmpty(searchString))
             {
                 return RedirectToAction(nameof(RoomList));

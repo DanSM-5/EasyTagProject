@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EasyTagProject.Infrastructure
 {
@@ -13,9 +14,18 @@ namespace EasyTagProject.Infrastructure
         /// </summary>
         /// <param name="request">Extended object</param>
         /// <returns></returns>
-        public static string PathAndQuery(this HttpRequest request) =>
-            request.QueryString.HasValue
-            ? $"{request.Path}{request.QueryString}"
-            : request.Path.ToString();
+        public static string PathAndQuery(this HttpRequest request)
+        {
+            string url = request.QueryString.HasValue
+                            ? $"{request.Path}{request.QueryString}"
+                            : request.Path.ToString();
+
+            if (url.Contains("Login"))
+            {
+                url = "/";
+            }
+
+            return url;
+        }
     }
 }

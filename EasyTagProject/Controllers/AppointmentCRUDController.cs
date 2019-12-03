@@ -25,7 +25,6 @@ namespace EasyTagProject.Controllers
 
         public AppointmentCRUDController(IAppointmentRepository aRepo, IHttpContextAccessor httpContext, UserManager<EasyTagUser> manager)
         {
-
             appointmentRopository = aRepo;
             ViewContext = httpContext;
             userManager = manager;
@@ -34,7 +33,10 @@ namespace EasyTagProject.Controllers
         [HttpGet("{action}/{code}/{roomId}/{selectedTime}")]
         public async Task<IActionResult> AddAppointment(string code, int roomId, int scheduleId, DateTime selectedTime)
         {
-            if (selectedTime.Date.Date > DateTime.Today || (selectedTime.Date == DateTime.Today.Date && DateTime.Now.TimeOfDay < (DateTime.Today + 22.5.Hours()).TimeOfDay))
+            // Protection to avoid add appointments out of the time range
+            if (selectedTime.Date.Date > DateTime.Today 
+                || (selectedTime.Date == DateTime.Today.Date && 
+                    DateTime.Now.TimeOfDay < (DateTime.Today + 22.5.Hours()).TimeOfDay))
             {
                 // Find logged user and add the name as default for an appointmnt
                 EasyTagUser tagUser = await userManager.FindByNameAsync(ViewContext.HttpContext.GetLoggedUserName());
@@ -77,6 +79,7 @@ namespace EasyTagProject.Controllers
         [HttpPost("{action}/{code}/{id}")]
         public async Task<IActionResult> EditAppointment(Appointment appointment)
         {
+            // Redirect to home if there is no existing appointment
             if (!(appointmentRopository.Appointments.Any(a => a.Id == appointment.Id)))
             {
                 return Redirect("/");
@@ -100,29 +103,34 @@ namespace EasyTagProject.Controllers
                                     .Where(a => 
                                         a.Start.Date == appointment.Start.Date 
                                         && a.RoomId == appointment.RoomId 
-                                        || a.Id == appointment.Id) // Check this later
+                                        || a.Id == appointment.Id)
                                     .ToListAsync();
             
+            // Starting time must be always before ending time
             if (appointment.Start > appointment.End)
             {
                 ModelState.AddModelError("", "Start time must be before end time");
             }
 
+            // Starting time cannot be the same as ending time
             if(appointment.Start == appointment.End)
             {
                 ModelState.AddModelError("", "Start must be different than end time");
             }
 
+            // Appointment cannot be set in the past
             if (appointment.Start < DateTime.Today)
             {
-                ModelState.AddModelError("", "The appointment cannot be created in the past");
+                ModelState.AddModelError("", "The appointment cannot be set in the past");
             }
 
+            // New appointments cannot be created in the past
             if (appointment.Start < DateTime.Now && appointment.Id == 0)
             {
                 ModelState.AddModelError("", "The appointment cannot be created in the past");
             }
 
+            // Appointment range cannot last more than one day
             if (appointment.Start.Date != appointment.End.Date)
             {
                 ModelState.AddModelError("", "The appointment must be created in the same day");
@@ -140,11 +148,13 @@ namespace EasyTagProject.Controllers
                 var app = appointments.Single(a => a.Id == appointment.Id);
                 appointments.Remove(app);
 
+                // Protect editting appointments in the past
                 if (app.Start < DateTime.Today)
                 {
                     ModelState.AddModelError("", "You cannot edit an appointment in the past!");
                 }
 
+                // Protect editting appointments of another user. Only admins are allowed to do that.
                 if (!(ViewContext.HttpContext.IsAccessibleForUserOrAdmin(app.UserId)))
                 {
                     ModelState.AddModelError("", "You do not have the rights to edit this appointment");

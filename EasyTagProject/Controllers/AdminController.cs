@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using EasyTagProject.Infrastructure;
 using EasyTagProject.Models.Identity;
 using EasyTagProject.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -13,10 +15,15 @@ using Microsoft.EntityFrameworkCore;
 
 namespace EasyTagProject.Controllers
 {
-    //[Authorize(Roles = nameof(UserRoles.Admin))]
     [Authorize(Roles = "Admin,Professor")]
     public class AdminController : Controller
     {
+        public const string ComplexEmailPattern4 = @"^[\w!#$%&'*+\-/=?\^_`{|}~]+(\.[\w!#$%&'*+\-/=?\^_`{|}~]+)*" // local-part
+                                                  + "@"
+                                                  + @"((([\w]+([-\w]*[\w]+)*\.)+[a-zA-Z]+)|" // domain
+                                                  + @"((([01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]).){3}[01]?[0-9]{1,2}|2[0-4][0-9]|25[0-5]))\z";// or IP Address
+
+        public const string phonePattern = @"^\(?([0-9]{3})\)?[-.●\s]?([0-9]{3})[-.●\s]?([0-9]{4})$";
         private UserManager<EasyTagUser> userManager;
         IHttpContextAccessor viewContext;
         public AdminController(UserManager<EasyTagUser> manager, IHttpContextAccessor viewContext)
@@ -24,9 +31,11 @@ namespace EasyTagProject.Controllers
             userManager = manager;
             this.viewContext = viewContext;
         }
+
         [Authorize(Roles = nameof(UserRoles.Admin))]
         public async Task<IActionResult> ManageUsers()
         {
+            // Return the list of users except Admin
             return View(await userManager.Users.Where(u => u.UserName != UserRoles.Admin.ToString()).ToListAsync());
         }
 
@@ -45,6 +54,8 @@ namespace EasyTagProject.Controllers
             {
                 ModelState.AddModelError("", "Password does not match!!");
             }
+
+            ValidateFields(model);
 
             if (ModelState.IsValid)
             {
@@ -101,11 +112,12 @@ namespace EasyTagProject.Controllers
         [HttpGet]
         public async Task<IActionResult> Edit(string id, string returnUrl)
         {
-            if (viewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value == id ||
-                viewContext.HttpContext.User.IsInRole(nameof(UserRoles.Admin)))
+            // Validate permission to edit
+            if(viewContext.HttpContext.IsAccessibleForUserOrAdmin(id))
             {
                 EasyTagUser tagUser = await userManager.FindByIdAsync(id);
 
+                // Admin user cannot be changed
                 if (tagUser.UserName != UserRoles.Admin.ToString())
                 {
                     if (tagUser != null)
@@ -134,6 +146,7 @@ namespace EasyTagProject.Controllers
                         ModelState.AddModelError("", "User not found!!");
                     }
 
+                    // return a list of users except Admin
                     return View(nameof(ManageUsers), await userManager.Users.Where(u => u.UserName != UserRoles.Admin.ToString()).ToListAsync());
                 } 
             }
@@ -141,35 +154,45 @@ namespace EasyTagProject.Controllers
             return Redirect("/");
         }
 
-        //[Authorize(Roles = "Admin,Professor")]
         [HttpPost]
         public async Task<IActionResult> Edit(CreateUserViewModel model)
         {
+            ValidateFields(model);
+
             if (ModelState.IsValid)
             {
+                // Edit only if user exists
                 EasyTagUser tagUser = await userManager.FindByIdAsync(model.Id);
                 if (tagUser != null)
                 {
+                    // Only admin can change roles
                     if (viewContext.HttpContext.User.IsInRole(UserRoles.Admin.ToString()))
                     {
+                        // Update only if role changes
                         if (tagUser.Role != model.Role)
                         {
+                            // Identify old role
                             UserRoles? oldRole = tagUser.Role;
+
+                            // Remove from old role
                             await userManager.RemoveFromRoleAsync(tagUser, oldRole.ToString());
+
+                            // Assign new role
                             tagUser.Role = model.Role;
                             var changeRoleResult = await userManager.AddToRoleAsync(tagUser, model.Role.ToString());
                             if (!changeRoleResult.Succeeded)
                             {
+                                // recover old role if new assignment fails
                                 tagUser.Role = oldRole;
                                 ModelState.AddModelError("", $"Unexpected error occurred setting role for user with ID {tagUser.Id}");
                                 AddErrorsFromResult(changeRoleResult);
                             }
                         } 
                     }
-
+                    
+                    // Update only if email changes
                     if (tagUser.Email != model.Email)
                     {
-                        //var emailToken = await userManager.GenerateChangeEmailTokenAsync(tagUser, model.Email);
                         var changeEmailResult = await userManager.SetEmailAsync(tagUser, model.Email.ToLower());
                         if (!changeEmailResult.Succeeded)
                         {
@@ -178,9 +201,9 @@ namespace EasyTagProject.Controllers
                         }
                     }
 
+                    // Update only if phone number changes
                     if (tagUser.PhoneNumber != model.PhoneNumber)
                     {
-                        //var phoneToken = await userManager.GenerateChangePhoneNumberTokenAsync(tagUser, model.PhoneNumber);
                         var changePhoneNumberResult = await userManager.SetPhoneNumberAsync(tagUser, model.PhoneNumber);
                         if (!changePhoneNumberResult.Succeeded)
                         {
@@ -189,6 +212,7 @@ namespace EasyTagProject.Controllers
                         }
                     }
 
+                    // Update only if user name changes
                     if (tagUser.UserName != model.UserName)
                     {
                         var changeUserNameResult = await userManager.SetUserNameAsync(tagUser, model.UserName);
@@ -199,16 +223,19 @@ namespace EasyTagProject.Controllers
                         }
                     }
 
+                    // Update only if first name changes
                     if (tagUser.FirstName != model.FirstName)
                     {
                         tagUser.FirstName = model.FirstName;
                     }
 
+                    // Update only if last name changes
                     if (tagUser.LastName != model.LastName)
                     {
                         tagUser.LastName = model.LastName;
                     }
 
+                    // Update user values
                     var updateResult = await userManager.UpdateAsync(tagUser);
                     if (!updateResult.Succeeded)
                     {
@@ -244,7 +271,7 @@ namespace EasyTagProject.Controllers
             {
                 if (String.IsNullOrEmpty(model.OldPassword))
                 {
-                    ModelState.AddModelError("OldPassword", "Please type your corrent password!");
+                    ModelState.AddModelError("OldPassword", "Please type your current password!");
                 }
                 if (String.IsNullOrEmpty(model.Password))
                 {
@@ -274,20 +301,30 @@ namespace EasyTagProject.Controllers
                         {
                             TempData["PasswordChanged"] = "";
                             AddErrorsFromResult(changePasswordResult);
-                        }
-                        
+                        }                       
                     }
                 } 
             }
             return View(nameof(Edit), model);
         }
 
-        //public async Task<ViewResult> ChangePasswordRedirect(CreateUserViewModel model)
-        //{
-        //    return View(nameof(Edit), model);
-        //}
+        // Validate Email and Phone number
+        private void ValidateFields(CreateUserViewModel model)
+        {
+            Regex emailRegex = new Regex(ComplexEmailPattern4);
+            if (!emailRegex.IsMatch(model.Email))
+            {
+                ModelState.AddModelError("Email", "Invalid email address");
+            }
 
+            Regex phoneRegex = new Regex(phonePattern);
+            if (!phoneRegex.IsMatch(model.PhoneNumber))
+            {
+                ModelState.AddModelError("PhoneNumber", "Invalid phone number");
+            }
+        }
 
+        // Add all errors to model state
         private void AddErrorsFromResult(IdentityResult result)
         {
             foreach (IdentityError error in result.Errors)
@@ -295,11 +332,5 @@ namespace EasyTagProject.Controllers
                 ModelState.AddModelError("", error.Description);
             }
         }
-
-
-        //public async Task<IdentityUser> GetCurrentUserAsync()
-        //{
-        //    return await userManager.GetUserAsync(HttpContext.User);
-        //}
     }
 }
