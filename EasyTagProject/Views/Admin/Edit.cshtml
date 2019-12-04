@@ -8,7 +8,6 @@
     Page for additing user accounts information
     Accessible Admin users or the specific user only.
 -->
-
 <!--
     Display massage if password change succeeded
 -->
@@ -21,11 +20,20 @@
 
 <div><h1 class="text-center">Edit User</h1></div>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
-<!--
+@*
     Form to change password only
     All other filelds are not updated
--->
-<form asp-controller="Admin" asp-action="ChangePassword" method="post">
+*@
+
+@if (ViewContext.IsUserInRool(UserRoles.Admin.ToString()))
+{
+    <partial name="ChangePasswordAdmin" for="@Model" />
+}
+else
+{
+    <partial name="ChangePasswordUser" for="@Model" />
+}
+@*<form asp-controller="Admin" asp-action="ChangePassword" method="post">
     <div class="form-group">
         <div><span asp-validation-for="OldPassword" class="text-danger validation-summary-errors" data-valmsg-for="OldPassword"></span></div>
         <label asp-for="OldPassword"></label>
@@ -46,10 +54,10 @@
     <input asp-for="FirstName" type="hidden" />
     <input asp-for="LastName" type="hidden" />
 </form>
-<br />
-<!--
-    Form to uldate fields other than password
--->
+<br />*@
+@*
+    Form to update fields other than password
+*@
 <form asp-action="Edit" asp-controller="Admin" method="post">
     <input asp-for="ReturnUrl" type="hidden" />
     <input asp-for="Editing" type="hidden" />

@@ -20,7 +20,8 @@ namespace EasyTagProject.Infrastructure
                             ? $"{request.Path}{request.QueryString}"
                             : request.Path.ToString();
 
-            if (url.Contains("Login"))
+            // avoid self redirection
+            if (url.Contains("Login") || url.Contains("ChangePassword"))
             {
                 url = "/";
             }

@@ -110,7 +110,7 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Edit(string id, string returnUrl)
+        public async Task<IActionResult> Edit(string id, string returnUrl, string message = "")
         {
             // Validate permission to edit
             if(viewContext.HttpContext.IsAccessibleForUserOrAdmin(id))
@@ -137,6 +137,11 @@ namespace EasyTagProject.Controllers
                         if (!String.IsNullOrEmpty(returnUrl))
                         {
                             user.ReturnUrl = returnUrl;
+                        }
+
+                        if (message == "success")
+                        {
+                            TempData["PasswordChanged"] = $"Password changed successfully!";
                         }
 
                         return View(user);
@@ -263,6 +268,7 @@ namespace EasyTagProject.Controllers
             return View(model);
         }
 
+
         [HttpPost]
         public async Task<IActionResult> ChangePassword(CreateUserViewModel model)
         {
@@ -272,6 +278,7 @@ namespace EasyTagProject.Controllers
                 if (String.IsNullOrEmpty(model.OldPassword))
                 {
                     ModelState.AddModelError("OldPassword", "Please type your current password!");
+                    return View(nameof(Edit), model);
                 }
                 if (String.IsNullOrEmpty(model.Password))
                 {
@@ -295,15 +302,59 @@ namespace EasyTagProject.Controllers
                 {
                     if (model.OldPassword != model.Password)
                     {
-                        TempData["PasswordChanged"] = "Password changed successfully";
                         var changePasswordResult = await userManager.ChangePasswordAsync(tagUser, model.OldPassword, model.Password);
                         if (!changePasswordResult.Succeeded)
                         {
-                            TempData["PasswordChanged"] = "";
                             AddErrorsFromResult(changePasswordResult);
-                        }                       
+                        }
+                        else
+                        {
+                            return RedirectToAction(nameof(Edit), new { id = tagUser.Id, returnUrl = "/", message = "success" });
+                        }
                     }
                 } 
+            }
+            return View(nameof(Edit), model);
+        }
+
+        // Admin users can change password without old password
+        [HttpPost]
+        public async Task<IActionResult> ChangePasswordAdmin(CreateUserViewModel model)
+        {
+            EasyTagUser tagUser = await userManager.FindByIdAsync(model.Id);
+            if (tagUser != null)
+            {
+                if (String.IsNullOrEmpty(model.Password))
+                {
+                    ModelState.AddModelError("Password", "Please type a valid password!");
+                }
+                if (String.IsNullOrEmpty(model.RepeatPass))
+                {
+                    ModelState.AddModelError("RepeatPass", "Please repeat the new password!");
+                }
+                if (model.Password != model.RepeatPass)
+                {
+                    ModelState.AddModelError("", "Password does not match!!");
+                }
+
+                if (ModelState.IsValid)
+                {
+                    TempData["PasswordFlagSuccess"] = "Success";
+
+                    var token = await userManager.GeneratePasswordResetTokenAsync(tagUser);
+
+                    var changePasswordResult = await userManager.ResetPasswordAsync(tagUser, token, model.Password);
+
+                    if (!changePasswordResult.Succeeded)
+                    {
+                        TempData["PasswordFlagSuccess"] = null;
+                        AddErrorsFromResult(changePasswordResult);
+                    }
+                    else
+                    {
+                        return RedirectToAction(nameof(Edit), new { id = tagUser.Id, returnUrl = "/", message = "success" });
+                    }
+                }
             }
             return View(nameof(Edit), model);
         }
