@@ -4,13 +4,13 @@
     ViewData["Title"] = "Edit User";
 }
 
-<!--
+@*
     Page for additing user accounts information
     Accessible Admin users or the specific user only.
--->
-<!--
+
+
     Display massage if password change succeeded
--->
+*@
 @if (TempData["PasswordChanged"] != null)
 {
     <div class="text-center p-2 text-info">
@@ -33,28 +33,7 @@ else
 {
     <partial name="ChangePasswordUser" for="@Model" />
 }
-@*<form asp-controller="Admin" asp-action="ChangePassword" method="post">
-    <div class="form-group">
-        <div><span asp-validation-for="OldPassword" class="text-danger validation-summary-errors" data-valmsg-for="OldPassword"></span></div>
-        <label asp-for="OldPassword"></label>
-        <input asp-for="OldPassword" class="form-control" />
-    </div>
-    <partial name="UserPasswordInputPartial" for="@Model" />
 
-    <div>
-        <button type="submit" class="btn btn-primary">Change Password</button>
-    </div>
-    <input asp-for="ReturnUrl" type="hidden" />
-    <input asp-for="Id" type="hidden" />
-    <input asp-for="Editing" type="hidden" />
-    <input asp-for="Role" type="hidden" />
-    <input asp-for="UserName" type="hidden" />
-    <input asp-for="Email" type="hidden" />
-    <input asp-for="PhoneNumber" type="hidden" />
-    <input asp-for="FirstName" type="hidden" />
-    <input asp-for="LastName" type="hidden" />
-</form>
-<br />*@
 @*
     Form to update fields other than password
 *@

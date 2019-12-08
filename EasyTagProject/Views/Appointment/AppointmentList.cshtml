@@ -46,7 +46,7 @@
                             <td>
                                 @Model.StartRange.ToShortTimeString()
                             </td>
-                        @* the current logged user can edit this appointment?*@
+                        @* The appointment belongs to the current logged user? *@
                         @if(ViewContext.IsAccessibleForUser(app.UserId))
                         {
 
@@ -68,7 +68,7 @@
                                 </div>
                             </td>
                         }
-                        // is the current logged user an admin?s
+                        // is the current logged user an admin?
                         else if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
                         {
                             <td>
@@ -91,6 +91,7 @@
                         }
                         else
                         {
+                            // Add Booked message
                             <td>
                                 Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)
                             </td>
@@ -104,16 +105,14 @@
             }
             else
             {
-                ///*
+                //
                 //    Verifies it the current block of time is available or if it is already in the past
-                //*/
-                //if (Model.Date.Date > DateTime.Now.Date || (Model.Date.Date == DateTime.Now.Date && Model.StartRange.TimeOfDay >= DateTime.Now.TimeOfDay))
-                //{
                 <tr>
-                    @*Time of the block*@
+                    @* Time of the block *@
                     <td>
                         @Model.StartRange.ToShortTimeString()
                     </td>
+                    @* Link to create appointment *@ 
                     <td class="h-100">
                         <div class="text-center h-100 d-block">
                             <a asp-action="AddAppointment" asp-controller="AppointmentCRUD"

@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace EasyTagProject.Models.Identity
 {
-    public enum UserRoles { Admin, Professor }
+    //public enum UserRoles { Admin, Professor }
 
     // Class that represents the custom IdentityUser for EasyTag
     public class EasyTagUser:IdentityUser, IComparable<EasyTagUser>

@@ -34,7 +34,7 @@ namespace EasyTagProject
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
-
+            
             // Connection to EasyTag DataBase
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration["Data:EasyTagDB:ConnectionString"]));
@@ -107,13 +107,13 @@ namespace EasyTagProject
                 );
             });
 
-            //if (env.IsDevelopment())
-            //{
-                // Creates EasyTagDB if it does not exist and adds default information
+            if (env.IsDevelopment())
+            {
+                //Creates EasyTagDB if it does not exist and adds default information
                 SeedData.EnsurePopulated(app);
-                // Creates IdentityUsersEasyTag database if it does not exist and adds default users and roles
+                //Creates IdentityUsersEasyTag database if it does not exist and adds default users and roles
                 SeedDataIdentiy.EnsurePopulated(app);
-            //}
+            }
         }
     }
 }
