@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Web;
+using EasyTagProject.Infrastructure;
 using EasyTagProject.Models.Identity;
 using EasyTagProject.Models.ViewModels;
 using Microsoft.AspNetCore.Authorization;
@@ -72,14 +73,40 @@ namespace EasyTagProject.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> ReturnToPage(string returnUrl)
+        [AllowAnonymous]
+        public IActionResult ReturnToPage(string returnUrl)
         {
-            var url = HttpUtility.UrlDecode(returnUrl);
-            return Redirect(url);
+            // Get the string back to original state
+            if (returnUrl.Contains("SearchList"))
+            {
+                returnUrl = HttpUtility.UrlDecode(returnUrl);
+            }
+            else if (returnUrl.Contains("+"))
+            {
+                returnUrl = returnUrl.Replace('+', '/');
+            }
+
+            // Redirect to page
+            if (String.IsNullOrEmpty(returnUrl))
+            {
+                return LocalRedirect("~/");
+            }
+            else if(returnUrl[0].Equals('/'))
+            {
+                return LocalRedirect($"~{returnUrl}");
+            }
+            else if (returnUrl.Contains("%2F"))
+            {
+                return LocalRedirect($"~{HttpUtility.UrlDecode(returnUrl)}");
+            }
+            else
+            {
+                return LocalRedirect($"~/{returnUrl}");
+            }
         }
 
         [HttpGet("{controller}/{action}/{returnUrl?}")]
-        public async Task<RedirectResult> Logout(string returnUrl = "/")
+        public async Task<IActionResult> Logout(string returnUrl = "/")
         {
             await signInManager.SignOutAsync();
 
@@ -88,7 +115,7 @@ namespace EasyTagProject.Controllers
                 return Redirect("/");
             }
 
-            return Redirect(HttpUtility.UrlDecode(returnUrl));
+            return RedirectToAction(nameof(ReturnToPage), new { returnUrl = returnUrl });
         }
 
         [Authorize(Roles = nameof(UserRoles.Professor))]
