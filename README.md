@@ -1,7 +1,5 @@
 # EasyTagProject
-EasyTag is an application to help to identify rooms using QR codes.
-
-You can try the site by visiting theeasytag.com
+EasyTag is a room management web application that helps to identify rooms using QR codes.
 
 Instructions to run the application locally
 
