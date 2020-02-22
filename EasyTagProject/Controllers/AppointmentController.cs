@@ -15,10 +15,12 @@ namespace EasyTagProject.Controllers
     public class AppointmentController : Controller
     {
         private IRoomRepository roomRepository;
+        private readonly IAppointmentRepository aRepo;
 
-        public AppointmentController(IRoomRepository rRepo) 
+        public AppointmentController(IRoomRepository rRepo, IAppointmentRepository aRepo) 
         { 
             roomRepository = rRepo;
+            this.aRepo = aRepo;
         }
 
         public async Task<IActionResult> RedirectToAppointmentList(int id, DateTime date)
@@ -44,6 +46,14 @@ namespace EasyTagProject.Controllers
             }
 
             return RedirectToAction(nameof(Room), nameof(Room), new { code = room.RoomCode, pDate = searchDate.ToString("MM-dd-yyyy") });
+        }
+
+        [HttpGet("{action}/{code}/{id}")]
+        public async Task<ViewResult> AppointmentConfirmation(string code, int id)
+        {
+            Appointment appointment = aRepo.Appointments.FirstOrDefault(a => a.Id == id);
+            appointment.RoomCode = code;
+            return View(appointment);
         }
     }
 }

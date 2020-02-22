@@ -77,31 +77,17 @@ namespace EasyTagProject.Controllers
         public IActionResult ReturnToPage(string returnUrl)
         {
             // Get the string back to original state
-            if (returnUrl.Contains("SearchList"))
-            {
-                returnUrl = HttpUtility.UrlDecode(returnUrl);
-            }
-            else if (returnUrl.Contains("+"))
-            {
-                returnUrl = returnUrl.Replace('+', '/');
-            }
+
+            returnUrl = HttpUtility.UrlDecode(returnUrl);
 
             // Redirect to page
             if (String.IsNullOrEmpty(returnUrl))
             {
                 return LocalRedirect("~/");
             }
-            else if(returnUrl[0].Equals('/'))
-            {
-                return LocalRedirect($"~{returnUrl}");
-            }
-            else if (returnUrl.Contains("%2F"))
-            {
-                return LocalRedirect($"~{HttpUtility.UrlDecode(returnUrl)}");
-            }
             else
             {
-                return LocalRedirect($"~/{returnUrl}");
+                return LocalRedirect(HttpUtility.UrlDecode(returnUrl));
             }
         }
 
@@ -113,6 +99,10 @@ namespace EasyTagProject.Controllers
             if (String.IsNullOrEmpty(returnUrl))
             {
                 return Redirect("/");
+            }
+            else if (returnUrl.Contains("ManageUsers"))
+            {
+                returnUrl = "/";
             }
 
             return RedirectToAction(nameof(ReturnToPage), new { returnUrl = returnUrl });

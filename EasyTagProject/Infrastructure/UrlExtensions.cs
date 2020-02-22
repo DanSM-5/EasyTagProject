@@ -25,16 +25,9 @@ namespace EasyTagProject.Infrastructure
             {
                 url = "/";
             }
-            // Encode all characters
-            else if (url.Contains("SearchList"))
-            {
-                url = HttpUtility.UrlEncode(url);
-            }
-            // Replace / to + to avoid redirection issues
-            else if (url[0].Equals('/') && url[1..].Contains("/"))
-            {
-                url = url.Replace('/', '+');
-            }
+
+            // Encode special characters
+            url = HttpUtility.UrlEncode(url);
 
             return url;
         }

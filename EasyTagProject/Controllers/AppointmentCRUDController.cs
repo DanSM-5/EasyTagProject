@@ -57,7 +57,10 @@ namespace EasyTagProject.Controllers
                 appointment.UserId = ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 await appointmentRopository.SaveAsync(appointment);
 
-                return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
+                // Editing
+                //return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
+                //return RedirectToAction("AppointmentConfirmation", nameof(Appointment), appointment);
+                return RedirectToAction("AppointmentConfirmation", nameof(Appointment), new { code = appointment.RoomCode, id = appointment.Id });
             }
 
             return View(appointment);
@@ -96,6 +99,7 @@ namespace EasyTagProject.Controllers
             return View(appointment);
         }
 
+        // Changes
         private async Task ValidateAppointmentAsync(Appointment appointment)
         {
             //  Start task to get appointments from the same room and in the same date

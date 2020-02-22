@@ -2,10 +2,10 @@
 @{
     ViewData["Title"] = "Add Appointment";
 }
-<!--
+@*
     Page for adding appointments
     Accessible for Professor/Admin users only
--->
+*@
 <h1>Add Appointment on @Model.Start.Date.ToShortDateString()</h1>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 <form asp-action="AddAppointment" asp-controller="AppointmentCRUD" method="post">
