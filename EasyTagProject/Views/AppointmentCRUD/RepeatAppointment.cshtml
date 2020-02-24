@@ -7,7 +7,7 @@
 
 <div asp-validation-summary="All"></div>
 <form asp-action="RepeatAppointment" asp-controller="AppointmentCRUD" method="post">
-    <div>
+    <div class="form-group">
         Repeat appointment &nbsp;
         <select asp-for="PeriodType">
             <option value="" selected="selected">Select a period</option>
@@ -22,9 +22,12 @@
         <input asp-for="RepeatNumber" min="1" />
         <span id="period">days</span>.
     </div>
-    <div class="form-group" id="question">
-        <label asp-for="IncludeWeekends">Do you want to include weekends?</label>
-        <input asp-for="IncludeWeekends" class="checkBox"/>
+    <div class="form-group mt-3" id="question">
+        <span class="">Do you want to include weekends?</span>&nbsp;
+        <label class="checkbox-label">
+            <input asp-for="IncludeWeekends" />
+            <span class="checkbox-custom rectangular"></span>
+        </label>
     </div>
     <input asp-for="Code" />
     <input asp-for="Id" />

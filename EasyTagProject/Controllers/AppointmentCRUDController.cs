@@ -149,7 +149,6 @@ namespace EasyTagProject.Controllers
             if (appointment.Start > appointment.End)
             {
                 ModelState.AddModelError("", "Start time must be before end time");
-                Console.WriteLine("Start time must be before end time" + appointment.Start.ToShortDateString());
                 success = false;
             }
 
@@ -157,7 +156,6 @@ namespace EasyTagProject.Controllers
             if(appointment.Start == appointment.End)
             {
                 ModelState.AddModelError("", "Start must be different than end time");
-                Console.WriteLine("Start must be different than end time" + appointment.Start.ToShortDateString());
                 success = false;
             }
 
@@ -165,7 +163,6 @@ namespace EasyTagProject.Controllers
             if (appointment.Start < DateTime.Today)
             {
                 ModelState.AddModelError("", "The appointment cannot be set in the past");
-                Console.WriteLine("The appointment cannot be set in the past(1)" + appointment.Start.ToShortDateString());
                 success = false;
             }
 
@@ -173,7 +170,6 @@ namespace EasyTagProject.Controllers
             if (appointment.Start < DateTime.Now && appointment.Id == 0)
             {
                 ModelState.AddModelError("", "The appointment cannot be created in the past");
-                Console.WriteLine("The appointment cannot be created in the past(2)" + appointment.Start.ToShortDateString());
                 success = false;
             }
 
@@ -181,7 +177,6 @@ namespace EasyTagProject.Controllers
             if (appointment.Start.Date != appointment.End.Date)
             {
                 ModelState.AddModelError("", "The appointment must be created in the same day");
-                Console.WriteLine("The appointment must be created in the same day" + appointment.Start.ToShortDateString());
                 success = false;
             }
 
@@ -201,7 +196,6 @@ namespace EasyTagProject.Controllers
                 if (app.Start < DateTime.Today)
                 {
                     ModelState.AddModelError("", "You cannot edit an appointment in the past!");
-                    Console.WriteLine("You cannot edit an appointment in the past!" + appointment.Start.ToShortDateString());
                     success = false;
                 }
 
@@ -209,7 +203,6 @@ namespace EasyTagProject.Controllers
                 if (!(ViewContext.HttpContext.IsAccessibleForUserOrAdmin(app.UserId)))
                 {
                     ModelState.AddModelError("", "You do not have the rights to edit this appointment");
-                    Console.WriteLine("You do not have the rights to edit this appointment" + appointment.Start.ToShortDateString());
                     success = false;
                 }
 
@@ -226,7 +219,6 @@ namespace EasyTagProject.Controllers
                                  && appointment.Start < a.End))
             {
                 ModelState.AddModelError("", "The time you selected is already busy!");
-                Console.WriteLine("The time you selected is already busy! " + appointment.Start.ToShortDateString());
                 success = false;
             }
             #endregion

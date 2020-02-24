@@ -64,7 +64,7 @@ else
             <tr>
                 <th>Hour</th>
                 <th>Course</th>
-                <th colspan="2">Instructor</th>
+                <th colspan="3">Instructor</th>
             </tr>
         </thead>
         <tbody>
@@ -92,6 +92,12 @@ else
                                         Delete
                                     </button>
                                 </form>
+                                <a class="btn btn-info"
+                                   asp-action="RepeatAppointment"
+                                   asp-controller="AppointmentCRUD"
+                                   asp-route-code="@Model.Room.RoomCode"
+                                   asp-route-id="@app.Id"
+                                   asp-route-dateTime="@app.Start.ToString("MM-dd-yyyy")">Repeat</a>
                             </td>
 
                         }
@@ -99,18 +105,18 @@ else
                         {
                             <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
                             <td>@app.Course</td>
-                            <td colspan="2">@app.UserName</td>
+                            <td colspan="3">@app.UserName</td>
                         }
                     </tr>
                     <tr id="@app.Id-description" class="hideTr">
-                        <td colspan="4" class="d-table-cell text-center">@app.Description</td>
+                        <td colspan="5" class="d-table-cell text-center">@app.Description</td>
                     </tr>
                 }
             }
             else
             {
                 <tr>
-                    <td colspan="4" class="text-center">No Appointments</td>
+                    <td colspan="5" class="text-center">No Appointments</td>
                 </tr>
             }
         </tbody>
