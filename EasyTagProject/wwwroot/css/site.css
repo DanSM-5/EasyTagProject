@@ -158,3 +158,29 @@ body {
     width: 100%;
     height: 100%;
 }
+
+.image-sm{
+    width:50px!important;
+    height: 50px!important;
+}
+
+.checkBox {
+    content: "\f096";
+    font-family: "FontAwesome";
+    speak: none;
+    font-style: normal;
+    font-weight: normal;
+    font-variant: normal;
+    text-transform: none;
+    line-height: 1;
+    -webkit-font-smoothing: antialiased;
+    width: 1em;
+    display: inline-block;
+    margin-right: 5px;
+}
+
+.checkBox:checked{
+    content: "\f14a";
+    color: #2980b9;
+    animation: effect 250ms ease-in;
+}

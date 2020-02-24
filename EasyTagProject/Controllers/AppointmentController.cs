@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using EasyTagProject.Infrastructure;
 using EasyTagProject.Models;
 using EasyTagProject.Models.ViewModels;
 using FluentDate;
@@ -51,9 +52,16 @@ namespace EasyTagProject.Controllers
         [HttpGet("{action}/{code}/{id}")]
         public async Task<ViewResult> AppointmentConfirmation(string code, int id)
         {
-            Appointment appointment = aRepo.Appointments.FirstOrDefault(a => a.Id == id);
+            Appointment appointment = await aRepo.Appointments.FirstOrDefaultAsync(a => a.Id == id);
             appointment.RoomCode = code;
             return View(appointment);
+        }
+
+        [HttpGet]
+        public async Task<ViewResult> ReportAppointments()
+        {
+            var appointments = TempData.GetObject<IEnumerable<Appointment>>("app") ?? new List<Appointment>();
+            return View(appointments);
         }
     }
 }

@@ -8,7 +8,11 @@
 
 <div>
     <p>Your appointment on @Model.Start.Date.ToShortDateString() @Model.Start.Date.ToShortTimeString() for @Model.Description was made successful.</p>
-    <p>Do you want to add more days? <a asp-action="" asp-controller="" asp-route-appointment="@Model">Select options</a></p>
+    <p>Do you want to repeat the appointment more days? <a asp-action="RepeatAppointment" 
+                                                           asp-controller="AppointmentCRUD" 
+                                                           asp-route-code="@Model.RoomCode"
+                                                           asp-route-id="@Model.Id"
+                                                           asp-route-dateTime="@Model.Start.ToString("MM-dd-yyyy")">Select options</a></p>
     <p><a asp-action="Room" asp-controller="Room"
           asp-route-code="@Model.RoomCode"
           asp-route-pdate="@Model.Start.ToString("MM-dd-yyyy")">Click here to go back to room @Model.RoomCode page.</a></p>

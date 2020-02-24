@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using EasyTagProject.Infrastructure;
 using EasyTagProject.Models;
 using EasyTagProject.Models.Identity;
+using EasyTagProject.Models.ViewModels;
 using FluentDate;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -57,9 +58,6 @@ namespace EasyTagProject.Controllers
                 appointment.UserId = ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 await appointmentRopository.SaveAsync(appointment);
 
-                // Editing
-                //return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
-                //return RedirectToAction("AppointmentConfirmation", nameof(Appointment), appointment);
                 return RedirectToAction("AppointmentConfirmation", nameof(Appointment), new { code = appointment.RoomCode, id = appointment.Id });
             }
 
@@ -87,6 +85,7 @@ namespace EasyTagProject.Controllers
             {
                 return Redirect("/");
             }
+
             await ValidateAppointmentAsync(appointment);
 
             if (ModelState.IsValid)
@@ -99,51 +98,97 @@ namespace EasyTagProject.Controllers
             return View(appointment);
         }
 
-        // Changes
-        private async Task ValidateAppointmentAsync(Appointment appointment)
+        [HttpGet("{action}/{code}/{id}/{dateTime}")]
+        public async Task<ViewResult> RepeatAppointment(string code, int id, DateTime dateTime)
         {
-            //  Start task to get appointments from the same room and in the same date
-            var getAppointments = appointmentRopository.Appointments
-                                    .Where(a => 
-                                        a.Start.Date == appointment.Start.Date 
-                                        && a.RoomId == appointment.RoomId 
-                                        || a.Id == appointment.Id)
-                                    .ToListAsync();
+            return View(new RepeatAppViewModel { Code = code, Id = id, IncludeWeekends = true, Date = dateTime.ToString("MM-dd-yyyy") });
+        }
+
+        [HttpPost("{action}/{code}/{id}/{dateTime}")]
+        public async Task<IActionResult> RepeatAppointment(RepeatAppViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                Appointment app = await appointmentRopository.Appointments.FirstOrDefaultAsync(a => a.Id == model.Id);
+                app.RoomCode = model.Code;
+
+                var toCompareTime = await appointmentRopository.Appointments
+                                        .Where(a =>
+                                            a.Start.Date > app.Start.Date
+                                            && a.RoomId == app.RoomId
+                                            || a.Id == app.Id)
+                                        .ToListAsync();
+
+                var appointments = await RepeatAppointment(app, model.PeriodType, model.RepeatNumber, model.IncludeWeekends, toCompareTime);
+
+                TempData.SetObject("app", appointments);
+                return RedirectToAction("ReportAppointments", nameof(Appointment)); 
+            }
+
+            return View(model);
+        }
+
+        // Changes
+        private async Task<bool> ValidateAppointmentAsync(Appointment appointment, List<Appointment> appointmentsToCompare = null)
+        {
+            bool success = true;
+            Task<List<Appointment>> getAppointments = null;
+
+            if (appointmentsToCompare == null)
+            {
+                //  Start task to get appointments from the same room and in the same date
+                getAppointments = appointmentRopository.Appointments
+                                        .Where(a =>
+                                            a.Start.Date == appointment.Start.Date
+                                            && a.RoomId == appointment.RoomId
+                                            || a.Id == appointment.Id)
+                                        .ToListAsync(); 
+            }
             
             // Starting time must be always before ending time
             if (appointment.Start > appointment.End)
             {
                 ModelState.AddModelError("", "Start time must be before end time");
+                Console.WriteLine("Start time must be before end time" + appointment.Start.ToShortDateString());
+                success = false;
             }
 
             // Starting time cannot be the same as ending time
             if(appointment.Start == appointment.End)
             {
                 ModelState.AddModelError("", "Start must be different than end time");
+                Console.WriteLine("Start must be different than end time" + appointment.Start.ToShortDateString());
+                success = false;
             }
 
             // Appointment cannot be set in the past
             if (appointment.Start < DateTime.Today)
             {
                 ModelState.AddModelError("", "The appointment cannot be set in the past");
+                Console.WriteLine("The appointment cannot be set in the past(1)" + appointment.Start.ToShortDateString());
+                success = false;
             }
 
             // New appointments cannot be created in the past
             if (appointment.Start < DateTime.Now && appointment.Id == 0)
             {
                 ModelState.AddModelError("", "The appointment cannot be created in the past");
+                Console.WriteLine("The appointment cannot be created in the past(2)" + appointment.Start.ToShortDateString());
+                success = false;
             }
 
             // Appointment range cannot last more than one day
             if (appointment.Start.Date != appointment.End.Date)
             {
                 ModelState.AddModelError("", "The appointment must be created in the same day");
+                Console.WriteLine("The appointment must be created in the same day" + appointment.Start.ToShortDateString());
+                success = false;
             }
 
             //  Identify if any apointment overlaps
             #region AvoidOverlapingAppoinments
 
-            List<Appointment> appointments = await getAppointments;
+            List<Appointment> appointments = appointmentsToCompare == null ? await getAppointments : appointmentsToCompare.ToList();
             
             // Validate that the appointment being eddited 
             // is not in the past and belongs to the same user or is an admin
@@ -156,28 +201,96 @@ namespace EasyTagProject.Controllers
                 if (app.Start < DateTime.Today)
                 {
                     ModelState.AddModelError("", "You cannot edit an appointment in the past!");
+                    Console.WriteLine("You cannot edit an appointment in the past!" + appointment.Start.ToShortDateString());
+                    success = false;
                 }
 
                 // Protect editting appointments of another user. Only admins are allowed to do that.
                 if (!(ViewContext.HttpContext.IsAccessibleForUserOrAdmin(app.UserId)))
                 {
                     ModelState.AddModelError("", "You do not have the rights to edit this appointment");
+                    Console.WriteLine("You do not have the rights to edit this appointment" + appointment.Start.ToShortDateString());
+                    success = false;
                 }
 
                 // Start date cannot be moved to the past
                 if (app.Start < DateTime.Now && app.Start != appointment.Start)
                 {
                     appointment.Start = app.Start;
+
                 }
             }
 
             //  Verify if the appoinment overlaps another
-            if (appointments.Any(a => a.Start.TimeOfDay < appointment.End.TimeOfDay
-                                 && appointment.Start.TimeOfDay < a.End.TimeOfDay))
+            if (appointments.Any(a => a.Start < appointment.End
+                                 && appointment.Start < a.End))
             {
                 ModelState.AddModelError("", "The time you selected is already busy!");
+                Console.WriteLine("The time you selected is already busy! " + appointment.Start.ToShortDateString());
+                success = false;
             }
             #endregion
+
+            return success;
+        }
+
+        public async Task<IEnumerable<Appointment>> RepeatAppointment(Appointment original, RepeatTime periodType, int repeatNumber, bool includeWeekends, List<Appointment> compareTo)
+        {
+            var tasks = new List<Task<Appointment>>();
+            int count = 1;
+
+            while(tasks.Count < repeatNumber)
+            {
+                if (!includeWeekends)
+                {
+                    var tempDate = original.Start + count.Days();
+
+                    if (tempDate.DayOfWeek == DayOfWeek.Saturday)
+                    {
+                        count += 2;
+                        continue;
+                    }
+                    else if (tempDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        count++;
+                        continue;
+                    }
+                }
+
+                tasks.Add(AddDuplicate(original.Clone(), periodType, count++, compareTo));
+            }
+
+            var appointments = await Task.WhenAll(tasks);
+            await appointmentRopository.SaveRangeAsync(appointments.Where(a => a.isValid == true));
+
+            return appointments;
+        }
+
+        public async Task<Appointment> AddDuplicate(Appointment newAppointment, RepeatTime periodType, int amount, List<Appointment> compareTo)
+        {
+            switch (periodType)
+            {
+                case RepeatTime.Daily:
+                    newAppointment.Start += amount.Days();
+                    newAppointment.End += amount.Days();
+                    break;
+                case RepeatTime.Weekly:
+                    newAppointment.Start += amount.Weeks();
+                    newAppointment.End += amount.Weeks();
+                    break;
+                case RepeatTime.Monthly:
+                    newAppointment.Start += amount.Months();
+                    newAppointment.End += amount.Months();
+                    break;
+                case RepeatTime.Never:
+                    break;
+                default:
+                    break;
+            }
+
+            newAppointment.isValid = await ValidateAppointmentAsync(newAppointment, compareTo);
+
+            return newAppointment;
         }
 
         [HttpPost]

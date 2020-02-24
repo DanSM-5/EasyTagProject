@@ -1,0 +1,40 @@
+﻿@model RepeatAppViewModel
+@{
+    ViewData["Title"] = "RepeatAppointment";
+}
+
+<h1>Repeat Appointment</h1>
+
+<div asp-validation-summary="All"></div>
+<form asp-action="RepeatAppointment" asp-controller="AppointmentCRUD" method="post">
+    <div>
+        Repeat appointment &nbsp;
+        <select asp-for="PeriodType">
+            <option value="" selected="selected">Select a period</option>
+            @foreach (var period in ((RepeatTime[])Enum.GetValues(typeof(RepeatTime)))
+             .Except(new List<RepeatTime> { RepeatTime.Never })
+             .OrderBy(r => r.ToString()))
+            {
+                <option value="@period">@period</option>
+            }
+        </select>
+        &nbsp;for a number of &nbsp;
+        <input asp-for="RepeatNumber" min="1" />
+        <span id="period">days</span>.
+    </div>
+    <div class="form-group" id="question">
+        <label asp-for="IncludeWeekends">Do you want to include weekends?</label>
+        <input asp-for="IncludeWeekends" class="checkBox"/>
+    </div>
+    <input asp-for="Code" />
+    <input asp-for="Id" />
+    <input asp-for="Date" />
+    <button class="btn btn-primary" type="submit">Repeat</button>
+    <a class="btn btn-secondary" type="button"
+          asp-action="Room" 
+          asp-controller="Room"
+          asp-route-code="@Model.Code"
+          asp-route-pdate="@Model.Date">Cancel</a>
+</form>
+
+<script defer src="~/js/repetition.js" asp-append-version="true"></script>

@@ -27,6 +27,7 @@ namespace EasyTagProject.Models
                     entry.Description = appointment.Description;
                     entry.Course = appointment.Course;
                     entry.UserName = appointment.UserName;
+                    entry.UserId = appointment.UserId;
                 }
             }
             else
@@ -38,6 +39,13 @@ namespace EasyTagProject.Models
                     room.Schedule.Appointments.Add(appointment);
                 }
             }
+
+            await context.SaveChangesAsync();
+        }
+
+        public async Task SaveRangeAsync(IEnumerable<Appointment> appointments)
+        {
+            await context.AddRangeAsync(appointments);
 
             await context.SaveChangesAsync();
         }

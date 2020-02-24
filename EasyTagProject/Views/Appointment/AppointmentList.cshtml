@@ -115,7 +115,8 @@
                     @* Link to create appointment *@ 
                     <td class="h-100">
                         <div class="text-center h-100 d-block">
-                            <a asp-action="AddAppointment" asp-controller="AppointmentCRUD"
+                            <a class="btn btn-primary"
+                               asp-action="AddAppointment" asp-controller="AppointmentCRUD"
                                asp-route-code="@Model.Room.RoomCode"
                                asp-route-roomId="@Model.Room.Id"
                                asp-route-selectedTime="@((Model.Date.Date + Model.StartRange.TimeOfDay).ToString("MM-dd-yyyy H:mm"))">

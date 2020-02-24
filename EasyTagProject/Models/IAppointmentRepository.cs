@@ -27,5 +27,7 @@ namespace EasyTagProject.Models
         /// </param>
         /// <returns></returns>
         Task<Appointment> DeleteAsync(int id);
+
+        Task SaveRangeAsync(IEnumerable<Appointment> appointments);
     }
 }

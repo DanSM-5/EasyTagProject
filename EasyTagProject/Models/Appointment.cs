@@ -26,12 +26,14 @@ namespace EasyTagProject.Models
         public string Description { get; set; }
         public int ScheduleId { get; set; }
         public int RoomId { get; set; }
-        [NotMapped]
-        public string RoomCode { get; set; }
-
         [Required]
         public string UserName { get; set; }
         public string UserId { get; set; }
+
+        [NotMapped]
+        public string RoomCode { get; set; }
+        [NotMapped]
+        public bool isValid { get; set; }
 
         public int CompareTo([AllowNull] Appointment other)
         {
@@ -39,5 +41,21 @@ namespace EasyTagProject.Models
         }
 
         public void Dispose(){}
+
+        public Appointment Clone()
+        {
+            return new Appointment
+            {
+                Start = Start,
+                End = End,
+                Course = Course,
+                Description = Description,
+                ScheduleId = ScheduleId,
+                RoomId = RoomId,
+                UserName = UserName,
+                UserId = UserId,
+                RoomCode = RoomCode
+            };
+        }
     }
 }
