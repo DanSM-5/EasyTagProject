@@ -15,7 +15,7 @@ namespace EasyTagProject.Controllers
     [Authorize(Roles = "Admin,Professor")]
     public class AppointmentController : Controller
     {
-        private IRoomRepository roomRepository;
+        private readonly IRoomRepository roomRepository;
         private readonly IAppointmentRepository aRepo;
 
         public AppointmentController(IRoomRepository rRepo, IAppointmentRepository aRepo) 
