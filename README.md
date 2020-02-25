@@ -12,16 +12,18 @@ Instructions to run the application locally
   
 3. Write the following json object in the file appsettings.json and save changes.
   
-######  {
-######  "Data": {
-######    "EasyTagDB": {
-######      "ConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=EasyTagDB;Trusted_Connection=True;MultipleActiveResultSets=true"
-######    },
-######    "EasyTagIdentity": {
-######      "ConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=IdentityUsersEasyTag;Trusted_Connection=True;MultipleActiveResultSets=true"
-######    }
-######   }
-######  }
+```  
+{
+  "Data": {
+    "EasyTagDB": {
+      "ConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=EasyTagDB;Trusted_Connection=True;MultipleActiveResultSets=true"
+    },
+      "EasyTagIdentity": {
+        "ConnectionString": "Server=(localdb)\\MSSQLLocalDB;Database=IdentityUsersEasyTag;Trusted_Connection=True;MultipleActiveResultSets=true"
+    }
+  }
+}
+```
 
 4. Default Admin user, Professor user, and respective passwords can be changed in SeedDataIdentity.cs under models folder, however changing the default Admin user information is not recommended.
 
