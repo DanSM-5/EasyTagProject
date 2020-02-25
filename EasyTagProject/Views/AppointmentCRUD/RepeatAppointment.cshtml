@@ -5,14 +5,14 @@
 
 <h1>Repeat Appointment</h1>
 
-<div asp-validation-summary="All"></div>
+<div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 <form asp-action="RepeatAppointment" asp-controller="AppointmentCRUD" method="post">
     <div class="form-group">
         Repeat appointment &nbsp;
         <select asp-for="PeriodType">
-            <option value="" selected="selected">Select a period</option>
+            <option value="@RepeatTime.Unselect" selected="selected">Select a period</option>
             @foreach (var period in ((RepeatTime[])Enum.GetValues(typeof(RepeatTime)))
-             .Except(new List<RepeatTime> { RepeatTime.Never })
+             .Except(new List<RepeatTime> { RepeatTime.Never, RepeatTime.Unselect })
              .OrderBy(r => r.ToString()))
             {
                 <option value="@period">@period</option>

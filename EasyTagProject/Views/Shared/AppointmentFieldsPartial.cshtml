@@ -1,10 +1,11 @@
 ﻿@model Appointment
-<!--
+@*
     Partial View with fileds for appointment registration    
--->
+*@
 <input asp-for="RoomCode" type="hidden" />
 <input asp-for="RoomId" type="hidden" />
 <input asp-for="ScheduleId" type="hidden" />
+
 <div class="form-group">
     <div><span asp-validation-for="UserName" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="UserName" class="form-text"></label>
@@ -16,9 +17,9 @@
     <div class="form-group">
         <div><span asp-validation-for="Start" class="text-danger validation-summary-errors"></span></div>
         <label asp-for="Start" class="form-text"></label>
-        <!--
+        @*
             Adds only current or future hours available for selection
-        -->
+        *@
         <select asp-for="Start" class="form-control">
             @for (DateTime timeOption = DateTime.Today.AddHours(8.5); timeOption.TimeOfDay <= (DateTime.Today + 22.Hours()).TimeOfDay; timeOption += 30.Minutes())
             {
@@ -38,9 +39,9 @@ else
 <div class="form-group">
     <div><span asp-validation-for="End" class="text-danger validation-summary-errors"></span></div>
     <label asp-for="End" class="form-text"></label>
-    <!--
+    @*
         Adds only current or future hours available for selection
-    -->
+    *@
     <select asp-for="End" class="form-control">
         @for (DateTime timeOption = DateTime.Today.AddHours(9); timeOption.TimeOfDay <= (DateTime.Today + 22.5.Hours()).TimeOfDay; timeOption += 30.Minutes())
         {

@@ -24,9 +24,9 @@ namespace EasyTagProject.Controllers
             this.aRepo = aRepo;
         }
 
-        public async Task<IActionResult> RedirectToAppointmentList(int id, DateTime date)
+        public async Task<IActionResult> RedirectToAppointmentList(string code, DateTime pDate)
         {
-            return RedirectToAction(nameof(AppointmentList), nameof(Appointment), new { id = id, searchDate = date.ToString("MM-dd-yyyy")});
+            return RedirectToAction(nameof(AppointmentList), nameof(Appointment), new { code, pDate = pDate.ToString("MM-dd-yyyy")});
         }
 
         public async Task<IActionResult> RedirectToRoom(string code, DateTime pDate)
@@ -34,19 +34,26 @@ namespace EasyTagProject.Controllers
             return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = pDate.ToString("MM-dd-yyyy") });
         }
 
-        [HttpGet("{action}/{Id}/{searchDate}")]
-        public async Task<IActionResult> AppointmentList(int Id, DateTime searchDate)
+        [HttpGet("{action}/{code}/{pDate}")]
+        public async Task<IActionResult> AppointmentList(string code, DateTime pDate)
         {
-            Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.Id == Id);
-            
-            if (searchDate >= DateTime.Today)
+            if (pDate >= DateTime.Today)
             {
-                room.Schedule.Appointments = room.Schedule.GetAppointmentsInDate(searchDate);
+                Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.RoomCode == r.RoomCode);
+                room.Schedule.Appointments = room.Schedule.GetAppointmentsInDate(pDate);
+                var pagination = new RoomPagination
+                {
+                    CurrentDate = pDate,
+                    RoomCode = code,
+                    Action = "AppointmentList",
+                    Controller = "Appointment",
+                    AllowPrevious = pDate > DateTime.Today ? true : false 
+                };
 
-                return View(new AppointmentListViewModel { Room = room, Date = searchDate.Date + DateTime.Now.TimeOfDay }); 
+                return View(new AppointmentListViewModel { Room = room, Date = pDate.Date + DateTime.Now.TimeOfDay, RoomPagination = pagination }); 
             }
 
-            return RedirectToAction(nameof(Room), nameof(Room), new { code = room.RoomCode, pDate = searchDate.ToString("MM-dd-yyyy") });
+            return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = pDate.ToString("MM-dd-yyyy") });
         }
 
         [HttpGet("{action}/{code}/{id}")]

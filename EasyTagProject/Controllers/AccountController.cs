@@ -76,10 +76,6 @@ namespace EasyTagProject.Controllers
         [AllowAnonymous]
         public IActionResult ReturnToPage(string returnUrl)
         {
-            // Get the string back to original state
-
-            returnUrl = HttpUtility.UrlDecode(returnUrl);
-
             // Redirect to page
             if (String.IsNullOrEmpty(returnUrl))
             {

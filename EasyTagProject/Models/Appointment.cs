@@ -57,5 +57,18 @@ namespace EasyTagProject.Models
                 RoomCode = RoomCode
             };
         }
+
+        public bool InformationChanged(Appointment other)
+        {
+            return !(Start == other.Start &&
+                   End == other.End &&
+                   Course == other.Course &&
+                   Description == other.Description &&
+                   ScheduleId == other.ScheduleId &&
+                   RoomId == other.RoomId &&
+                   UserName == other.UserName &&
+                   UserId == other.UserId &&
+                   RoomCode == other.RoomCode);
+        }
     }
 }

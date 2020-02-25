@@ -1,0 +1,10 @@
+﻿@model Appointment
+
+<a class="btn btn-info"
+   asp-action="RepeatAppointment"
+   asp-controller="AppointmentCRUD"
+   asp-route-code="@Model.RoomCode"
+   asp-route-id="@Model.Id"
+   asp-route-dateTime="@Model.Start.ToString("MM-dd-yyyy")">
+    Repeat
+</a>

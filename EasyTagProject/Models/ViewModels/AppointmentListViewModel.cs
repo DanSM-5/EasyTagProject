@@ -13,5 +13,6 @@ namespace EasyTagProject.Models.ViewModels
         public DateTime Date { get; set; }
         public Room Room { get; set; }
         public Appointment OverlappedAppointment { get; set; }
+        public RoomPagination RoomPagination { get; set; }
     }
 }

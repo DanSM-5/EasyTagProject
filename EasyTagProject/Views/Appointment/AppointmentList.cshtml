@@ -9,6 +9,9 @@
 *@
 
 <h1>Add Appoinment on @Model.Date.ToShortDateString()</h1>
+<div class="m-3 justify-content-center">
+    <partial name="RoomPaginationPartial" for="@Model.RoomPagination" />
+</div>
 
 <table class="table">
     <tr>
@@ -39,6 +42,7 @@
                 // Find overlapping appointment
                 using (var app = Model.Room.Schedule.GetOverlappingAppointment(Model.Date.Date + Model.StartRange.TimeOfDay))
                 {
+                    app.RoomCode = Model.Room.RoomCode;
                     if (app.Id != (Model.OverlappedAppointment?.Id ?? 0))
                     {
                         <tr>
@@ -46,56 +50,38 @@
                             <td>
                                 @Model.StartRange.ToShortTimeString()
                             </td>
-                        @* The appointment belongs to the current logged user? *@
-                        @if(ViewContext.IsAccessibleForUser(app.UserId))
-                        {
+                            @* The appointment belongs to the current logged user? *@
+                            @if (ViewContext.IsAccessibleForUser(app.UserId))
+                            {
 
-                            <td>
-                                <div class="d-flex">
-                                    <p class="mr-auto">Your appointment for &quot;@app.Description&quot;</p>
-                                    <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
-                                       asp-route-code="@Model.Room.RoomCode"
-                                       asp-route-id="@app.Id">
-                                        Edit
-                                    </a>
-                                    <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
-                                        <input type="hidden" name="id" value="@app.Id" />
-                                        <input type="hidden" name="code" value="@Model.Room.RoomCode" />
-                                        <button class="btn btn-danger btn-group">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        }
-                        // is the current logged user an admin?
-                        else if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
-                        {
-                            <td>
-                                <div class="d-flex">
-                                    <p class="mr-auto">Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)</p>
-                                    <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
-                                       asp-route-code="@Model.Room.RoomCode"
-                                       asp-route-id="@app.Id">
-                                        Edit
-                                    </a>
-                                    <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
-                                        <input type="hidden" name="id" value="@app.Id" />
-                                        <input type="hidden" name="code" value="@Model.Room.RoomCode" />
-                                        <button class="btn btn-danger btn-group">
-                                            Delete
-                                        </button>
-                                    </form>
-                                </div>
-                            </td>
-                        }
-                        else
-                        {
-                            // Add Booked message
-                            <td>
-                                Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)
-                            </td>
-                        }
+                                <td>
+                                    <div class="d-flex">
+                                        <p class="mr-auto">Your appointment for &quot;@app.Description&quot;</p>
+                                        <partial name="ButtonEditAppointmentPartial" for="@app" />
+                                        <partial name="ButtonDeleteAppointmentPartial" for="@app" />
+                                        <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                    </div>
+                                </td>
+                            }
+                            // is the current logged user an admin?
+                            else if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
+                            {
+                                <td>
+                                    <div class="d-flex">
+                                        <p class="mr-auto">Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)</p>
+                                        <partial name="ButtonEditAppointmentPartial" for="@app" />
+                                        <partial name="ButtonDeleteAppointmentPartial" for="@app" />
+                                        <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                    </div>
+                                </td>
+                            }
+                            else
+                            {
+                                // Add Booked message
+                                <td>
+                                    Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)
+                                </td>
+                            }
 
                         </tr>
                         Model.OverlappedAppointment = app;
@@ -105,23 +91,23 @@
             }
             else
             {
-                //
+                var btn = new BtnNewAppViewModel
+                {
+                    RoomCode = Model.Room.RoomCode,
+                    RoomId = Model.Room.Id,
+                    StartingDate = (Model.Date.Date + Model.StartRange.TimeOfDay),
+                    Message = "Free"
+                };
                 //    Verifies it the current block of time is available or if it is already in the past
                 <tr>
                     @* Time of the block *@
                     <td>
                         @Model.StartRange.ToShortTimeString()
                     </td>
-                    @* Link to create appointment *@ 
+                    @* Link to create appointment *@
                     <td class="h-100">
                         <div class="text-center h-100 d-block">
-                            <a class="btn btn-primary"
-                               asp-action="AddAppointment" asp-controller="AppointmentCRUD"
-                               asp-route-code="@Model.Room.RoomCode"
-                               asp-route-roomId="@Model.Room.Id"
-                               asp-route-selectedTime="@((Model.Date.Date + Model.StartRange.TimeOfDay).ToString("MM-dd-yyyy H:mm"))">
-                                Free
-                            </a>
+                            <partial name="ButtonCreateNewAppointmentPartial" for="@btn" />
                         </div>
                     </td>
                 </tr>
@@ -129,14 +115,18 @@
         }
     }
 </table>
-
+<div class="m-3 justify-content-center">
+    <partial name="RoomPaginationPartial" for="@Model.RoomPagination" />
+</div>
 @* Go back to room page *@
 <div>
-    <a class="btn btn-warning" 
-       asp-action="Room" 
+    <a class="btn btn-warning"
+       asp-action="Room"
        asp-controller="Room"
        asp-route-code="@Model.Room.RoomCode"
        asp-route-pDate="@Model.Date.ToString("MM-dd-yyyy")">
         Cancel
     </a>
 </div>
+
+<script defer src="~/js/deleteConfirmation.js" asp-append-version="true"></script>

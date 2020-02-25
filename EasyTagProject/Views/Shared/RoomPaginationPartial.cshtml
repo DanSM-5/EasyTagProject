@@ -1,36 +1,47 @@
-﻿@model RoomViewModel
-<!--
+﻿@model RoomPagination
+@*
     Partial View for pagination of Room page.
     It allows to navigate appointments per day
--->
+*@
 <div id="pagination" class="row">
     <div class="col align-content-center">
         <ul class="pagination justify-content-center">
-            <!--
+            @*
                 Previos day    
-            -->
-            <li class="page-item">
-                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Yesterday.ToString("MM-dd-yyyy")" class="page-link">
-                    <i class="fas fa-step-backward"></i>
-                </a>
-            </li>
-            <!--
+            *@
+            @if (Model.AllowPrevious)
+            {
+                <li class="page-item">
+                    <a asp-controller="@Model.Controller" asp-action="@Model.Action"
+                       asp-route-code="@Model.RoomCode" asp-route-pDate="@Model.Yesterday.ToString("MM-dd-yyyy H:mm")" class="page-link">
+                        <i class="fas fa-step-backward"></i>
+                    </a>
+                </li>
+            }
+            @*
                 Current date of the system   
-            -->
-            <li class="page-item">
-                <a asp-controller="Room" asp-action="Room"
-                   asp-route-code="@Model.Room.RoomCode" asp-route-pdate="" class="page-link">
-                    Today
-                </a>
-            </li>
-            <!--
+            *@
+                @if (Model.AllowCurrent)
+                {
+                <li class="page-item">
+                    <a asp-controller="@Model.Controller" asp-action="@Model.Action"
+                       asp-route-code="@Model.RoomCode" asp-route-pDate="@DateTime.Today.ToString("MM-dd-yyyy H:mm")" class="page-link">
+                        Today
+                    </a>
+                </li>
+            }
+            @*
                 Next day    
-            -->
-            <li class="page-item">
-                <a asp-action="Room" asp-route-code="@Model.Room.RoomCode" asp-route-pdate="@Model.Pagination.Tomorrow.ToString("MM-dd-yyyy")" class="page-link">
-                    <i class="fas fa-step-forward"></i>
-                </a>
-            </li>
+            *@
+            @if (Model.AllowNext)
+            {
+                <li class="page-item">
+                    <a asp-controller="@Model.Controller" asp-action="@Model.Action" 
+                       asp-route-code="@Model.RoomCode" asp-route-pDate="@Model.Tomorrow.ToString("MM-dd-yyyy H:mm")" class="page-link">
+                        <i class="fas fa-step-forward"></i>
+                    </a>
+                </li>
+            }
         </ul>
     </div>
 </div>

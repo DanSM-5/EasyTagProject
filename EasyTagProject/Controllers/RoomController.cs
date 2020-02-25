@@ -25,20 +25,22 @@ namespace EasyTagProject.Controllers
         [HttpGet("{action}/{code}")]
         public async Task<ViewResult> Room(string code)
         {
+            var room = await GetRoomWithDailyAppointmentsAsync(code, DateTime.Today);
             return View(new RoomViewModel
             {
-                Room = await GetRoomWithDailyAppointmentsAsync(code, DateTime.Today),
-                Pagination = new RoomPagination()
+                Room = room,
+                Pagination = new RoomPagination { RoomCode = room.RoomCode, Action = "Room", Controller = "Room"}
             });
         }
 
         [HttpGet("{action}/{code}/{pDate}")]
         public async Task<ViewResult> Room(string code, DateTime pDate)
         {
+            var room = await GetRoomWithDailyAppointmentsAsync(code, pDate.Date);
             return View(new RoomViewModel
             {
-                Room = await GetRoomWithDailyAppointmentsAsync(code, pDate),
-                Pagination = new RoomPagination { CurrentDate = pDate }
+                Room = room,
+                Pagination = new RoomPagination { CurrentDate = pDate, RoomCode = room.RoomCode, Action = "Room", Controller = "Room" }
             });
         }
 
@@ -61,7 +63,7 @@ namespace EasyTagProject.Controllers
                 return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = pDate.ToString("MM-dd-yyyy") });
             }
 
-            return Redirect("/Home/Error");
+            return RedirectToAction(nameof(Room), nameof(Room), new { code = code });
         }
 
         [HttpGet("{action}/{page=1}")]

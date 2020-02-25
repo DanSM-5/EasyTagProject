@@ -27,7 +27,6 @@ namespace EasyTagProject.Models
                     entry.Description = appointment.Description;
                     entry.Course = appointment.Course;
                     entry.UserName = appointment.UserName;
-                    entry.UserId = appointment.UserId;
                 }
             }
             else

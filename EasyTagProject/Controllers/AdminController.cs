@@ -4,6 +4,7 @@ using System.Linq;
 using System.Security.Claims;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using System.Web;
 using EasyTagProject.Infrastructure;
 using EasyTagProject.Models.Identity;
 using EasyTagProject.Models.ViewModels;
@@ -136,7 +137,7 @@ namespace EasyTagProject.Controllers
 
                         if (!String.IsNullOrEmpty(returnUrl))
                         {
-                            user.ReturnUrl = returnUrl;
+                            user.ReturnUrl = HttpUtility.UrlDecode(returnUrl);
                         }
 
                         if (message == "success")
@@ -259,7 +260,7 @@ namespace EasyTagProject.Controllers
                 {
                     if (!String.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
                     {
-                        return Redirect(model.ReturnUrl);
+                        return Redirect(HttpUtility.UrlDecode(model.ReturnUrl));
                     }
 
                     return RedirectToAction(nameof(ManageUsers));

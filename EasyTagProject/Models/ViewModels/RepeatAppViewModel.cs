@@ -18,10 +18,11 @@ namespace EasyTagProject.Models.ViewModels
         //[UIHint("Hidden")]
         [HiddenInput]
         public int Id { get; set; }
-        [Required]
+        [Required(ErrorMessage = "Please select a period")]
         public RepeatTime PeriodType { get; set; }
-        [Required]
+        [Required(ErrorMessage = "You have to repeat at least once")]
         public int RepeatNumber { get; set; }
+        [Required]
         public bool IncludeWeekends { get; set; }
         [HiddenInput]
         public string Date { get; set; }

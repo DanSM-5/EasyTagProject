@@ -6,14 +6,14 @@
 <h1 class="justify-content-center">Report Appointments</h1>
 @if (Model.Count() > 0)
 {
-<div class="d-flex align-content-center justify-content-center h-25">
-    <a class="btn btn-primary" type="button"
-       asp-action="Room"
-       asp-controller="Room"
-       asp-route-code="@Model.First().RoomCode">
-        Accept
-    </a>
-</div>
+    <div class="d-flex align-content-center justify-content-center h-25">
+        <a class="btn btn-primary" type="button"
+           asp-action="Room"
+           asp-controller="Room"
+           asp-route-code="@Model.First().RoomCode">
+            Accept
+        </a>
+    </div>
     <table class="table table-striped table-hover">
         <thead>
             <tr>
@@ -28,23 +28,13 @@
             {
                 <tr>
                     <td>@a.Start.ToShortDateString() @a.Start.ToShortTimeString()</td>
-                    <td>@(a.isValid ? "Appointment made successfull" : "Appointment cannot be created on this day")</td>
+                    <td>@(a.isValid ? "Appointment made successfully" : "Appointment cannot be created on this day")</td>
                     @if (a.isValid)
                     {
                         <td>
                             <div class="d-flex">
-                                <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
-                                   asp-route-code="@a.RoomCode"
-                                   asp-route-id="@a.Id">
-                                    Edit
-                                </a>
-                                <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
-                                    <input type="hidden" name="id" value="@a.Id" />
-                                    <input type="hidden" name="code" value="@a.RoomCode" />
-                                    <button class="btn btn-danger btn-group">
-                                        Delete
-                                    </button>
-                                </form>
+                                <partial name="ButtonEditAppointmentPartial" for="@a" />
+                                <partial name="ButtonDeleteAppointmentPartial" for="@a" />
                             </div>
                         </td>
                         <td>
@@ -55,15 +45,16 @@
                     }
                     else
                     {
+                        var btn = new BtnNewAppViewModel
+                        {
+                            RoomCode = a.RoomCode,
+                            RoomId = a.RoomId,
+                            StartingDate = a.Start,
+                            Message = "Try another time?"
+                        };
                         <td class="h-100">
                             <div class="text-center h-100 d-block">
-                                <a class="btn btn-info"
-                                   asp-action="AddAppointment" asp-controller="AppointmentCRUD"
-                                   asp-route-code="@a.RoomCode"
-                                   asp-route-roomId="@a.RoomId"
-                                   asp-route-selectedTime="@((a.Start).ToString("MM-dd-yyyy H:mm"))">
-                                    Try another time?
-                                </a>
+                                <partial name="ButtonCreateNewAppointmentPartial" for="@btn" />
                             </div>
                         </td>
                         <td>
@@ -99,4 +90,7 @@ else
         </a>
     </div>
 }
+
+
+<script defer src="~/js/deleteConfirmation.js" asp-append-version="true"></script>
 

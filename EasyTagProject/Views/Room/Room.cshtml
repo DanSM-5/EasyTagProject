@@ -53,7 +53,7 @@ else
 @*
     Include pagination for room
 *@
-<partial name="RoomPaginationPartial" for="@Model" />
+<partial name="RoomPaginationPartial" for="@Model.Pagination" />
 
 @*
     Create table to display daily appointments
@@ -72,32 +72,18 @@ else
             {
                 @foreach (var app in Model.Room.Schedule.Appointments)
                 {
+                    app.RoomCode = Model.Room.RoomCode;
                     <tr id="@app.Id-header" class="appointment">
                         @if (app.Start.Date >= DateTime.Now.Date &&
-                   ViewContext.IsAccessibleForUserOrAdmin(app.UserId))
+                  ViewContext.IsAccessibleForUserOrAdmin(app.UserId))
                         {
                             <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
                             <td>@app.Course</td>
                             <td>@app.UserName</td>
                             <td class="btn-inline">
-                                <a class="btn btn-warning btn-group" asp-action="EditAppointment" asp-controller="AppointmentCRUD"
-                                   asp-route-code="@Model.Room.RoomCode"
-                                   asp-route-id="@app.Id">
-                                    Edit
-                                </a>
-                                <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
-                                    <input type="hidden" name="id" value="@app.Id" />
-                                    <input type="hidden" name="code" value="@Model.Room.RoomCode" />
-                                    <button class="btn btn-danger btn-group">
-                                        Delete
-                                    </button>
-                                </form>
-                                <a class="btn btn-info"
-                                   asp-action="RepeatAppointment"
-                                   asp-controller="AppointmentCRUD"
-                                   asp-route-code="@Model.Room.RoomCode"
-                                   asp-route-id="@app.Id"
-                                   asp-route-dateTime="@app.Start.ToString("MM-dd-yyyy")">Repeat</a>
+                                <partial name="ButtonEditAppointmentPartial" for="@app" />
+                                <partial name="ButtonDeleteAppointmentPartial" for="@app" />
+                                <partial name="ButtonRepeatAppointmentPartial" for="@app" />
                             </td>
 
                         }
@@ -136,7 +122,7 @@ else
         <div class="form-group">
             <div class="btn-container">
                 <a class="btn btn-primary text-center btn-addApm" asp-controller="Appointment" asp-action="AppointmentList"
-                   asp-route-id="@Model.Room.Id" asp-route-searchDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
+                   asp-route-code="@Model.Room.RoomCode" asp-route-pDate="@Model.Pagination.CurrentDate.ToString("MM-dd-yyyy")">
                     Add Appointment
                 </a>
             </div>
@@ -147,7 +133,7 @@ else
 @*
     Include pagination for room
 *@
-<partial name="RoomPaginationPartial" for="@Model" />
+<partial name="RoomPaginationPartial" for="@Model.Pagination" />
 
 @*
     Include search appointments for specific date
@@ -158,3 +144,4 @@ else
     javascript file for fade in/out animations
 *@
 <script defer src="~/js/room.js" asp-append-version="true"></script>
+<script defer src="~/js/deleteConfirmation.js" asp-append-version="true"></script>
