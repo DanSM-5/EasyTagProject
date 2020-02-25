@@ -13,4 +13,4 @@ Instructions to run the application locally
 
 4. Db's will be created the first time the application is run using the migration scripts.
 
-5. Log in to have access to the special features of the application.
+5. Log in to have access to the special features of the application
