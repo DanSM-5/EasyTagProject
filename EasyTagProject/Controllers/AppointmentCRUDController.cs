@@ -123,7 +123,7 @@ namespace EasyTagProject.Controllers
         [HttpPost("{action}/{code}/{id}/{dateTime}")]
         public async Task<IActionResult> RepeatAppointment(RepeatAppViewModel model)
         {
-            if (model.PeriodType == RepeatTime.Unselect)
+            if (model.PeriodType == RepeatTime.Unselect || model.PeriodType == RepeatTime.Never)
             {
                 ModelState.AddModelError("", "Select the repetition type");
             }
