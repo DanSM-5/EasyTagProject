@@ -8,6 +8,7 @@ namespace EasyTagProject.Models
     public enum RepeatTime
     {
         Unselect,
+        Once,
         Daily,
         Weekly,
         Monthly,

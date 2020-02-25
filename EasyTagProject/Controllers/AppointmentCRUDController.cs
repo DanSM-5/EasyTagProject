@@ -131,6 +131,11 @@ namespace EasyTagProject.Controllers
             {
                 ModelState.AddModelError("", "You must repeat the appointment at least once");
             }
+            if (model.PeriodType == RepeatTime.Once && model.TargetDay == null ||
+                model.PeriodType == RepeatTime.Once && model.TargetDay < DateTime.Today)
+            {
+                ModelState.AddModelError("", "Date is not valid");
+            }
 
             if (ModelState.IsValid)
             {
@@ -144,7 +149,7 @@ namespace EasyTagProject.Controllers
                                             || a.Id == app.Id)
                                         .ToDictionaryAsync(a => a.Id);
 
-                var appointments = await RepeatAppointment(app, model.PeriodType, model.RepeatNumber, model.IncludeWeekends, toCompareTime);
+                var appointments = await RepeatAppointment(app, model.PeriodType, model.RepeatNumber, model.IncludeWeekends, toCompareTime, model.TargetDay?.Date ?? default(DateTime));
 
                 TempData.SetObject("app", appointments);
                 return RedirectToAction("ReportAppointments", nameof(Appointment)); 
@@ -251,7 +256,7 @@ namespace EasyTagProject.Controllers
             return success;
         }
 
-        public async Task<IEnumerable<Appointment>> RepeatAppointment(Appointment original, RepeatTime periodType, int repeatNumber, bool includeWeekends, Dictionary<int, Appointment> compareTo)
+        public async Task<IEnumerable<Appointment>> RepeatAppointment(Appointment original, RepeatTime periodType, int repeatNumber, bool includeWeekends, Dictionary<int, Appointment> compareTo, DateTime targetDay = default(DateTime))
         {
             var tasks = new List<Task<Appointment>>();
             int count = 1;
@@ -274,7 +279,7 @@ namespace EasyTagProject.Controllers
                     }
                 }
 
-                tasks.Add(AddDuplicate(original.Clone(), periodType, count++, compareTo));
+                tasks.Add(AddDuplicate(original.Clone(), periodType, count++, compareTo, targetDay));
             }
 
             var appointments = await Task.WhenAll(tasks);
@@ -283,10 +288,14 @@ namespace EasyTagProject.Controllers
             return appointments;
         }
 
-        public async Task<Appointment> AddDuplicate(Appointment newAppointment, RepeatTime periodType, int amount, Dictionary<int,Appointment> compareTo)
+        public async Task<Appointment> AddDuplicate(Appointment newAppointment, RepeatTime periodType, int amount, Dictionary<int,Appointment> compareTo, DateTime targetDay = default(DateTime))
         {
             switch (periodType)
             {
+                case RepeatTime.Once:
+                    newAppointment.Start = targetDay.Date + newAppointment.Start.TimeOfDay;
+                    newAppointment.End = targetDay.Date + newAppointment.End.TimeOfDay;
+                    break;
                 case RepeatTime.Daily:
                     newAppointment.Start += amount.Days();
                     newAppointment.End += amount.Days();

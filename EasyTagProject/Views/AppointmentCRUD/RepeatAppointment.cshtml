@@ -18,9 +18,15 @@
                 <option value="@period">@period</option>
             }
         </select>
-        &nbsp;for a number of &nbsp;
-        <input asp-for="RepeatNumber" min="1" />
-        <span id="period">days</span>.
+        <span id="once">
+            &nbsp;the day &nbsp;
+            <input asp-for="TargetDay" type="date" />
+        </span>
+        <span id="another">
+            &nbsp;for a number of &nbsp;
+            <input asp-for="RepeatNumber" min="1" />
+            <span id="period">days</span>.
+        </span>
     </div>
     <div class="form-group mt-3" id="question">
         <span class="">Do you want to include weekends?</span>&nbsp;

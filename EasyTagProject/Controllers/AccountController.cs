@@ -69,7 +69,7 @@ namespace EasyTagProject.Controllers
                 }
             }
 
-            ModelState.AddModelError("", "Invalid name of password");
+            ModelState.AddModelError("", "Invalid username or password");
             return View(model);
         }
 
