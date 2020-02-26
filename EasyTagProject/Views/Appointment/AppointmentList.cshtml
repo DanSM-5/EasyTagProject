@@ -16,7 +16,7 @@
 <table class="table">
     <tr>
         <th>Time</th>
-        <th>Status</th>
+        <th colspan="2" class="text-center">Status</th>
     </tr>
 
     @*
@@ -47,38 +47,48 @@
                     {
                         <tr>
                             @*Time of the block*@
-                            <td>
-                                @Model.StartRange.ToShortTimeString()
+                            <td class="align-middle">
+                                    @Model.StartRange.ToShortTimeString()
                             </td>
                             @* The appointment belongs to the current logged user? *@
                             @if (ViewContext.IsAccessibleForUser(app.UserId))
                             {
-
-                                <td>
-                                    <div class="d-flex">
-                                        <p class="mr-auto">Your appointment for &quot;@app.Description&quot;</p>
-                                        <partial name="ButtonEditAppointmentPartial" for="@app" />
-                                        <partial name="ButtonDeleteAppointmentPartial" for="@app" />
-                                        <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                <td class="align-middle">
+                                    <div class="d-xs-block d-sm-flex row align-items-center">
+                                        <div class="col-xs-12 col-sm-6">
+                                            Your appointment for &quot;@app.Description&quot;
+                                        </div>
+                                        <div class="d-flex col-xs-12 col-sm-6">
+                                            <partial name="ButtonEditAppointmentPartial" for="@app" />
+                                            <partial name="ButtonDeleteAppointmentPartial" for="@app" />
+                                            <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                        </div>
                                     </div>
                                 </td>
+
                             }
                             // is the current logged user an admin?
                             else if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
                             {
-                                <td>
-                                    <div class="d-flex">
-                                        <p class="mr-auto">Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)</p>
-                                        <partial name="ButtonEditAppointmentPartial" for="@app" />
-                                        <partial name="ButtonDeleteAppointmentPartial" for="@app" />
-                                        <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                <td class="align-middle">
+                                    <div class="d-xs-block d-sm-flex row align-items-center">
+                                       <div class="col-xs-12 col-sm-6">
+                                           Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)
+                                       </div>
+                                        <div class="d-flex col-xs-12 col-sm-6">
+                                            <partial name="ButtonEditAppointmentPartial" for="@app" />
+                                            <partial name="ButtonDeleteAppointmentPartial" for="@app" />
+                                            <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                        </div>
                                     </div>
+                                </td>
+                                <td>
                                 </td>
                             }
                             else
                             {
                                 // Add Booked message
-                                <td>
+                                <td colspan="2" class="align-middle">
                                     Booked by @Model.Room.Schedule.GetOverlappingAppointmentUserName(Model.Date.Date + Model.StartRange.TimeOfDay)
                                 </td>
                             }
@@ -101,12 +111,12 @@
                 //    Verifies it the current block of time is available or if it is already in the past
                 <tr>
                     @* Time of the block *@
-                    <td>
+                    <td class="align-middle">
                         @Model.StartRange.ToShortTimeString()
                     </td>
                     @* Link to create appointment *@
-                    <td class="h-100">
-                        <div class="text-center h-100 d-block">
+                    <td class="align-middle">
+                        <div class="text-center">
                             <partial name="ButtonCreateNewAppointmentPartial" for="@btn" />
                         </div>
                     </td>

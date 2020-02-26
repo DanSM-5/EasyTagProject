@@ -26,7 +26,7 @@ namespace EasyTagProject.Models.ViewModels
         public bool IncludeWeekends { get; set; }
         [HiddenInput]
         public string Date { get; set; }
-        [RequiredIf("PeriodType == Once", ErrorMessage = "Please select a day!")]
+        [RequiredIf("PeriodType == RepeatTime.Once", ErrorMessage = "Please select a day!")]
         public DateTime? TargetDay { get; set; }
     }
 }

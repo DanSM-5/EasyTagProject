@@ -77,10 +77,10 @@ else
                         @if (app.Start.Date >= DateTime.Now.Date &&
                   ViewContext.IsAccessibleForUserOrAdmin(app.UserId))
                         {
-                            <td>@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
-                            <td>@app.Course</td>
-                            <td>@app.UserName</td>
-                            <td class="btn-inline">
+                            <td class="align-middle">@app.Start.ToShortTimeString() - @app.End.ToShortTimeString()</td>
+                            <td class="align-middle">@app.Course</td>
+                            <td class="align-middle">@app.UserName</td>
+                            <td class="align-middle">
                                 <partial name="ButtonEditAppointmentPartial" for="@app" />
                                 <partial name="ButtonDeleteAppointmentPartial" for="@app" />
                                 <partial name="ButtonRepeatAppointmentPartial" for="@app" />

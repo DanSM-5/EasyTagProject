@@ -6,7 +6,7 @@
 <h1 class="justify-content-center">Report Appointments</h1>
 @if (Model.Count() > 0)
 {
-    <div class="d-flex align-content-center justify-content-center h-25">
+    <div class="d-flex align-content-center justify-content-center mt-3 mb-3">
         <a class="btn btn-primary" type="button"
            asp-action="Room"
            asp-controller="Room"
@@ -27,17 +27,17 @@
             @foreach (var a in Model)
             {
                 <tr>
-                    <td>@a.Start.ToShortDateString() @a.Start.ToShortTimeString()</td>
-                    <td>@(a.isValid ? "Appointment made successfully" : "Appointment cannot be created on this day")</td>
+                    <td class="align-middle">@a.Start.ToShortDateString() @a.Start.ToShortTimeString()</td>
+                    <td class="align-middle">@(a.isValid ? "Appointment made successfully" : "Appointment cannot be created on this day")</td>
                     @if (a.isValid)
                     {
-                        <td>
+                        <td class="align-middle">
                             <div class="d-flex">
                                 <partial name="ButtonEditAppointmentPartial" for="@a" />
                                 <partial name="ButtonDeleteAppointmentPartial" for="@a" />
                             </div>
                         </td>
-                        <td>
+                        <td class="align-middle">
                             <div class="image-sm">
                                 <img class="image-sm" src="~/images/success.png" />
                             </div>
@@ -52,12 +52,12 @@
                             StartingDate = a.Start,
                             Message = "Try another time?"
                         };
-                        <td class="h-100">
+                        <td class="align-middle">
                             <div class="text-center h-100 d-block">
                                 <partial name="ButtonCreateNewAppointmentPartial" for="@btn" />
                             </div>
                         </td>
-                        <td>
+                        <td class="align-middle">
                             <div class="image-sm">
                                 <img class="image-sm" src="~/images/fail.png" />
                             </div>

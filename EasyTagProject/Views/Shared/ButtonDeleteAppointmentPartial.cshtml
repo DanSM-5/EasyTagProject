@@ -2,7 +2,7 @@
 <form asp-action="DeleteAppointment" asp-controller="AppointmentCRUD" method="post">
     <input type="hidden" name="id" value="@Model.Id" />
     <input type="hidden" name="code" value="@Model.RoomCode" />
-    <button class="btn btn-danger btn-group delete" type="submit">
+    <button class="btn btn-danger delete" type="submit">
         Delete
     </button>
 </form>
