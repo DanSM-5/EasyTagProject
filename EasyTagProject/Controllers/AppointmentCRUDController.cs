@@ -23,13 +23,13 @@ namespace EasyTagProject.Controllers
         private IAppointmentRepository appointmentRopository;
         private readonly IRoomRepository roomRepository;
         private UserManager<EasyTagUser> userManager;
-        private IHttpContextAccessor ViewContext { get; }
+        //private IHttpContextAccessor ViewContext { get; }
 
-        public AppointmentCRUDController(IAppointmentRepository aRepo, IRoomRepository rRepo, IHttpContextAccessor httpContext, UserManager<EasyTagUser> manager)
+        public AppointmentCRUDController(IAppointmentRepository aRepo, IRoomRepository rRepo, /*IHttpContextAccessor httpContext,*/ UserManager<EasyTagUser> manager)
         {
             appointmentRopository = aRepo;
             roomRepository = rRepo;
-            ViewContext = httpContext;
+            //ViewContext = httpContext;
             userManager = manager;
         }
 
@@ -45,7 +45,7 @@ namespace EasyTagProject.Controllers
                 if (room != null)
                 {
                     // Find logged user and add the name as default for an appointmnt
-                    EasyTagUser tagUser = await userManager.FindByNameAsync(ViewContext.HttpContext.GetLoggedUserName());
+                    EasyTagUser tagUser = await userManager.FindByNameAsync(HttpContext.GetLoggedUserName());
                     return View(new Appointment { UserName = tagUser.FullName, RoomCode = code, RoomId = room.Id, ScheduleId = room.Schedule.Id, Start = selectedTime, End = selectedTime + 30.Minutes() }); 
                 }
             }
@@ -53,14 +53,19 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpPost("{action}/{code}/{selectedTime}")]
-        public async Task<IActionResult> AddAppointment(Appointment appointment)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AddAppointment(
+            [Bind(nameof(Appointment.RowVersion), nameof(Appointment.RoomId), nameof(Appointment.RoomCode), nameof(Appointment.ScheduleId),
+                  nameof(Appointment.UserName),nameof(Appointment.Start),nameof(Appointment.End),nameof(Appointment.Course),
+                  nameof(Appointment.Description))]
+            Appointment appointment)
         {
             appointment.Id = 0;
             await ValidateAppointmentAsync(appointment);
 
             if (ModelState.IsValid)
             {
-                appointment.UserId = ViewContext.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                appointment.UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
                 await appointmentRopository.SaveAsync(appointment);
 
                 return RedirectToAction("AppointmentConfirmation", nameof(Appointment), new { code = appointment.RoomCode, id = appointment.Id });
@@ -78,7 +83,7 @@ namespace EasyTagProject.Controllers
                 Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.RoomCode == code);
                 if (room != null)
                 {
-                    if (ViewContext.HttpContext.IsAccessibleForUserOrAdmin(app.UserId))
+                    if (HttpContext.IsAccessibleForUserOrAdmin(app.UserId))
                     {
                         app.RoomCode = code;
                         return View(app);
@@ -89,15 +94,20 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpPost("{action}/{code}/{id}")]
-        public async Task<IActionResult> EditAppointment(Appointment appointment)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditAppointment(
+            [Bind(nameof(Appointment.RowVersion), nameof(Appointment.RoomId), nameof(Appointment.RoomCode), nameof(Appointment.ScheduleId),
+                  nameof(Appointment.UserName),nameof(Appointment.Start),nameof(Appointment.End),nameof(Appointment.Course),
+                  nameof(Appointment.Description), nameof(Appointment.Id))]
+            Appointment appointment)
         {
             // Redirect to home if there is no existing appointment
-            if (!(appointmentRopository.Appointments.Any(a => a.Id == appointment.Id)))
+            if (!(await appointmentRopository.Appointments.AnyAsync(a => a.Id == appointment.Id)))
             {
                 return Redirect("/");
             }
 
-            if ((await appointmentRopository.Appointments.FirstAsync(a => a.Id == appointment.Id)).InformationChanged(appointment))
+            if (!(await appointmentRopository.Appointments.FirstAsync(a => a.Id == appointment.Id)).InformationChanged(appointment))
             {
                 return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
             }
@@ -106,22 +116,63 @@ namespace EasyTagProject.Controllers
 
             if (ModelState.IsValid)
             {
-                await appointmentRopository.SaveAsync(appointment);
+                try
+                {
+                    await appointmentRopository.SaveAsync(appointment);
 
-                return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
+                    return RedirectToAction(nameof(Room), nameof(Room), new { code = appointment.RoomCode, pDate = appointment.Start.ToString("MM-dd-yyyy") });
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    Appointment conflicted = await appointmentRopository.Appointments.FirstAsync(a => a.Id == appointment.Id);
+                    if (conflicted == null)
+                    {
+                        ModelState.AddModelError("", "The appointment has been deleted!");
+                    }
+                    else
+                    {
+                        if (conflicted.UserName != appointment.UserName)
+                        {
+                            ModelState.AddModelError(nameof(Appointment.UserName), $"Current value: {conflicted.UserName}");
+                        }
+                        if (conflicted.Start != appointment.Start)
+                        {
+                            ModelState.AddModelError(nameof(Appointment.Start), $"Current value: {conflicted.Start.ToString("MM-dd-yyyy H:mm")}");
+                        }
+                        if (conflicted.End != appointment.End)
+                        {
+                            ModelState.AddModelError(nameof(Appointment.End), $"Current value: {conflicted.End.ToString("MM-dd-yyyy H:mm")}");
+                        }
+                        if (conflicted.Description != appointment.Description)
+                        {
+                            ModelState.AddModelError(nameof(Appointment.Description), $"Current value: {conflicted.Description}");
+                        }
+                        if (conflicted.Course != appointment.Course)
+                        {
+                            ModelState.AddModelError(nameof(Appointment.Course), $"Current value: {conflicted.Course}");
+                        }
+
+                        ModelState.AddModelError("", "The appointment has been modified!");
+                    }
+
+                    return View(appointment);
+                }
             }
 
             return View(appointment);
         }
 
-        [HttpGet("{action}/{code}/{id}/{dateTime}")]
-        public async Task<ViewResult> RepeatAppointment(string code, int id, DateTime dateTime)
+        [HttpGet("{action}/{code}/{id}/{start}/{end}")]
+        public async Task<ViewResult> RepeatAppointment(string code, int id, DateTime start, DateTime end)
         {
-            return View(new RepeatAppViewModel { Code = code, Id = id, IncludeWeekends = true, Date = dateTime.ToString("MM-dd-yyyy") });
+            return View(new RepeatAppViewModel { Code = code, Id = id, IncludeWeekends = true, Date = start.ToString("MM-dd-yyyy"), TargetDay = start, Start = start.TimeOfDay, End = end.TimeOfDay });
         }
 
-        [HttpPost("{action}/{code}/{id}/{dateTime}")]
-        public async Task<IActionResult> RepeatAppointment(RepeatAppViewModel model)
+        [HttpPost("{action}/{code}/{id}/{start}/{end}")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> RepeatAppointment(
+            [Bind]
+            RepeatAppViewModel model)
         {
             if (model.PeriodType == RepeatTime.Unselect || model.PeriodType == RepeatTime.Never)
             {
@@ -149,9 +200,10 @@ namespace EasyTagProject.Controllers
                                             || a.Id == app.Id)
                                         .ToDictionaryAsync(a => a.Id);
 
-                var appointments = await RepeatAppointment(app, model.PeriodType, model.RepeatNumber, model.IncludeWeekends, toCompareTime, model.TargetDay?.Date ?? default(DateTime));
+                var appointments = await RepeatAppointment(app, model, toCompareTime);
 
-                TempData.SetObject("app", appointments);
+                HttpContext.Session.SetJson("repeatResult", appointments);
+                //TempData.SetObject("app", appointments);
                 return RedirectToAction("ReportAppointments", nameof(Appointment)); 
             }
 
@@ -210,6 +262,13 @@ namespace EasyTagProject.Controllers
                 success = false;
             }
 
+            if (appointment.Start.TimeOfDay.TotalMinutes % 30 != 0 ||
+                appointment.End.TimeOfDay.TotalMinutes % 30 != 0)
+            {
+                ModelState.AddModelError("", "The time selected is not valid");
+                success = false;
+            }
+
             //  Identify if any apointment overlaps
             #region AvoidOverlapingAppoinments
 
@@ -230,7 +289,7 @@ namespace EasyTagProject.Controllers
                 }
 
                 // Protect editting appointments of another user. Only admins are allowed to do that.
-                if (!(ViewContext.HttpContext.IsAccessibleForUserOrAdmin(app.UserId)))
+                if (!(HttpContext.IsAccessibleForUserOrAdmin(app.UserId)))
                 {
                     ModelState.AddModelError("", "You do not have the rights to edit this appointment");
                     success = false;
@@ -256,14 +315,14 @@ namespace EasyTagProject.Controllers
             return success;
         }
 
-        public async Task<IEnumerable<Appointment>> RepeatAppointment(Appointment original, RepeatTime periodType, int repeatNumber, bool includeWeekends, Dictionary<int, Appointment> compareTo, DateTime targetDay = default(DateTime))
+        public async Task<IEnumerable<Appointment>> RepeatAppointment(Appointment original, RepeatAppViewModel model, Dictionary<int, Appointment> compareTo)
         {
             var tasks = new List<Task<Appointment>>();
             int count = 1;
 
-            while(tasks.Count < repeatNumber)
+            while(tasks.Count < model.RepeatNumber)
             {
-                if (!includeWeekends)
+                if (!model.IncludeWeekends)
                 {
                     var tempDate = original.Start + count.Days();
 
@@ -279,22 +338,24 @@ namespace EasyTagProject.Controllers
                     }
                 }
 
-                tasks.Add(AddDuplicate(original.Clone(), periodType, count++, compareTo, targetDay));
+                tasks.Add(AddDuplicate(original.Clone(), model, count++, compareTo));
             }
 
             var appointments = await Task.WhenAll(tasks);
-            await appointmentRopository.SaveRangeAsync(appointments.Where(a => a.isValid == true));
+            await appointmentRopository.SaveRangeAsync(appointments.Where(a => a.IsValid == true));
 
             return appointments;
         }
 
-        public async Task<Appointment> AddDuplicate(Appointment newAppointment, RepeatTime periodType, int amount, Dictionary<int,Appointment> compareTo, DateTime targetDay = default(DateTime))
+        public async Task<Appointment> AddDuplicate(Appointment newAppointment, RepeatAppViewModel model, int amount, Dictionary<int,Appointment> compareTo)
         {
-            switch (periodType)
+            switch (model.PeriodType)
             {
                 case RepeatTime.Once:
-                    newAppointment.Start = targetDay.Date + newAppointment.Start.TimeOfDay;
-                    newAppointment.End = targetDay.Date + newAppointment.End.TimeOfDay;
+
+                    //var appointmentDuration = newAppointment.End - newAppointment.Start;
+                    newAppointment.Start = model.TargetDay.Value.Date + model.Start.Value;
+                    newAppointment.End = model.TargetDay.Value.Date + model.End.Value;
                     break;
                 case RepeatTime.Daily:
                     newAppointment.Start += amount.Days();
@@ -314,7 +375,7 @@ namespace EasyTagProject.Controllers
                     break;
             }
 
-            newAppointment.isValid = await ValidateAppointmentAsync(newAppointment, compareTo);
+            newAppointment.IsValid = await ValidateAppointmentAsync(newAppointment, compareTo);
 
             return newAppointment;
         }
@@ -322,9 +383,14 @@ namespace EasyTagProject.Controllers
         [HttpPost]
         public async Task<IActionResult> DeleteAppointment(int id, string code)
         {
-            Appointment app = await appointmentRopository.DeleteAsync(id);
+            if (HttpContext.IsAccessibleForUserOrAdmin(HttpContext.GetLoggedUserId()))
+            {
+                Appointment app = await appointmentRopository.DeleteAsync(id);
 
-            return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = app.Start.ToString("MM-dd-yyyy") });
+                return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = app.Start.ToString("MM-dd-yyyy") }); 
+            }
+
+            return Redirect("/");
         }
     }
 }

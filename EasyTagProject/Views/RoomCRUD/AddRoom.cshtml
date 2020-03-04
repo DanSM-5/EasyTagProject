@@ -11,6 +11,7 @@
 <div>
     <form asp-action="AddRoom" asp-controller="RoomCRUD" method="post">
         <input asp-for="Id" type="hidden"/>
+        <input asp-for="RowVersion" />
         <div class="form-group">
             <div><span asp-validation-for="Name" class="text-danger validation-summary-errors"></span></div>
             <label class="input-group" asp-for="Name"></label>

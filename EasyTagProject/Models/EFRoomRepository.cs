@@ -26,13 +26,14 @@ namespace EasyTagProject.Models
                 if (roomEntry != null)
                 {
                     roomEntry.Name = room.Name;
-                    roomEntry.Items = roomEntry.Items;
                     roomEntry.Number = room.Number;
                     roomEntry.Type = room.Type;
                     roomEntry.Floor = room.Floor;
                     roomEntry.Block = room.Block;
                     roomEntry.RoomCode = room.RoomCode;
                 }
+
+                context.Entry(roomEntry).OriginalValues["RowVersion"] = room.RowVersion;
             }
             else
             {

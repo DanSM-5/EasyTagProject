@@ -59,7 +59,7 @@ else
     Create table to display daily appointments
 *@
 <div>
-    <table class="table table-active table-hover">
+    <table class="table table-active table-hover table-responsive-md">
         <thead>
             <tr>
                 <th>Hour</th>
@@ -81,11 +81,12 @@ else
                             <td class="align-middle">@app.Course</td>
                             <td class="align-middle">@app.UserName</td>
                             <td class="align-middle">
-                                <partial name="ButtonEditAppointmentPartial" for="@app" />
-                                <partial name="ButtonDeleteAppointmentPartial" for="@app" />
-                                <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                <div class="d-md-flex">
+                                    <partial name="ButtonEditAppointmentPartial" for="@app" />
+                                    <partial name="ButtonDeleteAppointmentPartial" for="@app" />
+                                    <partial name="ButtonRepeatAppointmentPartial" for="@app" />
+                                </div>
                             </td>
-
                         }
                         else
                         {

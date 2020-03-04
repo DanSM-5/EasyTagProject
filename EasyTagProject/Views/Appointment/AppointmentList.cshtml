@@ -13,7 +13,7 @@
     <partial name="RoomPaginationPartial" for="@Model.RoomPagination" />
 </div>
 
-<table class="table">
+<table class="table table-responsive-md">
     <tr>
         <th>Time</th>
         <th colspan="2" class="text-center">Status</th>
@@ -45,7 +45,7 @@
                     app.RoomCode = Model.Room.RoomCode;
                     if (app.Id != (Model.OverlappedAppointment?.Id ?? 0))
                     {
-                        <tr>
+                        <tr class="table-secondary">
                             @*Time of the block*@
                             <td class="align-middle">
                                     @Model.StartRange.ToShortTimeString()
@@ -101,6 +101,7 @@
             }
             else
             {
+                // Creation of the model for button create appointment
                 var btn = new BtnNewAppViewModel
                 {
                     RoomCode = Model.Room.RoomCode,

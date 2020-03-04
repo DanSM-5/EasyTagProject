@@ -1,4 +1,5 @@
 ﻿using EasyTagProject.Models.Identity;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -28,12 +29,16 @@ namespace EasyTagProject.Models
         public int RoomId { get; set; }
         [Required]
         public string UserName { get; set; }
+
         public string UserId { get; set; }
 
         [NotMapped]
         public string RoomCode { get; set; }
         [NotMapped]
-        public bool isValid { get; set; }
+        public bool IsValid { get; set; }
+        [Timestamp]
+        [HiddenInput]
+        public byte[] RowVersion { get; set; }
 
         public int CompareTo([AllowNull] Appointment other)
         {
@@ -66,9 +71,7 @@ namespace EasyTagProject.Models
                    Description == other.Description &&
                    ScheduleId == other.ScheduleId &&
                    RoomId == other.RoomId &&
-                   UserName == other.UserName &&
-                   UserId == other.UserId &&
-                   RoomCode == other.RoomCode);
+                   UserName == other.UserName);
         }
     }
 }

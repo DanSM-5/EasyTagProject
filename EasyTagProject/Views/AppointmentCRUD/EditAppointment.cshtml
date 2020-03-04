@@ -9,7 +9,7 @@
 <h1>Add Appointment on @Model.Start.Date.ToShortDateString()</h1>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 <form asp-action="EditAppointment" asp-controller="AppointmentCRUD" method="post">
-
+    <input asp-for="Id" type="hidden"/>
     <partial name="AppointmentFieldsPartial" for="@Model" />
     <div class="form-group">
         <div class="row">

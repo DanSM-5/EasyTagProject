@@ -27,6 +27,8 @@ namespace EasyTagProject.Models
                     entry.Description = appointment.Description;
                     entry.Course = appointment.Course;
                     entry.UserName = appointment.UserName;
+
+                    context.Entry(entry).OriginalValues["RowVersion"] = appointment.RowVersion;
                 }
             }
             else
@@ -55,9 +57,11 @@ namespace EasyTagProject.Models
 
             if (app != null)
             {
-                context.Appointments.Remove(app);
+                //context.Appointments.Remove(app);
+                context.Entry(app).State = EntityState.Deleted;
                 await context.SaveChangesAsync();
             }
+           
 
             return app;
         }

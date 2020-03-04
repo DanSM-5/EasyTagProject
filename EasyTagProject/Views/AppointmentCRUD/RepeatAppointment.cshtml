@@ -1,6 +1,7 @@
 ﻿@model RepeatAppViewModel
 @{
     ViewData["Title"] = "RepeatAppointment";
+    var x = Model;
 }
 
 <h1>Repeat Appointment</h1>
@@ -20,7 +21,9 @@
         </select>
         <span id="once">
             &nbsp;the day &nbsp;
-            <input asp-for="TargetDay" type="date" />
+            <input asp-for="TargetDay" type="date"/>&nbsp;at&nbsp;
+            <input asp-for="Start" type="time" value="@Model.Start.ToString()"/>&nbsp;-&nbsp;
+            <input asp-for="End" type="time" value="@Model.End.ToString()"/>
         </span>
         <span id="another">
             &nbsp;for a number of &nbsp;

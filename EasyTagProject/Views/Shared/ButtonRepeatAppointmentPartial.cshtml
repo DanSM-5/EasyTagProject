@@ -5,6 +5,7 @@
    asp-controller="AppointmentCRUD"
    asp-route-code="@Model.RoomCode"
    asp-route-id="@Model.Id"
-   asp-route-dateTime="@Model.Start.ToString("MM-dd-yyyy")">
+   asp-route-start="@Model.Start.ToString("MM-dd-yyyy H:mm")"
+   asp-route-end="@Model.End.ToString("MM-dd-yyyy H:mm")">
     Repeat
 </a>

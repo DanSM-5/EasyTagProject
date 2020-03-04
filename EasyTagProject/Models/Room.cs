@@ -34,6 +34,7 @@ namespace EasyTagProject.Models
         [Required]
         public Type? Type { get; set; }
         [BindNever]
+        [NotMapped]
         public Status Status
         {
             get
@@ -51,12 +52,14 @@ namespace EasyTagProject.Models
                 }
             }
         }
-        
+        [BindNever]
         public string RoomCode {get; set;}  
         [BindNever]
-        public ICollection<Item> Items { get; set; } = new List<Item>();
-        [BindNever]
         public Schedule Schedule { get; set; } = new Schedule();
+
+        [Timestamp]
+        [HiddenInput]
+        public byte[] RowVersion { get; set; }
 
         public int CompareTo([AllowNull] Room other)
         {

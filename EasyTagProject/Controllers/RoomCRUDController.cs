@@ -59,10 +59,18 @@ namespace EasyTagProject.Controllers
 
             if (ModelState.IsValid)
             {
-                room.RoomCode = $"{room.Block}{room.Floor}-{room.Number.ToString("00")}";
-                await roomRepository.SaveAsync(room);
+                try
+                {
+                    room.RoomCode = $"{room.Block}{room.Floor}-{room.Number.ToString("00")}";
+                    await roomRepository.SaveAsync(room);
 
-                return RedirectToAction(nameof(Room), nameof(Room), new { code = room.RoomCode });
+                    return RedirectToAction(nameof(Room), nameof(Room), new { code = room.RoomCode });
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    ModelState.AddModelError("", "The room has been modified! Please refresh the page or go to Room List");
+                    return View(room);
+                }
             }
 
             return View(room);

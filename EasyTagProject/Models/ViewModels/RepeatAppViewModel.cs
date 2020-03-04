@@ -28,5 +28,9 @@ namespace EasyTagProject.Models.ViewModels
         public string Date { get; set; }
         [RequiredIf("PeriodType == RepeatTime.Once", ErrorMessage = "Please select a day!")]
         public DateTime? TargetDay { get; set; }
+        [RequiredIf("PeriodType == RepeatTime.Once", ErrorMessage = "Please select a start time!")]
+        public TimeSpan? Start { get; set; }
+        [RequiredIf("PeriodType == RepeatTime.Once", ErrorMessage = "Please select a end time!")]
+        public TimeSpan? End { get; set; }
     }
 }

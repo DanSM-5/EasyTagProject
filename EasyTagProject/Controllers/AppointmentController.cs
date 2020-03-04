@@ -39,7 +39,7 @@ namespace EasyTagProject.Controllers
         {
             if (pDate >= DateTime.Today)
             {
-                Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.RoomCode == r.RoomCode);
+                Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.RoomCode == code);
                 room.Schedule.Appointments = room.Schedule.GetAppointmentsInDate(pDate);
                 var pagination = new RoomPagination
                 {
@@ -67,7 +67,7 @@ namespace EasyTagProject.Controllers
         [HttpGet]
         public async Task<ViewResult> ReportAppointments()
         {
-            var appointments = TempData.GetObject<IEnumerable<Appointment>>("app") ?? new List<Appointment>();
+            var appointments = HttpContext.Session.GetJson<IEnumerable<Appointment>>("repeatResult") ?? default;
             return View(appointments);
         }
     }
