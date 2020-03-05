@@ -68,6 +68,7 @@ namespace EasyTagProject.Controllers
         public async Task<ViewResult> ReportAppointments()
         {
             var appointments = HttpContext.Session.GetJson<IEnumerable<Appointment>>("repeatResult") ?? default;
+
             return View(appointments);
         }
     }

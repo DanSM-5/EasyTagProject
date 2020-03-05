@@ -62,6 +62,9 @@ namespace EasyTagProject.Migrations
 
                     b.HasIndex("ScheduleId");
 
+                    b.HasIndex("Start", "RoomId")
+                        .IsUnique();
+
                     b.ToTable("Appointments");
                 });
 

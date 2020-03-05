@@ -12,6 +12,13 @@ namespace EasyTagProject.Models
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<Appointment>()
+                .HasIndex(a => new { a.Start, a.RoomId})
+                .IsUnique();
+        }
+
         public DbSet<Room> Rooms { get; set; }
         public DbSet<Appointment> Appointments { get; set; }
         public DbSet<Schedule> Schedules { get; set; }

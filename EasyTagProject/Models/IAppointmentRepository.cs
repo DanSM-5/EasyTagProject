@@ -28,6 +28,11 @@ namespace EasyTagProject.Models
         /// <returns></returns>
         Task<Appointment> DeleteAsync(int id);
 
+        /// <summary>
+        /// Save multiples instances of Appointment
+        /// </summary>
+        /// <param name="appointments">Collection of appointments</param>
+        /// <returns></returns>
         Task SaveRangeAsync(IEnumerable<Appointment> appointments);
     }
 }

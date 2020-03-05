@@ -57,7 +57,6 @@ namespace EasyTagProject.Models
 
             if (app != null)
             {
-                //context.Appointments.Remove(app);
                 context.Entry(app).State = EntityState.Deleted;
                 await context.SaveChangesAsync();
             }

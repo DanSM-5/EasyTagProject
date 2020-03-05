@@ -65,10 +65,18 @@ namespace EasyTagProject.Controllers
 
             if (ModelState.IsValid)
             {
-                appointment.UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-                await appointmentRopository.SaveAsync(appointment);
+                try
+                {
+                    appointment.UserId = HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+                    await appointmentRopository.SaveAsync(appointment);
 
-                return RedirectToAction("AppointmentConfirmation", nameof(Appointment), new { code = appointment.RoomCode, id = appointment.Id });
+                    return RedirectToAction("AppointmentConfirmation", nameof(Appointment), new { code = appointment.RoomCode, id = appointment.Id });
+                }
+                catch (DbUpdateException ex)
+                {
+                    ModelState.AddModelError("", "The time for the appointment has been used, please select another time");
+                    return View(appointment);
+                }
             }
 
             return View(appointment);
@@ -124,32 +132,34 @@ namespace EasyTagProject.Controllers
                 }
                 catch (DbUpdateConcurrencyException ex)
                 {
-                    Appointment conflicted = await appointmentRopository.Appointments.FirstAsync(a => a.Id == appointment.Id);
-                    if (conflicted == null)
+                    var databaseEntry = ex.Entries.Single().GetDatabaseValues();
+                    if (databaseEntry == null)
                     {
                         ModelState.AddModelError("", "The appointment has been deleted!");
                     }
                     else
                     {
+                        Appointment conflicted = databaseEntry.ToObject() as Appointment;
+
                         if (conflicted.UserName != appointment.UserName)
                         {
-                            ModelState.AddModelError(nameof(Appointment.UserName), $"Current value: {conflicted.UserName}");
+                            ModelState.AddModelError(nameof(Appointment.UserName), $"Current name: {conflicted.UserName}");
                         }
                         if (conflicted.Start != appointment.Start)
                         {
-                            ModelState.AddModelError(nameof(Appointment.Start), $"Current value: {conflicted.Start.ToString("MM-dd-yyyy H:mm")}");
+                            ModelState.AddModelError(nameof(Appointment.Start), $"Current start value: {conflicted.Start.ToString("MM-dd-yyyy H:mm")}");
                         }
                         if (conflicted.End != appointment.End)
                         {
-                            ModelState.AddModelError(nameof(Appointment.End), $"Current value: {conflicted.End.ToString("MM-dd-yyyy H:mm")}");
+                            ModelState.AddModelError(nameof(Appointment.End), $"Current end value: {conflicted.End.ToString("MM-dd-yyyy H:mm")}");
                         }
                         if (conflicted.Description != appointment.Description)
                         {
-                            ModelState.AddModelError(nameof(Appointment.Description), $"Current value: {conflicted.Description}");
+                            ModelState.AddModelError(nameof(Appointment.Description), $"Current description: {conflicted.Description}");
                         }
                         if (conflicted.Course != appointment.Course)
                         {
-                            ModelState.AddModelError(nameof(Appointment.Course), $"Current value: {conflicted.Course}");
+                            ModelState.AddModelError(nameof(Appointment.Course), $"Current course: {conflicted.Course}");
                         }
 
                         ModelState.AddModelError("", "The appointment has been modified!");
@@ -202,15 +212,23 @@ namespace EasyTagProject.Controllers
 
                 var appointments = await RepeatAppointment(app, model, toCompareTime);
 
+                if (appointments.Any(a => a.ErrorHappened))
+                {
+                    ModelState.Clear();
+                    ModelState.AddModelError("", $"An error occurred while processing the request, " +
+                                                 $"it is possible that the appointments were not created, " +
+                                                 $"please make sure and then try again");
+                    return View(model);
+                }
+
                 HttpContext.Session.SetJson("repeatResult", appointments);
-                //TempData.SetObject("app", appointments);
+                
                 return RedirectToAction("ReportAppointments", nameof(Appointment)); 
             }
 
             return View(model);
         }
 
-        // Changes
         private async Task<bool> ValidateAppointmentAsync(Appointment appointment, Dictionary<int, Appointment> appointmentsToCompare = null)
         {
             bool success = true;
@@ -342,7 +360,16 @@ namespace EasyTagProject.Controllers
             }
 
             var appointments = await Task.WhenAll(tasks);
-            await appointmentRopository.SaveRangeAsync(appointments.Where(a => a.IsValid == true));
+
+
+            try
+            {
+                await appointmentRopository.SaveRangeAsync(appointments.Where(a => a.IsValid == true));
+            }
+            catch (DbUpdateException ex)
+            {
+                Parallel.ForEach(appointments.Where(a => a.IsValid && a.Id == 0), a => a.ErrorHappened = true);                
+            }
 
             return appointments;
         }
@@ -385,12 +412,22 @@ namespace EasyTagProject.Controllers
         {
             if (HttpContext.IsAccessibleForUserOrAdmin(HttpContext.GetLoggedUserId()))
             {
-                Appointment app = await appointmentRopository.DeleteAsync(id);
+                try
+                {
+                    Appointment app = await appointmentRopository.DeleteAsync(id);
 
-                return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = app.Start.ToString("MM-dd-yyyy") }); 
+                    if (app != null)
+                    {
+                        return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = app.Start.ToString("MM-dd-yyyy") });
+                    }
+                }
+                catch (DbUpdateConcurrencyException ex)
+                {
+                    ModelState.AddModelError("", $"The appointment with id {id} was already deleted");                 
+                }
             }
 
-            return Redirect("/");
+            return RedirectToAction(nameof(Room), nameof(Room), new { code = code });
         }
     }
 }

@@ -13,7 +13,7 @@
     <partial name="RoomPaginationPartial" for="@Model.RoomPagination" />
 </div>
 
-<table class="table table-responsive-md">
+<table class="table @(Model.Room.Schedule.Appointments.Count > 0 ? "table-responsive-sm" : "" )">
     <tr>
         <th>Time</th>
         <th colspan="2" class="text-center">Status</th>

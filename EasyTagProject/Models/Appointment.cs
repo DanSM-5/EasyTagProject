@@ -36,6 +36,8 @@ namespace EasyTagProject.Models
         public string RoomCode { get; set; }
         [NotMapped]
         public bool IsValid { get; set; }
+        [NotMapped]
+        public bool ErrorHappened { get; set; } = false;
         [Timestamp]
         [HiddenInput]
         public byte[] RowVersion { get; set; }

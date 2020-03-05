@@ -34,6 +34,7 @@
 </div>
 
 <hr />
+<div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 @*
     Display date of results
 *@
@@ -59,7 +60,7 @@ else
     Create table to display daily appointments
 *@
 <div>
-    <table class="table table-active table-hover table-responsive-md">
+    <table class="table table-active table-hover @(Model.Room.Schedule.Appointments.Count > 0 ? "table-responsive-md" : "") ">
         <thead>
             <tr>
                 <th>Hour</th>

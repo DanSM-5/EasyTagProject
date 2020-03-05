@@ -27,7 +27,7 @@ namespace EasyTagProject.Models
                 string adminRoleName = nameof(UserRoles.Admin);
 
                 //Manager Data
-                string professorUser = "Andre";
+                string professorUser = "Eduardo";
                 string profPass = "Faculty@123";
                 string professorRoleName = nameof(UserRoles.Professor);
 
@@ -89,10 +89,10 @@ namespace EasyTagProject.Models
                     professor = new EasyTagUser(professorUser) 
                     { 
                         Role = UserRoles.Professor,
-                        Email = "andreTeacher@mail.com",
+                        Email = "teacher@mail.com",
                         PhoneNumber = "123456790",
-                        FirstName = "Andre",
-                        LastName = "Ribeiro"
+                        FirstName = "Eduardo",
+                        LastName = "Sanchez"
                     };
                     await userManager.CreateAsync(professor, profPass);
                     await userManager.AddToRoleAsync(professor, professorRoleName);
