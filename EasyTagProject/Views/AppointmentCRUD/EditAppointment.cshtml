@@ -7,6 +7,9 @@
     Accessible for Professor/Admin users only
 *@
 <h1>Add Appointment on @Model.Start.Date.ToShortDateString()</h1>
+<div id="notification" class="text-center alert-warning">
+
+</div>
 <div asp-validation-summary="All" class="text-danger validation-summary-errors"></div>
 <form asp-action="EditAppointment" asp-controller="AppointmentCRUD" method="post">
     <input asp-for="Id" type="hidden"/>
@@ -28,3 +31,4 @@
         </div>
     </div>
 </form>
+<script defer src="~/js/notification.js"></script>

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using EasyTagProject.Models;
 using EasyTagProject.Models.Identity;
+using EasyTagProject.Models.Notifications;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -65,7 +66,10 @@ namespace EasyTagProject
             // Services for dependency injection
             services.AddTransient<IRoomRepository, EFRoomRepository>();
             services.AddTransient<IAppointmentRepository, EFAppointmentRepository>();
+            services.AddTransient<INotificationConnection, NotificationConnection>();
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddScoped<ApplicationDbContext>();
+            services.AddScoped<ETIdentityDbContext>();
 
             // Required services for application functionality
             services.AddRazorPages();
