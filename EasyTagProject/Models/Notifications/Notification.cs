@@ -14,5 +14,6 @@ namespace EasyTagProject.Models.Notifications
         public int Id { get; set; } = 0;
         public int RoomId { get; set; }
         public DateTime Date { get; set; }
+        public DateTime TimeCreated { get; set; }
     }
 }

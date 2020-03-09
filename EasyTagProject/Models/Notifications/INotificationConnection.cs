@@ -10,8 +10,6 @@ namespace EasyTagProject.Models.Notifications
         IQueryable<Notification> Notifications { get; }
         Task Create(Notification notification);
         Task<Notification> Delete(int id);
-
-
-
+        Task UpdateTimeCreated(int id);
     }
 }

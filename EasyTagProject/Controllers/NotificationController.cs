@@ -16,8 +16,6 @@ namespace EasyTagProject.Controllers
     public class NotificationController : Controller
     {
         public INotificationConnection NotificationRepository { get; }
-        //private Timer NotificationTimer { get; set; }
-        //private ElapsedEventHandler ElapsedEvent { get; set; } = null;
 
         public NotificationController(INotificationConnection notificationRepo)
         {
@@ -38,13 +36,6 @@ namespace EasyTagProject.Controllers
             }
         }
 
-        // GET api/<controller>/5
-        //[HttpGet("{id}")]
-        //public string Get(int id)
-        //{
-        //    return "value";
-        //}
-
         // POST api/<controller>/add
         [HttpPost("set")]
         public async Task<IActionResult> Post([FromBody] Notification notification)
@@ -59,14 +50,6 @@ namespace EasyTagProject.Controllers
                         return BadRequest("Notification alredy set");
                     }
                     await NotificationRepository.Create(notification);
-
-                    //ElapsedEvent = delegate(object sender, ElapsedEventArgs args) { DeleteNotification(notification.Id); };
-                    //ElapsedEvent = (sender, args) => DeleteNotification(notification.Id);
-
-                    //NotificationTimer = new Timer(30 * 60 * 1000);
-                    //NotificationTimer.AutoReset = false;
-                    //NotificationTimer.Elapsed += ElapsedEvent;// (sender, args) => Deletion(notification.Id);
-                    //NotificationTimer.Start();
 
                     return new OkObjectResult(new { Id = notification.Id });
                 }
@@ -98,36 +81,22 @@ namespace EasyTagProject.Controllers
             return BadRequest("Invalid value");
         }
 
-        //[HttpPost("Keep")]
-        //public async Task<IActionResult> PostKeepNotification([FromBody] int id)
-        //{
-        //    if (NotificationRepository.Notifications.Any(n => n.Id == id))
-        //    {
-        //        await KeepNotification(id);
-        //    }
-        //    return Ok();
-        //}
-
-        //private Task KeepNotification(int id)
-        //{
-        //    return Task.Run(() => { 
-        //        if (NotificationRepository.Notifications.Any(n => n.Id == id))
-        //        {
-        //            NotificationRepository.Delete(id);
-        //        }
-        //    });
-        //}
-
-        //private void DeleteNotification(int id)
-        //{
-        //    if (NotificationRepository.Notifications.Any(n => n.Id == id))
-        //    {
-        //        NotificationRepository.Delete(id);
-        //    }
-
-        //    NotificationTimer.Elapsed -= ElapsedEvent;
-        //    NotificationTimer.Dispose();
-        //    ElapsedEvent = null;
-        //}
+        [HttpPost("Keep")]
+        public async Task<IActionResult> PostKeepNotification([FromBody] int id)
+        {
+            try
+            {
+                if (NotificationRepository.Notifications.Any(n => n.Id == id))
+                {
+                    await NotificationRepository.UpdateTimeCreated(id);
+                }
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return BadRequest("Notification not found!");
+            }
+        }
     }
 }

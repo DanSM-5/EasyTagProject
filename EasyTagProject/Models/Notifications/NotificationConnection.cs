@@ -17,6 +17,7 @@ namespace EasyTagProject.Models.Notifications
 
         public async Task Create(Notification notification)
         {
+            notification.TimeCreated = DateTime.Now;
             await context.Notifications.AddAsync(notification);
             await context.SaveChangesAsync();
         }
@@ -32,6 +33,17 @@ namespace EasyTagProject.Models.Notifications
             }
 
             return notification;
+        }
+
+        public async Task UpdateTimeCreated(int id)
+        {
+            Notification notification = await context.Notifications.FirstOrDefaultAsync(n => n.Id == id);
+
+            if (notification != null)
+            {
+                notification.TimeCreated = DateTime.Now;
+                await context.SaveChangesAsync();
+            }
         }
     }
 }

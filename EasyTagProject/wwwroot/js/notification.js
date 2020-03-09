@@ -21,18 +21,44 @@ const setNotification = async (roomId, date) => {
     return (await result.json()).id;
 }
 
+const keepNotification = async (id) => {
+    const result = await fetch('/api/notification/keep', {
+        method: 'post',
+        body: id,
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+};
+
+const notificationExist = async (roomId, date) => {
+    const result = await fetch(`/api/notification/${roomId}/${date}`);
+    return result.json();
+};
+
+const checkAgain = async (func, clearNotification) => {
+    const resultObject = await func();
+    if (!resultObject.existNotification) {
+        $('#notification').fadeOut();
+        clearInterval(clearNotification);
+        loadNofication();
+    }
+};
+
 const loadNofication = async() =>{
     const roomId = parseInt($('#RoomId')[0].value);
     const date = getDateString(new Date($('#End')[0].value));
 
-    const result = await fetch(`/api/notification/${roomId}/${date}`);
-    const resultObject = await result.json();
+    const verifyNotification = async () => await notificationExist(roomId, date);
+    const resultObject = await verifyNotification();
 
     if (resultObject.existNotification) {
         $('#notification')[0].textContent = 'Someone else is editing this day, please wait or your information may be lost';
         $('#notification').fadeIn("slow");
+        const clearNotification = setInterval(async () => await checkAgain(verifyNotification, clearNotification), 2 * 60 * 1000);
     } else {
         const responseId = await setNotification(roomId, date);
+        setInterval(async() => await keepNotification(responseId), 5 * 60 * 1000);
         window.onbeforeunload = () => deleteNotification(responseId);
     }
 }
