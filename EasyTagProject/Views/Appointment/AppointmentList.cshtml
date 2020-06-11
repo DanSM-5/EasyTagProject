@@ -13,7 +13,7 @@
     <partial name="RoomPaginationPartial" for="@Model.RoomPagination" />
 </div>
 
-<table class="table @(Model.Room.Schedule.Appointments.Count > 0 ? "table-responsive-sm" : "" )">
+<table class="table @(Model.ResponsiveTable)">
     <tr>
         <th>Time</th>
         <th colspan="2" class="text-center">Status</th>
@@ -23,14 +23,10 @@
         Create all the posible blocks of 30 minutes in the range "StartRange = 8:30 AM"
         to "EndRange" = 10:30 PM
     *@
-    @for (; Model.StartRange.TimeOfDay < Model.EndRange.TimeOfDay; Model.StartRange += 30.Minutes())
+    @while (Model.StartRange.TimeOfDay < Model.EndRange.TimeOfDay)
     {
         // If the time of the appointment is in the past, it won't be diplayed
-        if (Model.Date.Date == DateTime.Today && Model.StartRange.TimeOfDay < DateTime.Now.TimeOfDay)
-        {
-            // Don't print the block of time
-        }
-        else
+        if (!(Model.Date.Date == DateTime.Today && Model.StartRange.TimeOfDay < DateTime.Now.TimeOfDay))
         {
             /*
                 Verifies if there is any appointment in the current block of time
@@ -50,7 +46,7 @@
                             <td class="align-middle">
                                     @Model.StartRange.ToShortTimeString()
                             </td>
-                            @* The appointment belongs to the current logged user? *@
+                            @* If rhe appointment belongs to the current logged user *@
                             @if (ViewContext.IsAccessibleForUser(app.UserId))
                             {
                                 <td class="align-middle">
@@ -67,7 +63,7 @@
                                 </td>
 
                             }
-                            // is the current logged user an admin?
+                            // if the current user is an admin, the appointment is open for edition
                             else if (ViewContext.IsUserInRool(nameof(UserRoles.Admin)))
                             {
                                 <td class="align-middle">
@@ -102,13 +98,7 @@
             else
             {
                 // Creation of the model for button create appointment
-                var btn = new BtnNewAppViewModel
-                {
-                    RoomCode = Model.Room.RoomCode,
-                    RoomId = Model.Room.Id,
-                    StartingDate = (Model.Date.Date + Model.StartRange.TimeOfDay),
-                    Message = "Free"
-                };
+                Model.BtnNew.StartingDate = (Model.Date.Date + Model.StartRange.TimeOfDay);
                 //    Verifies it the current block of time is available or if it is already in the past
                 <tr>
                     @* Time of the block *@
@@ -118,12 +108,14 @@
                     @* Link to create appointment *@
                     <td class="align-middle">
                         <div class="text-center">
-                            <partial name="ButtonCreateNewAppointmentPartial" for="@btn" />
+                            <partial name="ButtonCreateNewAppointmentPartial" for="BtnNew" />
                         </div>
                     </td>
                 </tr>
             }
         }
+        // Increae 30 minutes for the next row
+        Model.StartRange += 30.Minutes();
     }
 </table>
 <div class="m-3 justify-content-center">

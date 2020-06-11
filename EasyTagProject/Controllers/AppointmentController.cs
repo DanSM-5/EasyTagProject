@@ -41,6 +41,8 @@ namespace EasyTagProject.Controllers
             {
                 Room room = await roomRepository.Rooms.FirstOrDefaultAsync(r => r.RoomCode == code);
                 room.Schedule.Appointments = room.Schedule.GetAppointmentsInDate(pDate);
+
+
                 var pagination = new RoomPagination
                 {
                     CurrentDate = pDate,
@@ -50,7 +52,25 @@ namespace EasyTagProject.Controllers
                     AllowPrevious = pDate > DateTime.Today ? true : false 
                 };
 
-                return View(new AppointmentListViewModel { Room = room, Date = pDate.Date + DateTime.Now.TimeOfDay, RoomPagination = pagination }); 
+                var appointmentListModel = new AppointmentListViewModel
+                {
+                    Room = room,
+                    Date = pDate.Date + DateTime.Now.TimeOfDay,
+                    RoomPagination = pagination,
+                    BtnNew = new BtnNewAppViewModel
+                    {
+                        RoomCode = room.RoomCode,
+                        Message = "Free Time"
+                    }                    
+                };
+
+                if (room.Schedule.Appointments.Count > 0 &&
+                    room.Schedule.Appointments.Any(a => a.Start > DateTime.Now))
+                {
+                    appointmentListModel.ResponsiveTable = "table-responsive-sm";
+                }
+
+                return View(appointmentListModel); 
             }
 
             return RedirectToAction(nameof(Room), nameof(Room), new { code = code, pDate = pDate.ToString("MM-dd-yyyy") });
@@ -67,9 +87,16 @@ namespace EasyTagProject.Controllers
         [HttpGet]
         public async Task<ViewResult> ReportAppointments()
         {
-            var appointments = HttpContext.Session.GetJson<IEnumerable<Appointment>>("repeatResult") ?? default;
+            var model = new ReportAppointmentsViewModel
+            {
+                Appointments = HttpContext.Session.GetJson<IEnumerable<Appointment>>("repeatResult") ?? new List<Appointment>(),
+                BtnNew = new BtnNewAppViewModel
+                {
+                    Message = "Try another time?"
+                }
+            };
 
-            return View(appointments);
+            return View(model);
         }
     }
 }

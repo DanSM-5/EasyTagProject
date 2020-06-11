@@ -258,7 +258,7 @@ namespace EasyTagProject.Controllers
 
                 if (ModelState.IsValid)
                 {
-                    if (!String.IsNullOrEmpty(model.ReturnUrl) && Url.IsLocalUrl(model.ReturnUrl))
+                    if (!String.IsNullOrEmpty(model.ReturnUrl))
                     {
                         return Redirect(HttpUtility.UrlDecode(model.ReturnUrl));
                     }
@@ -310,7 +310,7 @@ namespace EasyTagProject.Controllers
                         }
                         else
                         {
-                            return RedirectToAction(nameof(Edit), new { id = tagUser.Id, returnUrl = "/", message = "success" });
+                            return RedirectToAction(nameof(Edit), new { id = tagUser.Id, returnUrl = model.ReturnUrl, message = "success" });
                         }
                     }
                 } 
@@ -353,7 +353,7 @@ namespace EasyTagProject.Controllers
                     }
                     else
                     {
-                        return RedirectToAction(nameof(Edit), new { id = tagUser.Id, returnUrl = "/", message = "success" });
+                        return RedirectToAction(nameof(Edit), new { id = tagUser.Id, returnUrl = model.ReturnUrl, message = "success" });
                     }
                 }
             }

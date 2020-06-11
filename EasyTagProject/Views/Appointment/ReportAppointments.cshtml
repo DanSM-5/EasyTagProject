@@ -1,16 +1,17 @@
-﻿@model IEnumerable<Appointment>
+﻿@model ReportAppointmentsViewModel
 @{
     ViewData["Title"] = "ReportAppointments";
 }
 
 <h1 class="justify-content-center">Report Appointments</h1>
-@if (Model.Count() > 0)
+@if (Model.Appointments.Count() > 0)
 {
+    Model.BtnNew.RoomCode = Model.Appointments.First().RoomCode;
     <div class="d-flex align-content-center justify-content-center mt-3 mb-3">
         <a class="btn btn-primary" type="button"
            asp-action="Room"
            asp-controller="Room"
-           asp-route-code="@Model.First().RoomCode">
+           asp-route-code="@Model.BtnNew.RoomCode">
             Accept
         </a>
     </div>
@@ -25,7 +26,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var a in Model)
+                @foreach (var a in Model.Appointments)
                 {
                     <tr>
                         <td class="align-middle">@a.Start.ToShortDateString() @a.Start.ToShortTimeString()</td>
@@ -47,16 +48,10 @@
                         }
                         else
                         {
-                            var btn = new BtnNewAppViewModel
-                            {
-                                RoomCode = a.RoomCode,
-                                RoomId = a.RoomId,
-                                StartingDate = a.Start,
-                                Message = "Try another time?"
-                            };
+                            Model.BtnNew.StartingDate = a.Start;
                             <td class="align-middle">
                                 <div class="text-center h-100 d-block">
-                                    <partial name="ButtonCreateNewAppointmentPartial" for="@btn" />
+                                    <partial name="ButtonCreateNewAppointmentPartial" for="BtnNew" />
                                 </div>
                             </td>
                             <td class="align-middle">
@@ -75,7 +70,7 @@
         <a class="btn btn-primary" type="button"
            asp-action="Room"
            asp-controller="Room"
-           asp-route-code="@(Model.First().RoomCode)">
+           asp-route-code="@(Model.BtnNew.RoomCode)">
             Accept
         </a>
     </div>

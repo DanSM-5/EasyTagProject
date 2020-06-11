@@ -37,12 +37,12 @@ namespace EasyTagProject
             
             // Connection to EasyTag DataBase
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(Configuration["Data:EasyTagDB:ConnectionString"]));
+                options.UseSqlServer(Configuration["Data:EasyTagDB_local:ConnectionString"]));
 
             #region IdentityFramework
             // Connection to EasyTag Identity DataBase
             services.AddDbContext<ETIdentityDbContext>(options =>
-                options.UseSqlServer(Configuration["Data:EasyTagIdentity:ConnectionString"]));
+                options.UseSqlServer(Configuration["Data:EasyTagIdentity_local:ConnectionString"]));
 
             // Services for Identity Framework
             services.AddIdentity<EasyTagUser, IdentityRole>(options => {
@@ -75,7 +75,6 @@ namespace EasyTagProject
             services.AddRazorPages();
             services.AddMemoryCache();
             services.AddSession();
-
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

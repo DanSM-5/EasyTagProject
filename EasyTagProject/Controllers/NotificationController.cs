@@ -22,7 +22,7 @@ namespace EasyTagProject.Controllers
             NotificationRepository = notificationRepo;
         }
 
-        // GET: api/<controller>
+        // GET: api/<controller>/id/date
         [HttpGet("{id}/{date}")]
         public async Task<IActionResult> Get(int id, DateTime date)
         {
@@ -36,7 +36,7 @@ namespace EasyTagProject.Controllers
             }
         }
 
-        // POST api/<controller>/add
+        // POST api/<controller>/set
         [HttpPost("set")]
         public async Task<IActionResult> Post([FromBody] Notification notification)
         {
@@ -62,7 +62,7 @@ namespace EasyTagProject.Controllers
             return BadRequest("Wrong data received");
         }
 
-        // PUT api/<controller>/5
+        // POST api/<controller>/unset
         [HttpPost("unset")]
         public async Task<IActionResult> Post([FromBody] int id)
         {
@@ -81,7 +81,8 @@ namespace EasyTagProject.Controllers
             return BadRequest("Invalid value");
         }
 
-        [HttpPost("Keep")]
+        // POST api/<controller>/keep
+        [HttpPost("keep")]
         public async Task<IActionResult> PostKeepNotification([FromBody] int id)
         {
             try

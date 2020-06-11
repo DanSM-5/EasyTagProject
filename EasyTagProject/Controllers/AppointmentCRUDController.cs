@@ -288,7 +288,7 @@ namespace EasyTagProject.Controllers
             //  Identify if any apointment overlaps
             #region AvoidOverlapingAppoinments
 
-            Dictionary<int, Appointment> appointments = appointmentsToCompare == null ? await getAppointments : appointmentsToCompare;
+            Dictionary<int, Appointment> appointments = appointmentsToCompare ?? await getAppointments;
             
             // Validate that the appointment being eddited 
             // is not in the past and belongs to the same user or is an admin

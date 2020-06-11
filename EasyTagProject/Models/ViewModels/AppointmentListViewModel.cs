@@ -14,5 +14,7 @@ namespace EasyTagProject.Models.ViewModels
         public Room Room { get; set; }
         public Appointment OverlappedAppointment { get; set; }
         public RoomPagination RoomPagination { get; set; }
+        public string ResponsiveTable { get; set; } = "";
+        public BtnNewAppViewModel BtnNew { get; set; }
     }
 }

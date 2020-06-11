@@ -29,18 +29,19 @@ namespace EasyTagProject.Models
         public int RoomId { get; set; }
         [Required]
         public string UserName { get; set; }
-
         public string UserId { get; set; }
+        [Timestamp]
+        [HiddenInput]
+        public byte[] RowVersion { get; set; }
 
+        // Used for reference and validation
         [NotMapped]
         public string RoomCode { get; set; }
         [NotMapped]
         public bool IsValid { get; set; }
         [NotMapped]
         public bool ErrorHappened { get; set; } = false;
-        [Timestamp]
-        [HiddenInput]
-        public byte[] RowVersion { get; set; }
+
 
         public int CompareTo([AllowNull] Appointment other)
         {

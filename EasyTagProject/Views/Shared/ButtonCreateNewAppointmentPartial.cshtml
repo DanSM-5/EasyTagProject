@@ -3,7 +3,6 @@
 <a class="btn btn-primary"
    asp-action="AddAppointment" asp-controller="AppointmentCRUD"
    asp-route-code="@Model.RoomCode"
-   asp-route-roomId="@Model.RoomId"
    asp-route-selectedTime="@(Model.StartingDate.ToString("MM-dd-yyyy H:mm"))">
     @Model.Message
 </a>
