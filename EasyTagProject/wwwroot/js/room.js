@@ -1,26 +1,18 @@
 ﻿
 // Function to fade in and out the description
-let fadeAppointmentFunction = (e) => {
-    if ($(e.target).is('td')) {
-        let displayClass = 'displayed';
-        let idNum = $(e.target)
-            .parent()
-            .attr('id')
-            .split('-')[0];
-
-        let tr = $('#' + idNum + '-header');
-        let hiddenTd = '#' + idNum + "-description";
-
-        if ($(tr).hasClass(displayClass)) {
-            $(tr).removeClass(displayClass);
-            $(hiddenTd).fadeOut();
+const fadeDescription = () => {
+    const displayed = 'displayed';
+    const appointments = Array.from(document.getElementsByClassName('appointment'));
+    appointments.map(a => a.addEventListener('click', () => {
+        const description = a.nextElementSibling;
+        if (a.classList.contains(displayed)) {
+            description.style.display = "none";
         } else {
-            $(tr).addClass(displayClass);
-            $(hiddenTd).fadeIn();
+            description.style.display = "table-row";
         }
-    }
-};
+        a.classList.toggle(displayed);
+    }, false));
+}
 
 // add events after the page is loaded
-$(document).click(fadeAppointmentFunction);
-
+window.addEventListener('load', fadeDescription, false);
