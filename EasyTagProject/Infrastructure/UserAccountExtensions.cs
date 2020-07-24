@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using System.Web;
 
 namespace EasyTagProject.Infrastructure
 {
@@ -134,6 +135,11 @@ namespace EasyTagProject.Infrastructure
             }
 
             return httpContext.User.Identity.Name;
+        }
+
+        public static string GetHostUrl(this ViewContext viewContext)
+        {
+            return HttpUtility.UrlEncode(viewContext.HttpContext.Request.Host.ToString());
         }
     }
 }

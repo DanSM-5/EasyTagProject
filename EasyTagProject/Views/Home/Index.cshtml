@@ -6,12 +6,23 @@
     Accessible for all visitors
 -->
 <div class="text-center">
-    <h1 class="display-4 h1">Welcome</h1>
-    <form>
-        <!--<input type="file" accept="image/*" capture="camera" />-->
-        <button class="btn btn-primary btn-lg btn-block scannow" asp-action="Room" asp-controller="Room" asp-route-code="A3-13">Scan Tag Now</button>
-    </form>
-    <div class="btnlistofrooms">
-        <a asp-action="RoomList" asp-controller="Room"><div class="btn btn-outline-secondary">List of rooms</div></a>
+    <h1 class="display-4 h1">Welcome to EasyTag</h1>
+    <div>
+        <img id="index-QR" class="img-thumbnail rounded mx-auto d-block" src="@($"http://api.qrserver.com/v1/create-qr-code/?data={ViewContext.GetHostUrl()}&size=350x350")"/>
+    </div>
+    <br />
+    <h3>Scan a QR code with your phone to navigate to the room's schedule or find it with the options below.</h3>
+    <br />
+    <div class="row">
+        <div class="col">
+            <p>Go to list of rooms</p>
+            <div class="btnlistofrooms">
+                <a asp-action="RoomList" asp-controller="Room"><div class="btn btn-outline-secondary">List of rooms</div></a>
+            </div>
+        </div>
+        <div class="col">
+            <p>Search your room by name:</p>
+            <partial name="SearchRoomByNamePartial" />
+        </div>
     </div>
 </div>

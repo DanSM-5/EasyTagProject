@@ -16,10 +16,6 @@ html {
   html {
     font-size: 16px;
   }
-    /*.qr-code {
-        width: 200px;
-        height: 200px;
-    }*/
 }
 
 .border-top {
@@ -285,4 +281,9 @@ body {
 
 #notification{
     display: none;
+}
+
+#index-QR {
+    width: 200px;
+    height: 200px;
 }
