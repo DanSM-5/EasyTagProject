@@ -221,7 +221,7 @@ namespace EasyTagProject.Controllers
 
                 HttpContext.Session.SetJson("repeatResult", appointments);
                 
-                return RedirectToAction("ReportAppointments", nameof(Appointment)); 
+                return RedirectToAction("ReportAppointments", nameof(Appointment), new { date = model.Date }); 
             }
 
             return View(model);

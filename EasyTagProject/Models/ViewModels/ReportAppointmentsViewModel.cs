@@ -9,5 +9,6 @@ namespace EasyTagProject.Models.ViewModels
     {
         public IEnumerable<Appointment> Appointments { get; set; }
         public BtnNewAppViewModel BtnNew { get; set; }
+        public string Date { get; set; }
     }
 }

@@ -85,7 +85,7 @@ namespace EasyTagProject.Controllers
         }
 
         [HttpGet]
-        public async Task<ViewResult> ReportAppointments()
+        public async Task<ViewResult> ReportAppointments(string date)
         {
             var model = new ReportAppointmentsViewModel
             {
@@ -93,7 +93,8 @@ namespace EasyTagProject.Controllers
                 BtnNew = new BtnNewAppViewModel
                 {
                     Message = "Try another time?"
-                }
+                },
+                Date = String.IsNullOrEmpty(date) ? DateTime.Today.ToString("MM-dd-yyyy") : date
             };
 
             return View(model);
